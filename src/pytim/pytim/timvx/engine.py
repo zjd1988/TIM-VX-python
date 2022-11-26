@@ -4,16 +4,6 @@ import numpy as np
 from .lib import *
 
 TimVxDataType = ["INT8", "UINT8", "INT16", "UINT16", "INT32", "UINT32", "FLOAT16", "FLOAT32", "BOOL8"]
-TimVxDataTypeToNpDataTypeMap = {
-    "INT8"    :  np.int8,
-    "INT16"   :  np.int16,
-    "INT32"   :  np.int32,
-    "UINT8"   :  np.uint8,
-    "UINT16"  :  np.uint16,
-    "UINT32"  :  np.uint32,
-    "FLOAT16" :  np.float16,
-    "FLOAT32" :  np.float32,
-}
 
 class Engine():
     def __init__(self, name:str):
@@ -143,7 +133,7 @@ class Engine():
         # add engine tensor_info stat
         tensor_stat_info = {}
         tensor_stat_info["name"] = tensor_name
-        tensor_stat_info["dtype"] = TimVxDataTypeToNpDataTypeMap[tensor_dtype]
+        tensor_stat_info["dtype"] = self.convert_tim_dtype_to_np_dtype(tensor_dtype)
         tensor_stat_info["attr"] = tensor_attr
         tensor_stat_info["shape"] = tensor_shape
         tensor_stat_info["quant_info"] = quant_info
