@@ -1,6 +1,6 @@
 /****************************************************************************
 *
-*    Copyright (c) 2020 Vivante Corporation
+*    Copyright (c) 2022 Vivante Corporation
 *
 *    Permission is hereby granted, free of charge, to any person obtaining a
 *    copy of this software and associated documentation files (the "Software"),
@@ -21,51 +21,29 @@
 *    DEALINGS IN THE SOFTWARE.
 *
 *****************************************************************************/
-#ifndef TIM_VX_OPERATION_PAD_H_
-#define TIM_VX_OPERATION_PAD_H_
+#ifndef TIM_VX_OPS_HASHTABLE_LOOKUP_H_
+#define TIM_VX_OPS_HASHTABLE_LOOKUP_H_
+
 #include "tim/vx/builtin_op.h"
 
-namespace tim {
-namespace vx {
-namespace ops {
+namespace tim{
+namespace vx{
+namespace ops{
 
 /**
- * ## Pad
+ * ## HashtableLookup
  *
- * Pads a tensor.
- *
- * - const_val : the int32 value to pad.
- * - pad_mode : the mode of pad.
- * - front_size : Add pad values to the left and top.
- * - back_size : Add pad values to the right and bottom.
+ * Looks up sub-tensors in the input tensor using a key-value map.
  */
-
-class Pad : public BuiltinOp {
- public:
-  typedef enum {
-    // signature
-    PAD_MODE_CONSTANT,
-    PAD_MODE_EDGE,
-    PAD_MODE_SYMMETRIC,
-    PAD_MODE_REFLECT,
-  } pad_mode_type;
-
-  Pad(Graph* graph, const std::vector<uint32_t>& front_size,
-           const std::vector<uint32_t>& back_size, int32_t const_val);
-  Pad(Graph* graph, const std::vector<uint32_t>& front_size,
-      const std::vector<uint32_t>& back_size, int32_t const_val,
-      pad_mode_type pad_mode);
-
-  std::shared_ptr<Operation> Clone(
-      std::shared_ptr<Graph>& graph) const override;
-
- protected:
-  std::vector<uint32_t> front_size_;
-  std::vector<uint32_t> back_size_;
-  int32_t const_val_;
-  pad_mode_type pad_mode_;
+class HashtableLookup : public BuiltinOp {
+  public:
+    HashtableLookup(Graph* graph);
+    
+    std::shared_ptr<Operation> Clone(std::shared_ptr<Graph>& graph) const override;
 };
-}  // namespace ops
-}  // namespace vx
-}  // namespace tim
-#endif
+
+} // namespace ops
+} // namespace vx
+} // namespace tim
+
+#endif /* TIM_VX_OPS_HASHTABLE_LOOKUP_H_ */

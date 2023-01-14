@@ -1,6 +1,6 @@
 /****************************************************************************
 *
-*    Copyright (c) 2020 Vivante Corporation
+*    Copyright (c) 2022 Vivante Corporation
 *
 *    Permission is hereby granted, free of charge, to any person obtaining a
 *    copy of this software and associated documentation files (the "Software"),
@@ -21,51 +21,23 @@
 *    DEALINGS IN THE SOFTWARE.
 *
 *****************************************************************************/
-#ifndef TIM_VX_OPERATION_PAD_H_
-#define TIM_VX_OPERATION_PAD_H_
-#include "tim/vx/builtin_op.h"
+#include "tim/vx/ops/hashtable_lookup.h"
 
-namespace tim {
-namespace vx {
-namespace ops {
+#include "builtin_op_impl.h"
+#include "vsi_nn_pub.h"
 
-/**
- * ## Pad
- *
- * Pads a tensor.
- *
- * - const_val : the int32 value to pad.
- * - pad_mode : the mode of pad.
- * - front_size : Add pad values to the left and top.
- * - back_size : Add pad values to the right and bottom.
- */
+namespace tim{
+namespace vx{
+namespace ops{
 
-class Pad : public BuiltinOp {
- public:
-  typedef enum {
-    // signature
-    PAD_MODE_CONSTANT,
-    PAD_MODE_EDGE,
-    PAD_MODE_SYMMETRIC,
-    PAD_MODE_REFLECT,
-  } pad_mode_type;
+  HashtableLookup::HashtableLookup(Graph* graph)
+        : BuiltinOp (graph, VSI_NN_OP_HASHTABLE_LOOKUP, 3, 2){}
 
-  Pad(Graph* graph, const std::vector<uint32_t>& front_size,
-           const std::vector<uint32_t>& back_size, int32_t const_val);
-  Pad(Graph* graph, const std::vector<uint32_t>& front_size,
-      const std::vector<uint32_t>& back_size, int32_t const_val,
-      pad_mode_type pad_mode);
+  std::shared_ptr<Operation> HashtableLookup::Clone(
+      std::shared_ptr<Graph>& graph) const {
+    return graph->CreateOperation<HashtableLookup>();
+}
 
-  std::shared_ptr<Operation> Clone(
-      std::shared_ptr<Graph>& graph) const override;
-
- protected:
-  std::vector<uint32_t> front_size_;
-  std::vector<uint32_t> back_size_;
-  int32_t const_val_;
-  pad_mode_type pad_mode_;
-};
-}  // namespace ops
-}  // namespace vx
-}  // namespace tim
-#endif
+}
+}
+}

@@ -1,6 +1,6 @@
 /****************************************************************************
 *
-*    Copyright (c) 2021 Vivante Corporation
+*    Copyright (c) 2022 Vivante Corporation
 *
 *    Permission is hereby granted, free of charge, to any person obtaining a
 *    copy of this software and associated documentation files (the "Software"),
@@ -21,60 +21,51 @@
 *    DEALINGS IN THE SOFTWARE.
 *
 *****************************************************************************/
-#ifndef TIM_VX_OPS_MAXPOOLGRAD_H_
-#define TIM_VX_OPS_MAXPOOLGRAD_H_
-
-#include "tim/vx/operation.h"
-#include <array>
-
-#ifdef VSI_FEAT_OP_MAXPOOLWITHARGMAX
+#ifndef TIM_VX_OPERATION_PADV2_H_
+#define TIM_VX_OPERATION_PADV2_H_
+#include "tim/vx/builtin_op.h"
 
 namespace tim {
 namespace vx {
 namespace ops {
 
 /**
- * ## MaxpooGrad
+ * ## PadV2
  *
- * Acquire the gradient of 2-D Max pooling operation's input tensor. \
- * Like the tensorflow_XLA op SelectAndScatter, see \
- * https://tensorflow.google.cn/xla/operation_semantics?hl=en#selectandscatter.
+ * Pads a tensor.
  *
- * - padding : AUTO, VALID or SAME.
- * - ksize : filter size.
- * - stride : stride along each spatial axis.
- * - round_type : CEILING or FLOOR.
- * 
- *  * Inputs:
- * 
- * - 0 : input tensor of 2-D Max pooling.
- * - 1 : gradient of 2-D Max pooling output tensor.
- * 
- * * Outputs:
- * 
- * - 0 : updated tensor of 2-D Max pooling input.
+ * - const_val : the float value to pad.
+ * - pad_mode : the mode of pad.
+ * - front_size : Add pad values to the left and top.
+ * - back_size : Add pad values to the right and bottom.
  */
 
-class MaxpoolGrad: public Operation {
+class PadV2 : public BuiltinOp {
  public:
-  MaxpoolGrad(Graph* graph, PadType padding,
-              const std::array<uint32_t, 2>& ksize,
-              const std::array<uint32_t, 2>& stride,
-              RoundType round_type = RoundType::FLOOR,
-              DataLayout layout = DataLayout::WHCN);
+  typedef enum {
+    // signature
+    PAD_MODE_CONSTANT,
+    PAD_MODE_EDGE,
+    PAD_MODE_SYMMETRIC,
+    PAD_MODE_REFLECT,
+  } pad_mode_type;
+
+  PadV2(Graph* graph, const std::vector<uint32_t>& front_size,
+           const std::vector<uint32_t>& back_size, float const_val);
+  PadV2(Graph* graph, const std::vector<uint32_t>& front_size,
+      const std::vector<uint32_t>& back_size, float const_val,
+      pad_mode_type pad_mode);
+
   std::shared_ptr<Operation> Clone(
       std::shared_ptr<Graph>& graph) const override;
 
  protected:
-  const PadType padding_;
-  const std::array<uint32_t, 2> ksize_;
-  const std::array<uint32_t, 2> stride_;
-  const RoundType round_type_;
+  std::vector<uint32_t> front_size_;
+  std::vector<uint32_t> back_size_;
+  float const_val_;
+  pad_mode_type pad_mode_;
 };
-
 }  // namespace ops
 }  // namespace vx
 }  // namespace tim
-
-#endif //(VSI_FEAT_OP_MAXPOOLWITHARGMAX)
-#endif /* TIM_VX_OPS_MAXPOOLGRAD_H_ */
+#endif

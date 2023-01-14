@@ -1,6 +1,6 @@
 /****************************************************************************
 *
-*    Copyright (c) 2021 Vivante Corporation
+*    Copyright (c) 2022 Vivante Corporation
 *
 *    Permission is hereby granted, free of charge, to any person obtaining a
 *    copy of this software and associated documentation files (the "Software"),
@@ -21,60 +21,29 @@
 *    DEALINGS IN THE SOFTWARE.
 *
 *****************************************************************************/
-#ifndef TIM_VX_OPS_MAXPOOLGRAD_H_
-#define TIM_VX_OPS_MAXPOOLGRAD_H_
-
-#include "tim/vx/operation.h"
-#include <array>
-
-#ifdef VSI_FEAT_OP_MAXPOOLWITHARGMAX
+#ifndef TIM_VX_OPS_EMBEDDING_LOOKUP_H_
+#define TIM_VX_OPS_EMBEDDING_LOOKUP_H_
+#include "tim/vx/builtin_op.h"
 
 namespace tim {
 namespace vx {
 namespace ops {
 
 /**
- * ## MaxpooGrad
+ * ## EmbeddingLookup
  *
- * Acquire the gradient of 2-D Max pooling operation's input tensor. \
- * Like the tensorflow_XLA op SelectAndScatter, see \
- * https://tensorflow.google.cn/xla/operation_semantics?hl=en#selectandscatter.
- *
- * - padding : AUTO, VALID or SAME.
- * - ksize : filter size.
- * - stride : stride along each spatial axis.
- * - round_type : CEILING or FLOOR.
- * 
- *  * Inputs:
- * 
- * - 0 : input tensor of 2-D Max pooling.
- * - 1 : gradient of 2-D Max pooling output tensor.
- * 
- * * Outputs:
- * 
- * - 0 : updated tensor of 2-D Max pooling input.
+ * Looks up sub-tensors in the input tensor with specific indices(idx)
  */
 
-class MaxpoolGrad: public Operation {
+class EmbeddingLookup : public BuiltinOp {
  public:
-  MaxpoolGrad(Graph* graph, PadType padding,
-              const std::array<uint32_t, 2>& ksize,
-              const std::array<uint32_t, 2>& stride,
-              RoundType round_type = RoundType::FLOOR,
-              DataLayout layout = DataLayout::WHCN);
-  std::shared_ptr<Operation> Clone(
-      std::shared_ptr<Graph>& graph) const override;
-
- protected:
-  const PadType padding_;
-  const std::array<uint32_t, 2> ksize_;
-  const std::array<uint32_t, 2> stride_;
-  const RoundType round_type_;
+  EmbeddingLookup(Graph* Graph);
+  
+  std::shared_ptr<Operation> Clone(std::shared_ptr<Graph>& graph) const override;
 };
 
 }  // namespace ops
 }  // namespace vx
 }  // namespace tim
 
-#endif //(VSI_FEAT_OP_MAXPOOLWITHARGMAX)
-#endif /* TIM_VX_OPS_MAXPOOLGRAD_H_ */
+#endif /* TIM_VX_OPS_EMBEDDING_LOOKUP_H_ */

@@ -62,6 +62,8 @@
 #include "tim/vx/ops/nbg.h"
 #include "tim/vx/ops/onehot.h"
 #include "tim/vx/ops/pad.h"
+#include "tim/vx/ops/pad_v2.h"
+#include "tim/vx/ops/pool1d.h"
 #include "tim/vx/ops/pool2d.h"
 #include "tim/vx/ops/reduce.h"
 #include "tim/vx/ops/relational_operations.h"
@@ -98,5 +100,7 @@
 #include "tim/vx/ops/custom_base.h"
 #include "tim/vx/ops/topk.h"
 #include "tim/vx/ops/bidirectional_sequence_lstm.h"
+#include "tim/vx/ops/hashtable_lookup.h"
+#include "tim/vx/ops/embedding_lookup.h"
 
 #endif /* TIM_VX_OPS_H_ */
