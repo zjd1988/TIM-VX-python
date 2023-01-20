@@ -1,2 +1,3 @@
 from .rknn_converter import *
-__all__ = ['Rknn2TimVxEngine', ]
+from .tflite_convert import *
+__all__ = ['Rknn2TimVxEngine', 'Tflite2TimVxEngine']

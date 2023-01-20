@@ -36,6 +36,33 @@ def ConstructConv2dOpConfig(op_name:str, stride:list, dilation:list, ksize:list=
     return op_info_dict
 
 
+def ConstructGroupedConv2dOpConfig(op_name:str, stride:list, dilation:list, grouped_number:int, padding:str="AUTO", 
+    pad:list=[0, 0, 0, 0], input_layout:str="WHCN", kernel_layout:str="WHIcOc", 
+    op_inputs:list=[], op_outputs:list=[])->dict:
+
+    assert padding in PadType, "padding:{} is not in {}".format(padding, PadType)
+    assert input_layout in DataLayout, "input_layout:{} is not in {}".format(input_layout, DataLayout)
+    assert kernel_layout in DataLayout, "kernel_layout:{} is not in {}".format(kernel_layout, DataLayout)
+    op_info_dict = {}
+    op_info_dict["op_name"] = op_name
+    op_info_dict["op_type"] = "GroupedConv2d"
+    op_attr = {}
+    op_attr["stride"] = stride
+    op_attr["dilation"] = dilation
+    op_attr["grouped_number"] = grouped_number
+    op_attr["padding"] = padding
+    op_attr["pad"] = pad
+    op_attr["input_layout"] = input_layout
+    op_attr["kernel_layout"] = kernel_layout
+    op_info_dict["op_attr"] = op_attr
+    if len(op_inputs) > 0:
+        op_info_dict["op_inputs"] = op_inputs
+    if len(op_outputs) > 0:
+        op_info_dict["op_outputs"] = op_outputs
+
+    return op_info_dict
+
+
 def ConstructActivationOpConfig(op_name:str, activation_type:str, parameter:dict={}, 
     op_inputs:list=[], op_outputs:list=[])->dict:
 
@@ -221,6 +248,19 @@ def ConstructConcatOpConfig(op_name:str, axis:int, op_inputs:list=[], op_outputs
     op_attr = {}
     op_attr["axis"] = axis
     op_attr["input_cnt"] = len(op_inputs)
+    op_info_dict["op_attr"] = op_attr
+    if len(op_inputs) > 0:
+        op_info_dict["op_inputs"] = op_inputs
+    if len(op_outputs) > 0:
+        op_info_dict["op_outputs"] = op_outputs
+    return op_info_dict
+
+
+def ConstructDataConvertConfig(op_name:str, op_inputs:list=[], op_outputs:list=[]):
+    op_info_dict = {}
+    op_info_dict["op_name"] = op_name
+    op_info_dict["op_type"] = "DataConvert"
+    op_attr = {}
     op_info_dict["op_attr"] = op_attr
     if len(op_inputs) > 0:
         op_info_dict["op_inputs"] = op_inputs

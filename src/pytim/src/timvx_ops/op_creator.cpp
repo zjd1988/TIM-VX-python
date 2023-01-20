@@ -18,6 +18,9 @@ namespace TIMVXPY
     extern void Resize_op_creator();
     extern void Transpose_op_creator();
     extern void Concat_op_creator();
+    extern void DataConvert_op_creator();
+    extern void GroupedConv2d_op_creator();
+    extern void Broadcast_op_creator();
     void register_ops()
     {
         Activation_op_creator();
@@ -30,6 +33,9 @@ namespace TIMVXPY
         Resize_op_creator();
         Transpose_op_creator();
         Concat_op_creator();
+        DataConvert_op_creator();
+        GroupedConv2d_op_creator();
+        Broadcast_op_creator();
     }
 
     bool OpCreator::parse_pool_type(const py::dict &op_info, const std::string &op_name, 

@@ -520,8 +520,7 @@ class Rknn2TimVxEngine():
     def construct_engine_nodes(self, rknn_model_info:dict, engine:Engine, log_flag=False):
         nodes_info = rknn_model_info["nodes"]
         for index in range(len(nodes_info)):
-            node_info = self.constructor.construct_node(nodes_info, index, engine, log_flag)
-            engine.add_nodes_info(node_info)
+            self.constructor.construct_node(nodes_info, index, engine, log_flag)
 
 
     def construct_engine_norm_info(self, rknn_model_info:dict, engine:Engine, log_flag=False):

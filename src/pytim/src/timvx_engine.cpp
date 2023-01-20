@@ -414,13 +414,40 @@ namespace TIMVXPY
         return true;
     }
 
-    bool TimVXEngine::compile_graph()
+    bool TimVXEngine::verify_graph()
     {
+        if (nullptr == m_context.get())
+        {
+            std::cout << "context is invalid, please create context first!" << std::endl;
+            return false;
+        }
         if (m_graph.get() == nullptr)
         {
             std::cout << "graph is invalid, please create graph first!" << std::endl;
             return false;
         }
+        m_layout_infered = LayoutInference(m_graph, m_context);
+        if (nullptr == m_layout_infered.first.get() || 0 == m_layout_infered.second.size())
+        {
+            std::cout << "graph layout inference fail, please check ori graph!" << std::endl;
+            return false;
+        }
+        return true;
+    }
+
+    bool TimVXEngine::compile_graph()
+    {
+        if (nullptr == m_graph.get() && nullptr == m_layout_infered.first.get())
+        {
+            std::cout << "graph is invalid, please create graph first!" << std::endl;
+            return false;
+        }
+        if (nullptr != m_layout_infered.first.get())
+        {
+            std::cout << "layout infered graph compile ..." << std::endl;
+            return m_layout_infered.first->Compile();
+        }
+        std::cout << "origin graph compile ..." << std::endl;
         return m_graph->Compile();
     }
 

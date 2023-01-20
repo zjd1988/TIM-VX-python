@@ -9,6 +9,7 @@
 #include <mutex>
 #include "tim/vx/context.h"
 #include "tim/vx/graph.h"
+#include "tim/vx/ops.h"
 #include "tim/vx/operation.h"
 #include "tim/vx/types.h"
 #include "pybind11/pybind11.h"

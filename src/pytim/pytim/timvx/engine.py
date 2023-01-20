@@ -60,7 +60,7 @@ class Engine():
     def add_tensors_info(self, tensor_info:dict):
         tensor_name = tensor_info["name"]
         self.tensors_info.append(tensor_info)
-        print("add tensor {}:\n{}".format(tensor_name, tensor_info))
+        # print("add tensor {}:\n{}".format(tensor_name, tensor_info))
 
 
     def convert_np_dtype_to_tim_dtype(self, datatype):
@@ -167,6 +167,7 @@ class Engine():
         if ret and "op_outputs" in op_info.keys():
             op_outputs = op_info["op_outputs"]
             ret = self.engine.bind_outputs(op_name, op_outputs)
+        self.add_nodes_info(op_info)
         return ret
 
 
@@ -202,6 +203,10 @@ class Engine():
 
     def create_graph(self):
         return self.engine.create_graph()
+
+
+    def verify_graph(self):
+        return self.engine.verify_graph()
 
 
     def compile_graph(self):
@@ -354,7 +359,7 @@ class Engine():
             print(graph_json_dict["outputs_alias"])
         # dump to json file/bin file
         print("write to file ...")
-        graph_json_obj = json.dumps(graph_json_dict)
+        graph_json_obj = json.dumps(graph_json_dict, indent=4)
         with open(graph_json_file, "w") as f:
             f.write(graph_json_obj)
 

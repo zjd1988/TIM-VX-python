@@ -29,7 +29,6 @@ namespace TIMVXPY
         virtual Operation* on_create(std::shared_ptr<Graph> &graph, const py::dict &op_info) override;
 
     private:
-        bool get_conv2d_type();
         bool parse_weights(const py::dict &op_info, Conv2dOpAttr &op_attr);
         bool parse_padding(const py::dict &op_info, Conv2dOpAttr &op_attr);
         bool parse_ksize(const py::dict &op_info, Conv2dOpAttr &op_attr);

@@ -13,7 +13,9 @@
 #include "tim/vx/graph.h"
 #include "tim/vx/tensor.h"
 #include "tim/vx/operation.h"
+#include "tim/transform/layout_inference.h"
 using namespace tim::vx;
+using namespace tim::transform;
 namespace py = pybind11;
 namespace TIMVXPY
 {
@@ -58,6 +60,7 @@ namespace TIMVXPY
 
         // graph uitls
         bool create_graph();
+        bool verify_graph();
         bool compile_graph();
         bool run_graph();
         std::string get_graph_name();
@@ -79,5 +82,8 @@ namespace TIMVXPY
         std::shared_ptr<Context>                       m_context;
         std::shared_ptr<Graph>                         m_graph;
         std::string                                    m_graph_name;
+        // call verify graph get a new graph
+        std::pair<std::shared_ptr<Graph>, 
+            std::map<std::shared_ptr<Tensor>, std::shared_ptr<Tensor>>> m_layout_infered;
     };
 } //namespace TIMVXPY

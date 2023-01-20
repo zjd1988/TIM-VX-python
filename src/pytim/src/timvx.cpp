@@ -32,6 +32,7 @@ PYBIND11_MODULE(timvx, m)
     .def("bind_input",            &TimVXEngine::bind_input)
     .def("bind_output",           &TimVXEngine::bind_output)
     .def("create_graph",          &TimVXEngine::create_graph)
+    .def("verify_graph",          &TimVXEngine::verify_graph)
     .def("compile_graph",         &TimVXEngine::compile_graph)
     .def("run_graph",             &TimVXEngine::run_graph)
     .def("get_graph_name",        &TimVXEngine::get_graph_name);

@@ -129,14 +129,14 @@ namespace TIMVXPY
                     std::cout << tensor_name << "'s channel dim should greater than 0!" << std::endl;
                     return false;
                 }
-                if (!parse_dynamic_list<py::int_, int32_t>(quant_info, tensor_name, "zero_points", zero_points)
-                    || !parse_dynamic_list<py::float_, float>(quant_info, tensor_name, "scales", scales))
+                if (!parse_dynamic_list<py::int_, int32_t>(quant_info, tensor_name, "zero_point", zero_points)
+                    || !parse_dynamic_list<py::float_, float>(quant_info, tensor_name, "scale", scales))
                     return false;
-                if (zero_points.size() != channel_dim || scales.size() != channel_dim)
-                {
-                    std::cout << tensor_name << "'s zero_points/scales len is not equal to channel dim!" << std::endl;
-                    return false;
-                }
+                // if (zero_points.size() != channel_dim || scales.size() != channel_dim)
+                // {
+                //     std::cout << tensor_name << "'s zero_points/scales len is not equal to channel dim!" << std::endl;
+                //     return false;
+                // }
             }
             else
             {

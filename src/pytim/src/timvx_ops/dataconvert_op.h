@@ -1,5 +1,5 @@
 /***********************************
-******  concat_op.h
+******  dataconvert_op.h
 ******
 ******  Created by zhaojd on 2022/05/11.
 ***********************************/
@@ -10,22 +10,20 @@ using namespace std;
 namespace TIMVXPY
 {
 
-    class ConcatCreator : public OpCreator
+    class DataConvertCreator : public OpCreator
     {
     public:
-        struct ConcatOpAttr
+        struct DataConvertOpAttr
         {
-            uint32_t axis;
-            int input_cnt;
         };
     
         virtual Operation* on_create(std::shared_ptr<Graph> &graph, const py::dict &op_info) override;
 
     private:
-        bool parse_op_attr(const py::dict &op_info, ConcatOpAttr &op_attr);
+        bool parse_op_attr(const py::dict &op_info, DataConvertOpAttr &op_attr);
 
     private:
-        std::string m_op_name = "Concat";
+        std::string m_op_name = "DataConvert";
     };
 
 } // namespace TIMVXPY
