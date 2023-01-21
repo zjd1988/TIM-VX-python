@@ -1,6 +1,6 @@
 /****************************************************************************
 *
-*    Copyright (c) 2020 Vivante Corporation
+*    Copyright (c) 2020-2023 Vivante Corporation
 *
 *    Permission is hereby granted, free of charge, to any person obtaining a
 *    copy of this software and associated documentation files (the "Software"),
@@ -77,8 +77,8 @@ vsi_nn_pad_e TranslatePadType(PadType pad) {
       return VSI_NN_PAD_VALID;
     case PadType::SAME:
       return VSI_NN_PAD_SAME;
-
     default:
+      VSILOGE("PadType not support.");
       break;
   }
   return VSI_NN_PAD_AUTO;
