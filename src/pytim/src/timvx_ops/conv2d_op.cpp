@@ -52,7 +52,7 @@ namespace TIMVXPY
     
     bool Conv2dCreator::parse_kernel_layout(const py::dict &op_info, Conv2dOpAttr &op_attr)
     {
-        return parse_data_layout_type(op_info, m_op_name, "kernel_layout", op_attr.input_layout, false);
+        return parse_data_layout_type(op_info, m_op_name, "kernel_layout", op_attr.kernel_layout, false);
     }
 
     bool Conv2dCreator::parse_op_attr(const py::dict &op_info, Conv2dOpAttr &op_attr)

@@ -49,7 +49,7 @@ namespace TIMVXPY
         pool_type_map["AVG_ANDROID"] = PoolType::AVG_ANDROID;
         const char* attr_c_name = attr_name.c_str();
         bool parse_result = parse_value<py::str, std::string>(op_info, op_name, attr_name, pool_type_str, necessary);
-        if (parse_result && necessary)
+        if (parse_result)
         {
             if (pool_type_map.find(pool_type_str) != pool_type_map.end())
                 pool_type = pool_type_map[pool_type_str];
@@ -74,7 +74,7 @@ namespace TIMVXPY
         padding_map["SAME"]  = PadType::SAME;
         const char* attr_c_name = attr_name.c_str();
         bool parse_result = parse_value<py::str, std::string>(op_info, op_name, attr_name, padding_type_str, necessary);        
-        if (parse_result && necessary)
+        if (parse_result)
         {
             if (padding_map.find(padding_type_str) != padding_map.end())
                 pad_type = padding_map[padding_type_str];
@@ -97,7 +97,7 @@ namespace TIMVXPY
         round_type_map["FLOOR"]      = RoundType::FLOOR;
         const char* attr_c_name = attr_name.c_str();
         bool parse_result = parse_value<py::str, std::string>(op_info, op_name, attr_name, round_type_str, necessary);        
-        if (parse_result && necessary)
+        if (parse_result)
         {
             if (round_type_map.find(round_type_str) != round_type_map.end())
                 round_type = round_type_map[round_type_str];
@@ -121,7 +121,7 @@ namespace TIMVXPY
         overflow_policy_map["SATURATE"]   = OverflowPolicy::SATURATE;
         const char* attr_c_name = attr_name.c_str();
         bool parse_result = parse_value<py::str, std::string>(op_info, op_name, attr_name, overflow_policy_str, necessary);        
-        if (parse_result && necessary)
+        if (parse_result)
         {
             if (overflow_policy_map.find(overflow_policy_str) != overflow_policy_map.end())
                 overflow_policy_type = overflow_policy_map[overflow_policy_str];
@@ -144,7 +144,7 @@ namespace TIMVXPY
         rounding_policy_map["RTNE"]       = RoundingPolicy::RTNE;
         const char* attr_c_name = attr_name.c_str();
         bool parse_result = parse_value<py::str, std::string>(op_info, op_name, attr_name, rounding_policy_str, necessary);        
-        if (parse_result && necessary)
+        if (parse_result)
         {
             if (rounding_policy_map.find(rounding_policy_str) != rounding_policy_map.end())
                 rounding_policy_type = rounding_policy_map[rounding_policy_str];
@@ -168,7 +168,7 @@ namespace TIMVXPY
         resize_type_map["AREA"]                = ResizeType::AREA;
         const char* attr_c_name = attr_name.c_str();
         bool parse_result = parse_value<py::str, std::string>(op_info, op_name, attr_name, resize_type_str, necessary);        
-        if (parse_result && necessary)
+        if (parse_result)
         {
             if (resize_type_map.find(resize_type_str) != resize_type_map.end())
                 resize_type = resize_type_map[resize_type_str];
@@ -198,7 +198,7 @@ namespace TIMVXPY
         data_layout_map["WIcOc"]  = DataLayout::WIcOc;     /*for conv1d*/        
         const char* attr_c_name = attr_name.c_str();
         bool parse_result = parse_value<py::str, std::string>(op_info, op_name, attr_name, data_layout_str, necessary);        
-        if (parse_result && necessary)
+        if (parse_result)
         {
             if (data_layout_map.find(data_layout_str) != data_layout_map.end())
                 data_layout_type = data_layout_map[data_layout_str];
