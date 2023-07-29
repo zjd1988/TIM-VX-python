@@ -178,9 +178,9 @@ install(TARGETS ${TARGET_NAME} ${TARGET_NAME}
 	DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 
 if(TIM_VX_ENABLE_TENSOR_CACHE)
+file(GLOB OPENSSL_H ${openssl-cmake_BINARY_DIR}/usr/local/include/openssl/*.h)
 install(
-    FILES
-        ${openssl-cmake_BINARY_DIR}/usr/local/include/openssl/evp.h
+    FILES ${OPENSSL_H}
     DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/openssl)
 endif()
 install(
@@ -227,6 +227,10 @@ endif()
 if(TIM_VX_ENABLE_TEST)
     include(GoogleTest)
 
+    if(TIM_VX_ENABLE_API_TRACE)
+        add_definitions("-DENABLE_API_TRACE")
+    endif()
+
     add_executable(unit_test ${${TARGET_NAME}_TEST_SRCS})
     target_link_libraries(unit_test PRIVATE
         -Wl,--whole-archive ${TARGET_NAME}
@@ -235,7 +239,9 @@ if(TIM_VX_ENABLE_TEST)
         ${PROJECT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}/vx
         ${OVXLIB_INCLUDE_DIR}
-        ${LITE_INC_DIRS})
+        ${LITE_INC_DIRS}
+        ${PROJECT_SOURCE_DIR}
+    )
 
     install(TARGETS unit_test DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR})
 endif()

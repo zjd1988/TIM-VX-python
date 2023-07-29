@@ -150,6 +150,10 @@ std::shared_ptr<Tensor> GraphImpl::GetTensorFromCache(const TensorSpec& spec, co
 }
 #endif
 
+void GraphImpl::SetCompileOption(const CompileOption& new_options) {
+  options_ = new_options;
+}
+
 vsi_nn_graph_t* GraphImpl::graph() { return graph_; }
 
 void GraphImpl::AddInput(vsi_nn_tensor_id_t id) {
@@ -192,6 +196,22 @@ void GraphImpl::UpdateTensorConsumersMap(const std::shared_ptr<Tensor>& tensor,
     if (added_op.get() == op) {
       tensor_consumers_[tensor].push_back(added_op);
     }
+  }
+}
+
+void GraphImpl::RenewTensorConsumersMap(
+    const std::shared_ptr<Tensor>& org_tensor,
+    const std::shared_ptr<Tensor>& dst_tensor, const Operation* op) {
+  auto exist_op = std::find_if(
+      op_vector_.begin(), op_vector_.end(),
+      [op](std::shared_ptr<Operation> oper) { return oper.get() == op; });
+  if (exist_op == op_vector_.end()) {
+    return;  //given op cannot be found
+  } else {
+    auto consumer_to_remove = tensor_consumers_.find(org_tensor);
+    if (consumer_to_remove != tensor_consumers_.end())
+      tensor_consumers_.erase(consumer_to_remove);
+    tensor_consumers_[dst_tensor].push_back(*exist_op);
   }
 }
 
@@ -304,6 +324,12 @@ bool GraphImpl::Setup() {
             "mode which will have better performance but lower precesion");
   }
   vsi_nn_SetGraphFastMode(graph_, is_fast_mode);
+
+  #if defined(ENABLE_PLATFORM)
+  auto id = options_.getDeviceId();
+  vxSetGraphAttribute(graph_->g, VX_GRAPH_DEVICE_INDEX_VIV,
+                      (void*)(&id), sizeof(id));
+  #endif
 
   std::call_once(setio_once_, [&status, this]() {
     status = (vsi_nn_SetGraphInputs(this->graph_, this->inputs_.data(),
