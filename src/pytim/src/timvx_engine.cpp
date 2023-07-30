@@ -463,6 +463,38 @@ namespace TIMVXPY
         return m_graph->Run();
     }
 
+    py::bytearray TimVXEngine::compile_to_binary()
+    {
+        size_t bin_size = 0;
+        std::vector<uint8_t> nbg_buf;
+        Graph* graph = nullptr;
+        if (nullptr == m_graph.get() && nullptr == m_layout_infered.first.get())
+        {
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph is invalid, please create graph first!");
+            return py::bytearray();
+        }
+
+        graph = m_graph.get();
+        if (nullptr != m_layout_infered.first.get())
+        {
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "use layout infered graph compile to binary buffer ...");
+            graph = m_layout_infered.first.get();
+        }
+        if (false == graph->CompileToBinary(nullptr, &bin_size) || 0 == bin_size)
+        {
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph compile to get binary buffer size fail ...");
+            return py::bytearray();
+        }
+
+        // generate binary graph does't require input data
+        if (false == graph->CompileToBinary(nbg_buf.data(), &bin_size))
+        {
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph compile to binary buffer fail ...");
+            return py::bytearray();
+        }
+        return py::bytearray((char*)nbg_buf.data(), bin_size);
+    }
+
     std::string TimVXEngine::get_graph_name()
     {
         return m_graph_name;

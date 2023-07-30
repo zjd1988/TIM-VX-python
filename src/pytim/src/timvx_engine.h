@@ -65,28 +65,30 @@ namespace TIMVXPY
         bool verify_graph();
         bool compile_graph();
         bool run_graph();
+        py::bytearray compile_to_binary();
         std::string get_graph_name();
+
     private:
         // util func
         uint32_t type_get_bits(DataType type);
         // operation func
         // tensor names
-        std::vector<std::string>                       m_input_tensor_names;
-        std::vector<std::string>                       m_output_tensor_names;
+        std::vector<std::string>                                            m_input_tensor_names;
+        std::vector<std::string>                                            m_output_tensor_names;
         // tensors
-        std::map<std::string, std::shared_ptr<Tensor>> m_tensors;
+        std::map<std::string, std::shared_ptr<Tensor>>                      m_tensors;
         // std::map<std::string, TensorSpec>              m_tensors_spec;
-        std::map<std::string, std::shared_ptr<char>>   m_tensors_data;
+        std::map<std::string, std::shared_ptr<char>>                        m_tensors_data;
         // operation
-        std::map<std::string, Operation*>              m_operations;
-        std::map<std::string, py::dict>                m_op_info;
+        std::map<std::string, Operation*>                                   m_operations;
+        std::map<std::string, py::dict>                                     m_op_info;
         // engine context/graph/name
-        std::shared_ptr<Context>                       m_context;
-        std::shared_ptr<Graph>                         m_graph;
-        std::string                                    m_graph_name;
+        std::shared_ptr<Context>                                            m_context;
+        std::shared_ptr<Graph>                                              m_graph;
+        std::string                                                         m_graph_name;
         // call verify graph get a new graph
         std::pair<std::shared_ptr<Graph>, 
-            std::map<std::shared_ptr<Tensor>, std::shared_ptr<Tensor>>> m_layout_infered;
+            std::map<std::shared_ptr<Tensor>, std::shared_ptr<Tensor>>>     m_layout_infered;
     };
 
 } //namespace TIMVXPY

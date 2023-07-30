@@ -240,3 +240,10 @@ if __name__ == "__main__":
     outputs = engine.run_graph(input_dict)
     print("5 run graph end....")
     print(outputs)
+
+    print("6 compile graph to binary begin....")
+    ngb_buffer = engine.compile_to_binary()
+    assert 0 != len(ngb_buffer), "compile graph to binary fail...."
+    with open("lenet.nbg", "wb") as f:
+        f.write(ngb_buffer)
+    print("6 compile graph to binary end....")

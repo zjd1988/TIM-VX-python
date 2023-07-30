@@ -213,6 +213,10 @@ class Engine():
         return self.engine.compile_graph()
 
 
+    def compile_to_binary(self):
+        return self.engine.compile_to_binary()
+
+
     def run_graph(self, input_dict:dict, output_name_list:list=[]):
         for input_name in input_dict.keys():
             input_tensor_name = input_name
