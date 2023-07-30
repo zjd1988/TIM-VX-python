@@ -4,8 +4,7 @@
 ******  Created by zhaojd on 2022/04/27.
 ***********************************/
 #include "tim/vx/ops/groupedconv2d.h"
-#include "grouped_conv2d_op.h"
-
+#include "timvx_ops/grouped_conv2d_op.h"
 
 namespace TIMVXPY
 {
@@ -70,13 +69,13 @@ namespace TIMVXPY
         int32_t                 grouped_number     = op_attr.grouped_number;
         DataLayout              input_layout       = op_attr.input_layout;
         DataLayout              kernel_layout      = op_attr.kernel_layout;
-        // std::cout << "padding: " << (int)padding << std::endl;
-        // std::cout << "stride: " << stride[0] << " " << stride[1] << std::endl;
-        // std::cout << "dilation: " << dilation[0] << " " << dilation[1] << std::endl;
-        // std::cout << "pad: " << pad[0] << " " << pad[1] << " " << pad[2] << " " << pad[3] << std::endl;
-        // std::cout << "grouped_number: " << grouped_number << std::endl;
-        // std::cout << "input_layout: " << (int)input_layout << std::endl;
-        // std::cout << "kernel_layout: " << (int)kernel_layout << std::endl;
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "padding: {}", (int)padding);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "stride: {} {}", stride[0], stride[1]);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "dilation: {} {}", dilation[0], dilation[1]);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "pad: {} {} {} {}", pad[0], pad[1], pad[2], pad[3]);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "grouped_number: {}", grouped_number);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "input_layout: {}", (int)input_layout);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "kernel_layout: {}", (int)kernel_layout);
         if (0 != pad[0] || 0 != pad[2] || 0 != pad[2] || 0 != pad[3])
             return graph->CreateOperation<ops::GroupedConv2d>(pad, stride, dilation, grouped_number, 
                 input_layout, kernel_layout).get();
@@ -86,4 +85,5 @@ namespace TIMVXPY
     }
 
     REGISTER_OP_CREATOR(GroupedConv2dCreator, GroupedConv2d);
+
 } // namespace TIMVXPY

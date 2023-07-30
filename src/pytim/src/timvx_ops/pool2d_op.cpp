@@ -4,22 +4,22 @@
 ******  Created by zhaojd on 2022/05/02.
 ***********************************/
 #include "tim/vx/ops/pool2d.h"
-#include "pool2d_op.h"
-
+#include "timvx_ops/pool2d_op.h"
 
 namespace TIMVXPY
 {
+
     Pool2dCreator::Pool2dCfgType Pool2dCreator::get_pool2d_type(const py::dict &op_info)
     {
         if (op_info.contains("padding") && op_info.contains("pad"))
         {
-            std::cout << "cannot contain padding and pad same time!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "cannot contain padding and pad same time!");
             return Pool2dCfgType::None;
         }
         if ((op_info.contains("padding") || op_info.contains("pad"))
             && op_info.contains("input_size"))
         {
-            std::cout << "cannot contain padding(pad) and input_size same time!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "cannot contain padding(pad) and input_size same time!");
             return Pool2dCfgType::None;
         }
         if (op_info.contains("type") && op_info.contains("padding") &&
@@ -36,7 +36,7 @@ namespace TIMVXPY
             return Pool2dCfgType::Adaptive_Pool2d;
         else
         {
-            std::cout << "invalid pool2d op attr!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "invalid pool2d op attr!");
             return Pool2dCfgType::None;
         }
     }
@@ -95,19 +95,21 @@ namespace TIMVXPY
                 && parse_ksize(op_info, op_attr) && parse_stride(op_info, op_attr)
                 && parse_round_type(op_info, op_attr) && parse_layout(op_info, op_attr);
 
-        if (Classic_Pool2d_2 == cfg_type)
+        else if (Classic_Pool2d_2 == cfg_type)
             return parse_type(op_info, op_attr) && parse_pad(op_info, op_attr)
                 && parse_ksize(op_info, op_attr) && parse_stride(op_info, op_attr)
                 && parse_round_type(op_info, op_attr) && parse_layout(op_info, op_attr);
 
-        if (Global_Pool2d == cfg_type)
+        else if (Global_Pool2d == cfg_type)
             return parse_type(op_info, op_attr) && parse_input_size(op_info, op_attr)
                 && parse_round_type(op_info, op_attr) && parse_layout(op_info, op_attr);
 
-        if (Adaptive_Pool2d == cfg_type)
+        else if (Adaptive_Pool2d == cfg_type)
             return parse_type(op_info, op_attr) && parse_input_size(op_info, op_attr)
                 && parse_output_size(op_info, op_attr) && parse_round_type(op_info, op_attr) 
                 && parse_layout(op_info, op_attr);
+        else
+            return false;
     }
 
     Operation* Pool2dCreator::on_create(std::shared_ptr<Graph> &graph, const py::dict &op_info)
@@ -122,7 +124,7 @@ namespace TIMVXPY
         cfg_type = get_pool2d_type(op_info);
         if (pool_cfg_type_map.find(cfg_type) == pool_cfg_type_map.end())
         {
-            std::cout << "unsupported pool cfg, please check!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "unsupported pool cfg, please check!");
             return nullptr;
         }
         if (!parse_op_attr(op_info, op_attr, cfg_type))
@@ -152,10 +154,11 @@ namespace TIMVXPY
                 return graph->CreateOperation<ops::Pool2d>(type, input_size,
                     output_size, round_type, layout).get();
             default:
-                std::cout << "get invalid pool2d type!" << std::endl;
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "get invalid pool2d type!");
                 return nullptr;
         }
     }
 
     REGISTER_OP_CREATOR(Pool2dCreator, Pool2d);
+
 } // namespace TIMVXPY

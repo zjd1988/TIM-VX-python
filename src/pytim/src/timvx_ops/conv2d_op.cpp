@@ -4,8 +4,7 @@
 ******  Created by zhaojd on 2022/04/27.
 ***********************************/
 #include "tim/vx/ops/conv2d.h"
-#include "conv2d_op.h"
-
+#include "timvx_ops/conv2d_op.h"
 
 namespace TIMVXPY
 {
@@ -86,18 +85,19 @@ namespace TIMVXPY
         int32_t                 multiplier     = op_attr.multiplier;
         DataLayout              input_layout   = op_attr.input_layout;
         DataLayout              kernel_layout  = op_attr.kernel_layout;
-        // std::cout << "weights: " << weights << std::endl;
-        // std::cout << "padding: " << (int)padding << std::endl;
-        // std::cout << "ksize: " << ksize[0] << " " << ksize[1] << std::endl;
-        // std::cout << "stride: " << stride[0] << " " << stride[1] << std::endl;
-        // std::cout << "dilation: " << dilation[0] << " " << dilation[1] << std::endl;
-        // std::cout << "pad: " << pad[0] << " " << pad[1] << " " << pad[2] << " " << pad[3] << std::endl;
-        // std::cout << "multiplier: " << multiplier << std::endl;
-        // std::cout << "input_layout: " << (int)input_layout << std::endl;
-        // std::cout << "kernel_layout: " << (int)kernel_layout << std::endl;
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "weights: {}");
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "padding: {}", (int)padding);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "ksize: {} {}", ksize[0], ksize[1]);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "stride: {} {}", stride[0], stride[1]);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "dilation: {} {}", dilation[0], dilation[1]);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "pad: {} {} {} {}", pad[0], pad[1], pad[2], pad[3]);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "multiplier: {}", multiplier);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "input_layout: {}", (int)input_layout);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "kernel_layout: {}", (int)kernel_layout);
         return graph->CreateOperation<ops::Conv2d>(weights, padding, ksize, stride, 
             dilation, pad, multiplier, input_layout, kernel_layout).get();
     }
 
     REGISTER_OP_CREATOR(Conv2dCreator, Conv2d);
+
 } // namespace TIMVXPY

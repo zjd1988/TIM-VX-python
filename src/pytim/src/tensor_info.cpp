@@ -35,8 +35,8 @@ namespace TIMVXPY
                 data_type = data_type_map[data_type_str];
             else
             {
-                std::cout << "tensor " << tensor_name << " attr " << key_name 
-                    << " contains invalid data type " << data_type_str << "!" << std::endl;
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} attr {} contains invalid data type {}!", tensor_name,
+                    key_name, data_type_str);
                 parse_result = false;
             }
         }
@@ -62,8 +62,8 @@ namespace TIMVXPY
                 tensor_attr = tensor_attr_map[tensor_attr_str];
             else
             {
-                std::cout << "tensor " << tensor_name << " attr " << key_name 
-                    << " contains invalid attribute type " << tensor_attr_str << "!" << std::endl;
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} attr {} contains invalid attribute type {}!",
+                    tensor_name, key_name, tensor_attr_str);
                 parse_result = false;
             }
         }
@@ -86,8 +86,8 @@ namespace TIMVXPY
                 quant_type = quant_type_map[quant_type_str];
             else
             {
-                std::cout << "tensor " << tensor_name << " attr " << key_name 
-                    << " contains invalid quant type " << quant_type_str << "!" << std::endl;
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} attr {} contains invalid quant type {}!", tensor_name,
+                    key_name, quant_type_str);
                 parse_result = false;
             }
         }
@@ -114,7 +114,7 @@ namespace TIMVXPY
         {
             if (!check_obj_type<py::dict>(tensor_info["quant_info"]))
             {
-                std::cout << tensor_name << "'s quant_info should be a dict item!" << std::endl;
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "{}'s quant_info should be a dict item!", tensor_name);
                 return false;
             }
             py::dict quant_info = py::cast<py::dict>(tensor_info["quant_info"]);
@@ -126,7 +126,7 @@ namespace TIMVXPY
                     return false;
                 if (channel_dim < 0)
                 {
-                    std::cout << tensor_name << "'s channel dim should greater than 0!" << std::endl;
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "{}'s channel dim should greater than 0!", tensor_name);
                     return false;
                 }
                 if (!parse_dynamic_list<py::int_, int32_t>(quant_info, tensor_name, "zero_point", zero_points)
@@ -163,4 +163,5 @@ namespace TIMVXPY
         }
         return true;
     }
-}
+
+} // namespace TIMVXPY

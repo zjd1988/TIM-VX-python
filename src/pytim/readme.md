@@ -1,7 +1,7 @@
 
 ## 准备
 在执行下面命令前，确保当前的已经按照localpath/TIM-VX-python/readme.md正常编译安装到本地路径下，
-比如：localpath/TIM-VX-python/host_install/
+比如：localpath/TIM-VX-python/host_build/install/
 1. 切换到pytim路径, cd localpath/TIM-VX-python/src/pytim
 
 ## 编译so

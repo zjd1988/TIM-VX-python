@@ -7,9 +7,11 @@
 #include "pybind11/pybind11.h"
 #include "tim/vx/tensor.h"
 #include "tim/vx/types.h"
+#include "common/timvx_log.h"
 using namespace tim::vx;
 using namespace std;
 namespace py = pybind11;
+
 namespace TIMVXPY
 {
 
@@ -53,25 +55,25 @@ namespace TIMVXPY
             const char* attr_c_name = attr_name.c_str();
             if (necessary && !op_info.contains(attr_c_name))
             {
-                std::cout << tensor_name << " tensor should contain " << attr_name << " attr, please check!" << std::endl;
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} should contain {} attr, please check!", tensor_name, attr_name);
                 return false;
             }
             if (op_info.contains(attr_c_name))
             {
                 if (!check_obj_type<py::list>(op_info[attr_c_name]))
                 {
-                    std::cout << tensor_name << " tensor's attr " << attr_name << " is not list!" << std::endl;
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {}'s attr {} is not list!", tensor_name, attr_name);
                     return false;
                 }
                 py::list list_value = py::list(op_info[attr_c_name]);
                 if (list_value.size() != list_num)
                 {
-                    std::cout << tensor_name << " tensor's attr " << attr_name << " len should be " << list_num << std::endl;
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {}'s attr {} len should be {}!", tensor_name, attr_name, list_num);
                     return false;
                 }
                 if (!check_list_item_type<T>(list_value))
                 {
-                    std::cout << tensor_name << " tensor's attr " << attr_name << " item type wrong!" << std::endl;
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {}'s attr {} item type wrong!", tensor_name, attr_name);
                     return false;
                 }
                 for (int i = 0; i < list_value.size(); i++)

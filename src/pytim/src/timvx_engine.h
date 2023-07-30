@@ -14,9 +14,11 @@
 #include "tim/vx/tensor.h"
 #include "tim/vx/operation.h"
 #include "tim/transform/layout_inference.h"
+#include "common/timvx_log.h"
 using namespace tim::vx;
 using namespace tim::transform;
 namespace py = pybind11;
+
 namespace TIMVXPY
 {
     struct TimVXQuantInfo
@@ -86,4 +88,5 @@ namespace TIMVXPY
         std::pair<std::shared_ptr<Graph>, 
             std::map<std::shared_ptr<Tensor>, std::shared_ptr<Tensor>>> m_layout_infered;
     };
+
 } //namespace TIMVXPY

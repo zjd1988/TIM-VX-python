@@ -11,6 +11,7 @@
 
 namespace TIMVXPY
 {
+
     extern void register_ops();
     #define BITS_PER_BYTE 8
     TimVXEngine::TimVXEngine(const std::string &graph_name)
@@ -59,7 +60,7 @@ namespace TIMVXPY
         size_t dim_num;
         if (m_tensors.find(tensor_name) == m_tensors.end())
         {
-            std::cout << "tensor " << tensor_name <<" not exists!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} not exists!", tensor_name);
             return 0;
         }
         sz = 0;
@@ -98,18 +99,18 @@ namespace TIMVXPY
     {
         if (m_graph.get() == nullptr)
         {
-            std::cout << "graph is invalid, please create graph first!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph is invalid, please create graph first!");
             return false;
         }
         if (m_tensors.find(tensor_name) != m_tensors.end())
         {
-            std::cout << "duplicate tensor name is provided, please check again!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "duplicate tensor name is provided, please check again!");
             return false;
         }
         TensorSpec tensor_spec;
         if (!TensorSpecConstruct::construct_tensorspec(tensor_info, tensor_name, tensor_spec))
         {
-            std::cout << "construct tensor spec fail, please check again!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "construct tensor spec fail, please check again!");
             return false;
         }
         std::shared_ptr<Tensor> tensor;
@@ -126,7 +127,7 @@ namespace TIMVXPY
         }
         if (nullptr == tensor.get())
         {
-            std::cout << "graph create tensor " << tensor_name <<" fail!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph create tensor {} fail!", tensor_name);
             return false;
         }
         m_tensors[tensor_name] = tensor;
@@ -138,27 +139,27 @@ namespace TIMVXPY
         py::buffer_info buf = np_data.request();
         if (m_tensors.find(tensor_name) == m_tensors.end())
         {
-            std::cout << "tensor " << tensor_name <<" not exists!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} not exists!", tensor_name);
             return false;
         }
         auto tensor = m_tensors[tensor_name];
         if (buf.ndim != tensor->GetShape().size())
         {
-            std::cout << "tensor dim:" << tensor->GetShape().size() << " not equal to numpy data dim:" << 
-                buf.ndim << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} dim_size:{} not equal to numpy data dim_size:{}", 
+                tensor_name, tensor->GetShape().size(), buf.ndim);
             return false;
         }
         size_t total_np_size = buf.size * buf.itemsize;
         size_t total_tensor_size = get_tensor_size(tensor_name);
         if (total_tensor_size != total_np_size)
         {
-            std::cout << "tensor size:" << total_tensor_size << " not equal to numpy data size:" << 
-                total_np_size << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} size:{} not equal to numpy data size:{}", 
+                tensor_name, total_tensor_size, total_np_size);
             return false;
         }
         if (total_tensor_size <= 0)
         {
-            std::cout << "tensor size:" << total_tensor_size << " not valid!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} size:{} is invalid!", tensor_name, total_tensor_size);
             return false;
         }
         return tensor->CopyDataFromTensor(buf.ptr);
@@ -169,27 +170,27 @@ namespace TIMVXPY
         py::buffer_info buf = np_data.request();
         if (m_tensors.find(tensor_name) == m_tensors.end())
         {
-            std::cout << "tensor " << tensor_name <<" not exists!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} not exists!", tensor_name);
             return false;
         }
         auto tensor = m_tensors[tensor_name];
         // if (buf.ndim != tensor->GetShape().size())
         // {
-        //     std::cout << "tensor dim:" << tensor->GetShape().size() << " not equal to numpy data dim:" << 
-        //         buf.ndim << std::endl;
+        //     TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor dim:" << tensor->GetShape().size() << " not equal to numpy data dim:" << 
+        //         buf.ndim);
         //     return false;
         // }
         int total_np_size = buf.size * buf.itemsize;
         int total_tensor_size = get_tensor_size(tensor_name);
         if (total_tensor_size != total_np_size)
         {
-            std::cout << "tensor size:" << total_tensor_size << " not equal to numpy data size:" << 
-                total_np_size << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} size:{} not equal to numpy data size:{}",
+                tensor_name, total_tensor_size, total_np_size);
             return false;
         }
         if (total_tensor_size <= 0)
         {
-            std::cout << "tensor size:" << total_tensor_size << " not valid!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} size:{} is invalid!", tensor_name, total_tensor_size);
             return false;
         }
         return tensor->CopyDataToTensor(buf.ptr, total_np_size);
@@ -199,40 +200,40 @@ namespace TIMVXPY
     {
         if (m_graph.get() == nullptr)
         {
-            std::cout << "graph is invalid, please create graph first!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph is invalid, please create graph first!");
             return false;
         }
         if (!op_info.contains("op_type") || !py::isinstance<py::str>(op_info["op_type"]))
         {
-            std::cout << "op_type item is not contained, or op_type is not string!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "op_type item is not contained, or op_type is not string!");
             return false;
         }
         if (!op_info.contains("op_name") || !py::isinstance<py::str>(op_info["op_name"]))
         {
-            std::cout << "op_name item is not contained, or op_name is not string!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "op_name item is not contained, or op_name is not string!");
             return false;
         }
         if (!op_info.contains("op_attr") || !py::isinstance<py::dict>(op_info["op_attr"]))
         {
-            std::cout << "op_attr item is not contained, or op_attr is not dict!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "op_attr item is not contained, or op_attr is not dict!");
             return false;
         }
         if (op_info.contains("rounding_policy") && !py::isinstance<py::dict>(op_info["rounding_policy"]))
         {
-            std::cout << "rounding_policy item is contained, but not dict!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "rounding_policy item is contained, but not dict!");
             return false;
         }
         auto op_name = std::string(py::str(op_info["op_name"]));
         if (m_operations.find(op_name) != m_operations.end())
         {
-            std::cout << op_name << " is duplicate!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "{} is duplicate!", op_name);
             return false;
         }
         auto op_type = std::string(py::str(op_info["op_type"]));
         OpCreator* op_creator = TimVXOp::get_instance()->get_creator(op_type);
         if (nullptr == op_creator)
         {
-            std::cout << op_type << " op creator not find!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "op {} creator not find!", op_type);
             return false;
         }
         auto op_node = op_creator->on_create(m_graph, py::dict(op_info["op_attr"]));
@@ -262,17 +263,17 @@ namespace TIMVXPY
     {
         if (m_graph.get() == nullptr)
         {
-            std::cout << "graph is invalid, please create graph first!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph is invalid, please create graph first!");
             return false;
         }
         if (m_operations.find(op_name) == m_operations.end())
         {
-            std::cout << "op " << op_name <<" not exists!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "op {} not exists!", op_name);
             return false;
         }
         if (input_list.size() <= 0)
         {
-            std::cout << "bind input list is empty!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "bind input list is empty!");
             return false;
         }
         std::vector<std::shared_ptr<Tensor>> input_tensors;
@@ -281,7 +282,7 @@ namespace TIMVXPY
             std::string tensor_name = input_list[i];
             if (m_tensors.find(tensor_name) == m_tensors.end())
             {
-                std::cout << "tensor " << tensor_name <<" not exists!" << std::endl;
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} not exists!", tensor_name);
                 return false;
             }
             input_tensors.push_back(m_tensors[tensor_name]);
@@ -295,17 +296,17 @@ namespace TIMVXPY
     {
         if (m_graph.get() == nullptr)
         {
-            std::cout << "graph is invalid, please create graph first!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph is invalid, please create graph first!");
             return false;
         }
         if (m_operations.find(op_name) == m_operations.end())
         {
-            std::cout << "op " << op_name <<" not exists!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "op {} not exists!", op_name);
             return false;
         }
         if (output_list.size() <= 0)
         {
-            std::cout << "bind output list is empty!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "bind output list is empty!");
             return false;
         }
         std::vector<std::shared_ptr<Tensor>> output_tensors;
@@ -314,7 +315,7 @@ namespace TIMVXPY
             std::string tensor_name = output_list[i];
             if (m_tensors.find(tensor_name) == m_tensors.end())
             {
-                std::cout << "tensor " << tensor_name <<" not exists!" << std::endl;
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} not exists!", tensor_name);
                 return false;
             }
             output_tensors.push_back(m_tensors[tensor_name]);
@@ -328,17 +329,17 @@ namespace TIMVXPY
     {
         if (m_graph.get() == nullptr)
         {
-            std::cout << "graph is invalid, please create graph first!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph is invalid, please create graph first!");
             return false;
         }
         if (m_operations.find(op_name) == m_operations.end())
         {
-            std::cout << "op " << op_name <<" not exists!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "op {} not exists!", op_name);
             return false;
         }
         if (m_tensors.find(input_name) == m_tensors.end())
         {
-            std::cout << "tensor " << input_name <<" not exists!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} not exists!", input_name);
             return false;
         }
         std::shared_ptr<Tensor> input_tensor = m_tensors[input_name];
@@ -346,21 +347,22 @@ namespace TIMVXPY
         op_node->BindInput(input_tensor);
         return true;
     }
+
     bool TimVXEngine::bind_output(const std::string &op_name, const std::string &output_name)
     {
         if (m_graph.get() == nullptr)
         {
-            std::cout << "graph is invalid, please create graph first!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph is invalid, please create graph first!");
             return false;
         }
         if (m_operations.find(op_name) == m_operations.end())
         {
-            std::cout << "op " << op_name <<" not exists!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "op {} not exists!", op_name);
             return false;
         }
         if (m_tensors.find(output_name) == m_tensors.end())
         {
-            std::cout << "tensor " << output_name <<" not exists!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} not exists!", output_name);
             return false;
         }
         std::shared_ptr<Tensor> out_tensor = m_tensors[output_name];
@@ -374,12 +376,12 @@ namespace TIMVXPY
     // {
     //     if (m_graph.get() == nullptr)
     //     {
-    //         std::cout << "graph is invalid, please create graph first!" << std::endl;
+    //         TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph is invalid, please create graph first!");
     //         return false;
     //     }
     //     if (m_operations.find(op_name) == m_operations.end())
     //     {
-    //         std::cout << "op " << op_name <<" not exists!" << std::endl;
+    //         TIMVX_LOG(TIMVX_LEVEL_ERROR, "op " << op_name <<" not exists!");
     //         return false;
     //     }
     //     return true;
@@ -389,7 +391,7 @@ namespace TIMVXPY
     {
         if (m_op_info.find(op_name) != m_op_info.end())
         {
-            std::cout << "op " << op_name <<" not exists!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "op {} not exists!", op_name);
             py::dict ret;
             return ret;
         }
@@ -401,13 +403,13 @@ namespace TIMVXPY
         m_context = tim::vx::Context::Create();
         if (nullptr == m_context.get())
         {
-            std::cout << "create context fail!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "create context fail!");
             return false;
         }
         m_graph = m_context->CreateGraph();
         if (nullptr == m_graph.get())
         {
-            std::cout << "create graph fail!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "create graph fail!");
             m_context.reset();
             return false;
         }
@@ -418,18 +420,18 @@ namespace TIMVXPY
     {
         if (nullptr == m_context.get())
         {
-            std::cout << "context is invalid, please create context first!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "context is invalid, please create context first!");
             return false;
         }
         if (m_graph.get() == nullptr)
         {
-            std::cout << "graph is invalid, please create graph first!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph is invalid, please create graph first!");
             return false;
         }
         m_layout_infered = LayoutInference(m_graph, m_context);
         if (nullptr == m_layout_infered.first.get() || 0 == m_layout_infered.second.size())
         {
-            std::cout << "graph layout inference fail, please check ori graph!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph layout inference fail, please check ori graph!");
             return false;
         }
         return true;
@@ -439,15 +441,15 @@ namespace TIMVXPY
     {
         if (nullptr == m_graph.get() && nullptr == m_layout_infered.first.get())
         {
-            std::cout << "graph is invalid, please create graph first!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph is invalid, please create graph first!");
             return false;
         }
         if (nullptr != m_layout_infered.first.get())
         {
-            std::cout << "layout infered graph compile ..." << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "layout infered graph compile ...");
             return m_layout_infered.first->Compile();
         }
-        std::cout << "origin graph compile ..." << std::endl;
+        TIMVX_LOG(TIMVX_LEVEL_INFO, "origin graph compile ...");
         return m_graph->Compile();
     }
 
@@ -455,7 +457,7 @@ namespace TIMVXPY
     {
         if (m_graph.get() == nullptr)
         {
-            std::cout << "graph is invalid, please create graph first!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph is invalid, please create graph first!");
             return false;
         }
         return m_graph->Run();
@@ -465,4 +467,5 @@ namespace TIMVXPY
     {
         return m_graph_name;
     }
+
 } //namespace TIMVXPY

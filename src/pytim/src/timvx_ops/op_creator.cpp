@@ -3,11 +3,11 @@
 ******
 ******  Created by zhaojd on 2022/04/27.
 ***********************************/
-
-#include "op_creator.h"
+#include "timvx_ops/op_creator.h"
 
 namespace TIMVXPY
 {
+
     extern void Activation_op_creator();
     extern void Eltwise_op_creator();
     extern void Conv2d_op_creator();
@@ -55,8 +55,8 @@ namespace TIMVXPY
                 pool_type = pool_type_map[pool_type_str];
             else
             {
-                std::cout << op_name << " op's attr " << attr_name << " not support " 
-                    << pool_type_str << " pool type!" << std::endl;
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "{} op's attr {} not support {} pool type!",
+                    op_name, attr_name, pool_type_str);
                 parse_result = false;
             }
         }
@@ -80,8 +80,8 @@ namespace TIMVXPY
                 pad_type = padding_map[padding_type_str];
             else
             {
-                std::cout << op_name << " op's attr " << attr_name << " not support " 
-                    << padding_type_str << " padding type!" << std::endl;
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "{} op's attr {} not support {} padding type!",
+                    op_name, attr_name, padding_type_str);
                 parse_result = false;
             }
         }
@@ -103,8 +103,8 @@ namespace TIMVXPY
                 round_type = round_type_map[round_type_str];
             else
             {
-                std::cout << op_name << " op's attr " << attr_name << " not support " 
-                    << round_type_str << " round type!" << std::endl;
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "{} op's attr {} not support {} round type!",
+                    op_name, attr_name, round_type_str);
                 parse_result = false;
             }
         }
@@ -127,8 +127,8 @@ namespace TIMVXPY
                 overflow_policy_type = overflow_policy_map[overflow_policy_str];
             else
             {
-                std::cout << op_name << " op's attr " << attr_name << " not support " 
-                    << overflow_policy_str << " overflow policy type!" << std::endl;
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "{} op's attr {} not support {} overflow policy type!",
+                    op_name, attr_name, overflow_policy_str);
                 parse_result = false;
             }
         }
@@ -150,8 +150,8 @@ namespace TIMVXPY
                 rounding_policy_type = rounding_policy_map[rounding_policy_str];
             else
             {
-                std::cout << op_name << " op's attr " << attr_name << " not support " 
-                    << rounding_policy_str << " rounding policy type!" << std::endl;
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "{} op's attr {} not support {} rounding policy type!",
+                    op_name, attr_name, rounding_policy_str);
                 parse_result = false;
             }
         }
@@ -174,8 +174,8 @@ namespace TIMVXPY
                 resize_type = resize_type_map[resize_type_str];
             else
             {
-                std::cout << op_name << " op's attr " << attr_name << " not support " 
-                    << resize_type_str << " resize type!" << std::endl;
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "{} op's attr {} not support {} resize type!",
+                    op_name, attr_name, resize_type_str);
                 parse_result = false;
             }
         }
@@ -204,8 +204,8 @@ namespace TIMVXPY
                 data_layout_type = data_layout_map[data_layout_str];
             else
             {
-                std::cout << op_name << " op's attr " << attr_name << " not support " 
-                    << data_layout_str << " data layout type!" << std::endl;
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "{} op's attr {} not support {} data layout type!",
+                    op_name, attr_name, data_layout_str);
                 parse_result = false;
             }
         }
@@ -216,10 +216,10 @@ namespace TIMVXPY
     {
         if (op_creator.find(op_type) != op_creator.end())
         {
-            std::cout << op_type << " type has be added to op_creator!" << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "{} type has added to op_creator!", op_type);
             return false;
         }
-        std::cout << "add " << op_type << " op_creator to map!" << std::endl;
+        TIMVX_LOG(TIMVX_LEVEL_INFO,  "add {} op_creator to map!", op_type);
         op_creator.insert(std::make_pair(op_type, creator));
         return true;
     }

@@ -16,11 +16,14 @@
 #include "pybind11/pytypes.h"
 #include "pybind11/stl.h"
 #include "pybind11/numpy.h"
+#include "common/timvx_log.h"
 using namespace tim::vx;
 using namespace std;
 namespace py = pybind11;
+
 namespace TIMVXPY
 {
+
     void register_ops();
     class OpCreator 
     {

@@ -4,11 +4,11 @@
 ******  Created by zhaojd on 2022/04/27.
 ***********************************/
 #include "tim/vx/ops/elementwise.h"
-#include "eltwise_op.h"
-
+#include "timvx_ops/eltwise_op.h"
 
 namespace TIMVXPY
 {
+
     Operation* EltwiseCreator::on_create(std::shared_ptr<Graph> &graph, const py::dict &op_info)
     {
         std::string eltwise_type;
@@ -50,9 +50,10 @@ namespace TIMVXPY
                 return graph->CreateOperation<ops::Div>(scale).get();
         }
         else
-            std::cout << "unsupported elewise op type: " << eltwise_type << std::endl;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "unsupported elewise op type: {}", eltwise_type);
         return nullptr;
     }
 
     REGISTER_OP_CREATOR(EltwiseCreator, Eltwise);
+
 } // namespace TIMVXPY

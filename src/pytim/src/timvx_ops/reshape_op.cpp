@@ -4,11 +4,11 @@
 ******  Created by zhaojd on 2022/05/02.
 ***********************************/
 #include "tim/vx/ops/reshape.h"
-#include "reshape_op.h"
-
+#include "timvx_ops/reshape_op.h"
 
 namespace TIMVXPY
 {
+
     bool ReshapeCreator::parse_op_attr(const py::dict &op_info, ReshapeOpAttr &op_attr)
     {
         return parse_dynamic_list<py::int_, uint32_t>(op_info, m_op_name, "size", op_attr.size);
@@ -25,4 +25,5 @@ namespace TIMVXPY
     }
 
     REGISTER_OP_CREATOR(ReshapeCreator, Reshape);
+
 } // namespace TIMVXPY

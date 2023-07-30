@@ -4,10 +4,11 @@
 ******  Created by zhaojd on 2022/05/11.
 ***********************************/
 #include "tim/vx/ops/broadcast.h"
-#include "broadcast_op.h"
+#include "timvx_ops/broadcast_op.h"
 
 namespace TIMVXPY
 {
+
     bool BroadcastCreator::parse_op_attr(const py::dict &op_info, BroadcastOpAttr &op_attr)
     {
         return parse_dynamic_list<py::int_, int32_t>(op_info, m_op_name, "shape", op_attr.shape) &&
@@ -26,4 +27,5 @@ namespace TIMVXPY
     }
 
     REGISTER_OP_CREATOR(BroadcastCreator, Broadcast);
+
 } // namespace TIMVXPY

@@ -4,9 +4,10 @@
 ******  Created by zhaojd on 2022/04/29.
 ***********************************/
 #pragma once
-#include "op_creator.h"
+#include "timvx_ops/op_creator.h"
 using namespace tim::vx;
 using namespace std;
+
 namespace TIMVXPY
 {
 
@@ -19,29 +20,29 @@ namespace TIMVXPY
             struct
             {
                 int axis;
-            }prelu;
+            } prelu;
             // leakyrelu parameter
             struct
             {
                 float ratio = 1.0f;
-            }leakyrelu;        
+            } leakyrelu;        
             // linear parameter
             struct
             {
                 float a = 1.0f;
                 float b = 0.0f;
-            }linear;
+            } linear;
             // gelu parameter
             struct
             {
                 bool approximate = true;
-            }gelu;
+            } gelu;
             // hard sigmoid parameter
             struct
             {
                 float alpha;
                 float beta;
-            }hardsigmoid;
+            } hardsigmoid;
         };
 
         virtual Operation* on_create(std::shared_ptr<Graph> &graph, const py::dict &op_info) override;
