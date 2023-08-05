@@ -6,7 +6,7 @@
 #include "tim/vx/ops/activations.h"
 #include "timvx_ops/activation_op.h"
 
-namespace TIMVXPY
+namespace TimVX
 {
 
     bool ActivationCreator::parse_prelu_attr(const py::dict &op_info, ActivationOpAttr &op_attr)
@@ -130,4 +130,4 @@ namespace TIMVXPY
 
     REGISTER_OP_CREATOR(ActivationCreator, Activation);
 
-} // namespace TIMVXPY
+} // namespace TimVX

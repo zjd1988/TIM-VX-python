@@ -6,7 +6,7 @@
 #include "tim/vx/ops/fullyconnected.h"
 #include "timvx_ops/fullyconnected_op.h"
 
-namespace TIMVXPY
+namespace TimVX
 {
 
     bool FullyConnectedCreator::parse_op_attr(const py::dict &op_info, FullyConnectedOpAttr &op_attr)
@@ -29,4 +29,4 @@ namespace TIMVXPY
 
     REGISTER_OP_CREATOR(FullyConnectedCreator, FullyConnected);
 
-} // namespace TIMVXPY
+} // namespace TimVX

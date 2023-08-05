@@ -6,7 +6,7 @@
 #include "tim/vx/ops/reshape.h"
 #include "timvx_ops/reshape_op.h"
 
-namespace TIMVXPY
+namespace TimVX
 {
 
     bool ReshapeCreator::parse_op_attr(const py::dict &op_info, ReshapeOpAttr &op_attr)
@@ -26,4 +26,4 @@ namespace TIMVXPY
 
     REGISTER_OP_CREATOR(ReshapeCreator, Reshape);
 
-} // namespace TIMVXPY
+} // namespace TimVX

@@ -15,10 +15,12 @@
 #include "timvx_engine.h"
 
 namespace py = pybind11;
-using namespace TIMVXPY;
+using namespace TimVX;
 
-PYBIND11_MODULE(timvx, m)
+PYBIND11_MODULE(pytimvx, m)
 {
+    m.doc() = "timvx python interface, convert rknn/tflite to timvx model and run model with timvx engine";
+    m.def("get_tensor_size", &get_tensor_size, "get tensor size by tensor name in graph");
     py::class_<TimVXEngine>(m, "timvx_engine")
     .def(py::init<const std::string &>())
     .def("get_tensor_size",       &TimVXEngine::get_tensor_size)

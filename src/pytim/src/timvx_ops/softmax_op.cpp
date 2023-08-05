@@ -6,7 +6,7 @@
 #include "tim/vx/ops/softmax.h"
 #include "timvx_ops/softmax_op.h"
 
-namespace TIMVXPY
+namespace TimVX
 {
 
     bool SoftmaxCreator::parse_op_attr(const py::dict &op_info, SoftmaxOpAttr &op_attr)
@@ -28,4 +28,4 @@ namespace TIMVXPY
 
     REGISTER_OP_CREATOR(SoftmaxCreator, Softmax);
 
-} // namespace TIMVXPY
+} // namespace TimVX

@@ -6,7 +6,7 @@
 #include "tim/vx/ops/elementwise.h"
 #include "timvx_ops/eltwise_op.h"
 
-namespace TIMVXPY
+namespace TimVX
 {
 
     Operation* EltwiseCreator::on_create(std::shared_ptr<Graph> &graph, const py::dict &op_info)
@@ -56,4 +56,4 @@ namespace TIMVXPY
 
     REGISTER_OP_CREATOR(EltwiseCreator, Eltwise);
 
-} // namespace TIMVXPY
+} // namespace TimVX

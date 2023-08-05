@@ -6,7 +6,7 @@
 #include "tim/vx/ops/conv2d.h"
 #include "timvx_ops/conv2d_op.h"
 
-namespace TIMVXPY
+namespace TimVX
 {
 
     bool Conv2dCreator::parse_weights(const py::dict &op_info, Conv2dOpAttr &op_attr)
@@ -100,4 +100,4 @@ namespace TIMVXPY
 
     REGISTER_OP_CREATOR(Conv2dCreator, Conv2d);
 
-} // namespace TIMVXPY
+} // namespace TimVX

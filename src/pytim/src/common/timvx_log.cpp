@@ -7,8 +7,7 @@
 #include "common/timvx_log.h"
 #include "spdlog/sinks/rotating_file_sink.h"
 
-
-namespace TIMVXPY 
+namespace TimVX 
 {
 
     TimVXLog& TimVXLog::Instance()
@@ -69,4 +68,4 @@ namespace TIMVXPY
         spdlog::set_level(static_cast<spdlog::level::level_enum>(level));
     }
 
-} // namespace TIMVXPY
+} // namespace TimVX

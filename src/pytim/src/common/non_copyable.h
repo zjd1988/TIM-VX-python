@@ -6,7 +6,7 @@
 ********************************************/
 #pragma once
 
-namespace TIMVXPY
+namespace TimVX
 {
     
     /** protocol class. used to delete assignment operator. */
@@ -20,4 +20,4 @@ namespace TIMVXPY
         NonCopyable& operator=(const NonCopyable&&) = delete;
     };
 
-} // namespace TIMVXPY
+} // namespace TimVX

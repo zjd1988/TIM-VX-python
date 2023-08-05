@@ -6,7 +6,7 @@
 #include "tim/vx/ops/transpose.h"
 #include "timvx_ops/transpose_op.h"
 
-namespace TIMVXPY
+namespace TimVX
 {
 
     bool TransposeCreator::parse_op_attr(const py::dict &op_info, TransposeOpAttr &op_attr)
@@ -26,4 +26,4 @@ namespace TIMVXPY
 
     REGISTER_OP_CREATOR(TransposeCreator, Transpose);
 
-} // namespace TIMVXPY
+} // namespace TimVX

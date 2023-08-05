@@ -11,6 +11,7 @@ endif()
 set(PYBIND11_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rd_party/pybind11-2.9.2/include)
 set(SPDLOG_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rd_party/spdlog-1.12.0/include)
 set(NLOHMANN_JSON_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rd_party/nlohmann-json-3.11.2/include)
+set(PYBIND11_JSON_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rd_party/pybind11_json/include)
 file(GLOB_RECURSE PYTIMVX_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 
 find_package(Python REQUIRED COMPONENTS Development)

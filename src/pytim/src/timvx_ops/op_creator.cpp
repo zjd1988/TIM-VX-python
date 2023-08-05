@@ -5,7 +5,7 @@
 ***********************************/
 #include "timvx_ops/op_creator.h"
 
-namespace TIMVXPY
+namespace TimVX
 {
 
     extern void Activation_op_creator();
@@ -229,4 +229,4 @@ namespace TIMVXPY
             return nullptr;
     }
 
-}  //namespace TIMVXPY
+}  //namespace TimVX

@@ -8,7 +8,7 @@
 using namespace tim::vx;
 using namespace std;
 
-namespace TIMVXPY
+namespace TimVX
 {
     
     class GroupedConv2dCreator : public OpCreator
@@ -41,4 +41,4 @@ namespace TIMVXPY
         std::string m_op_name = "GroupedConv2d";
     };
 
-} // namespace TIMVXPY
+} // namespace TimVX

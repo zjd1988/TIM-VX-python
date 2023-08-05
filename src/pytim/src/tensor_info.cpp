@@ -10,7 +10,7 @@ using namespace tim::vx;
 using namespace std;
 namespace py = pybind11;
 
-namespace TIMVXPY
+namespace TimVX
 {
 
     bool TensorSpecConstruct::parse_tensor_data_type(const py::dict &tensor_info, const std::string &tensor_name, 
@@ -164,4 +164,4 @@ namespace TIMVXPY
         return true;
     }
 
-} // namespace TIMVXPY
+} // namespace TimVX

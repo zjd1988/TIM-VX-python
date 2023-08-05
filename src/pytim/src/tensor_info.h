@@ -12,7 +12,7 @@ using namespace tim::vx;
 using namespace std;
 namespace py = pybind11;
 
-namespace TIMVXPY
+namespace TimVX
 {
 
     class TensorSpecConstruct
@@ -142,5 +142,5 @@ namespace TIMVXPY
         }
     };
 
-} // namespace TIMVXPY
+} // namespace TimVX
 

@@ -6,7 +6,7 @@
 #include "tim/vx/ops/concat.h"
 #include "timvx_ops/concat_op.h"
 
-namespace TIMVXPY
+namespace TimVX
 {
 
     bool ConcatCreator::parse_op_attr(const py::dict &op_info, ConcatOpAttr &op_attr)
@@ -28,4 +28,4 @@ namespace TIMVXPY
 
     REGISTER_OP_CREATOR(ConcatCreator, Concat);
 
-} // namespace TIMVXPY
+} // namespace TimVX

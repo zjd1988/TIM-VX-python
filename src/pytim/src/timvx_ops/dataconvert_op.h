@@ -8,7 +8,7 @@
 using namespace tim::vx;
 using namespace std;
 
-namespace TIMVXPY
+namespace TimVX
 {
 
     class DataConvertCreator : public OpCreator
@@ -27,4 +27,4 @@ namespace TIMVXPY
         std::string m_op_name = "DataConvert";
     };
 
-} // namespace TIMVXPY
+} // namespace TimVX

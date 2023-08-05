@@ -6,7 +6,7 @@
 #include "tim/vx/ops/simple_operations.h"
 #include "timvx_ops/dataconvert_op.h"
 
-namespace TIMVXPY
+namespace TimVX
 {
     bool DataConvertCreator::parse_op_attr(const py::dict &op_info, DataConvertOpAttr &op_attr)
     {
@@ -24,4 +24,4 @@ namespace TIMVXPY
 
     REGISTER_OP_CREATOR(DataConvertCreator, DataConvert);
 
-} // namespace TIMVXPY
+} // namespace TimVX

@@ -21,7 +21,7 @@ using namespace tim::vx;
 using namespace std;
 namespace py = pybind11;
 
-namespace TIMVXPY
+namespace TimVX
 {
 
     void register_ops();
@@ -183,4 +183,4 @@ namespace TIMVXPY
             TimVXOp::get_instance()->add_creator(#op_type, &_temp);  \
         }
 
-}  //namespace TIMVXPY
+}  //namespace TimVX

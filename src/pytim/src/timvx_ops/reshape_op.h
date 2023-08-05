@@ -8,7 +8,7 @@
 using namespace tim::vx;
 using namespace std;
 
-namespace TIMVXPY
+namespace TimVX
 {
 
     class ReshapeCreator : public OpCreator
@@ -28,4 +28,4 @@ namespace TIMVXPY
         std::string m_op_name = "Reshape";
     };
 
-} // namespace TIMVXPY
+} // namespace TimVX

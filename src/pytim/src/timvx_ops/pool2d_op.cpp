@@ -6,7 +6,7 @@
 #include "tim/vx/ops/pool2d.h"
 #include "timvx_ops/pool2d_op.h"
 
-namespace TIMVXPY
+namespace TimVX
 {
 
     Pool2dCreator::Pool2dCfgType Pool2dCreator::get_pool2d_type(const py::dict &op_info)
@@ -155,4 +155,4 @@ namespace TIMVXPY
 
     REGISTER_OP_CREATOR(Pool2dCreator, Pool2d);
 
-} // namespace TIMVXPY
+} // namespace TimVX

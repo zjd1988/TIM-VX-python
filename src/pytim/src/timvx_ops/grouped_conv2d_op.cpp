@@ -6,7 +6,7 @@
 #include "tim/vx/ops/groupedconv2d.h"
 #include "timvx_ops/grouped_conv2d_op.h"
 
-namespace TIMVXPY
+namespace TimVX
 {
 
     bool GroupedConv2dCreator::parse_padding(const py::dict &op_info, GroupedConv2dOpAttr &op_attr)
@@ -86,4 +86,4 @@ namespace TIMVXPY
 
     REGISTER_OP_CREATOR(GroupedConv2dCreator, GroupedConv2d);
 
-} // namespace TIMVXPY
+} // namespace TimVX

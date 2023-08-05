@@ -9,7 +9,7 @@
 #include "tensor_info.h"
 #include "timvx_ops/op_creator.h"
 
-namespace TIMVXPY
+namespace TimVX
 {
 
     extern void register_ops();
@@ -500,4 +500,4 @@ namespace TIMVXPY
         return m_graph_name;
     }
 
-} //namespace TIMVXPY
+} //namespace TimVX

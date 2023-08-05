@@ -109,7 +109,7 @@ do {                                                                   \
 #define TIMVX_LOG_FILE_SIZE 10*1024*1024  // log file size: 10MB
 #define TIMVX_LOG(level, ...)  TIMVX_LOG_IMPL(level, ##__VA_ARGS__)
 
-namespace TIMVXPY
+namespace TimVX
 {
 
     class TimVXLog : public NonCopyable
@@ -136,4 +136,4 @@ namespace TIMVXPY
         std::shared_ptr<spdlog::logger>              m_logger;
     };
 
-}  // namespace TIMVXPY
+}  // namespace TimVX

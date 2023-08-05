@@ -19,7 +19,7 @@ using namespace tim::vx;
 using namespace tim::transform;
 namespace py = pybind11;
 
-namespace TIMVXPY
+namespace TimVX
 {
     struct TimVXQuantInfo
     {
@@ -91,4 +91,4 @@ namespace TIMVXPY
             std::map<std::shared_ptr<Tensor>, std::shared_ptr<Tensor>>>     m_layout_infered;
     };
 
-} //namespace TIMVXPY
+} //namespace TimVX
