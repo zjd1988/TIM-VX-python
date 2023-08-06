@@ -9,149 +9,163 @@
 #include <mutex>
 #include "tim/vx/context.h"
 #include "tim/vx/graph.h"
-// #include "tim/vx/ops.h"
 #include "tim/vx/operation.h"
 #include "tim/vx/types.h"
-#include "pybind11/pybind11.h"
-#include "pybind11/pytypes.h"
-#include "pybind11/stl.h"
-#include "pybind11/numpy.h"
 #include "common/timvx_log.h"
+#include "nlohmann/json.hpp"
 using namespace tim::vx;
+using namespace nlohmann;
 using namespace std;
-namespace py = pybind11;
 
 namespace TimVX
 {
 
-    void register_ops();
+    void registerOps();
     class OpCreator 
     {
     public:
-        virtual Operation* on_create(std::shared_ptr<Graph> &graph, const py::dict &op_info) = 0;
+        virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) = 0;
 
-        bool parse_pool_type(const py::dict &op_info, const std::string &op_name, 
-            const std::string &attr_name, PoolType &pool_type, bool necessary = true);
-        bool parse_pad_type(const py::dict &op_info, const std::string &op_name, 
-            const std::string &attr_name, PadType &pad_type, bool necessary = true);
-        bool parse_round_type(const py::dict &op_info, const std::string &op_name, 
-            const std::string &attr_name, RoundType &round_type, bool necessary = true);
-        bool parse_overflow_policy_type(const py::dict &op_info, const std::string &op_name, 
-            const std::string &attr_name, OverflowPolicy &overflow_policy_type, bool necessary = true);
-        bool parse_rounding_policy_type(const py::dict &op_info, const std::string &op_name, 
-            const std::string &attr_name, RoundingPolicy &rounding_policy_type, bool necessary = true);
-        bool parse_resize_type(const py::dict &op_info, const std::string &op_name, 
-            const std::string &attr_name, ResizeType &resize_type, bool necessary = true);
-        bool parse_data_layout_type(const py::dict &op_info, const std::string &op_name, 
-            const std::string &attr_name, DataLayout &data_layout_type, bool necessary = true);
+        bool parsePoolType(const json& op_info, const std::string& op_name, 
+            const std::string& attr_name, PoolType& pool_type, bool necessary = true);
+        bool parsePadType(const json& op_info, const std::string& op_name, 
+            const std::string& attr_name, PadType& pad_type, bool necessary = true);
+        bool parseRoundType(const json& op_info, const std::string& op_name, 
+            const std::string& attr_name, RoundType& round_type, bool necessary = true);
+        bool parseOverflowPolicyType(const json& op_info, const std::string& op_name, 
+            const std::string& attr_name, OverflowPolicy& overflow_policy_type, bool necessary = true);
+        bool parseRoundingPolicyType(const json& op_info, const std::string& op_name, 
+            const std::string& attr_name, RoundingPolicy& rounding_policy_type, bool necessary = true);
+        bool parseResizeType(const json& op_info, const std::string& op_name, 
+            const std::string& attr_name, ResizeType& resize_type, bool necessary = true);
+        bool parseDataLayoutType(const json& op_info, const std::string& op_name, 
+            const std::string& attr_name, DataLayout& data_layout_type, bool necessary = true);
         
         template <class T>
-        bool check_obj_type(const py::detail::item_accessor &item)
-        {
-            return py::isinstance<T>(item);
-        }
-
-        template <class T, class NEW_T>
-        bool parse_value(const py::dict &op_info, const std::string &op_name, 
-            const std::string &attr_name, NEW_T &parsed_value, bool necessary = true)
-        {
-            const char* attr_c_name = attr_name.c_str();
-            if (necessary && !op_info.contains(attr_c_name))
-            {
-                std::cout << op_name << " op should contain " << attr_name << " attr, please check!" << std::endl;
-                return false;
-            }
-            if (op_info.contains(attr_c_name))
-            {
-                if (check_obj_type<T>(op_info[attr_c_name]))
-                {
-                    parsed_value = NEW_T(T(op_info[attr_c_name]));
-                }
-                else
-                {
-                    std::cout << op_name << " op parse " << attr_name << " attr fail, please check!" << std::endl;
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        template <class T>
-        bool check_list_item_type(const py::list &list_value)
+        bool checkObjType(const json& item)
         {
             bool ret = true;
-            for (int i = 0; i < list_value.size(); i++)
+            try
             {
-                ret = py::isinstance<T>(list_value[i]);
-                if (false == ret)
-                    break;
+                T temp = item.get<T>();
+            }
+            catch(const std::exception& e)
+            {
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "exception occur: {}", e.what());
+                ret = false;
             }
             return ret;
         }
 
-        template <class T, class NEW_T, int list_num>
-        bool parse_fix_list(const py::dict &op_info, const std::string &op_name, 
-            const std::string &attr_name, std::array<NEW_T, list_num> &parsed_value, bool necessary = true)
+        template <class T>
+        bool parseValue(const json& op_info, const std::string& op_name, 
+            const std::string& attr_name, T& parsed_value, bool necessary = true)
         {
             const char* attr_c_name = attr_name.c_str();
             if (necessary && !op_info.contains(attr_c_name))
             {
-                std::cout << op_name << " op should contain " << attr_name << " attr, please check!" << std::endl;
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "op {} should contain {} attr, please check", op_name.c_str(), attr_c_name);
                 return false;
             }
             if (op_info.contains(attr_c_name))
             {
-                if (!check_obj_type<py::list>(op_info[attr_c_name]))
+                if (checkObjType<T>(op_info[attr_c_name]))
                 {
-                    std::cout << op_name << " op's attr " << attr_name << " is not list!" << std::endl;
-                    return false;
+                    parsed_value = op_info[attr_c_name].get<T>();
                 }
-                py::list list_value = py::list(op_info[attr_c_name]);
-                if (list_value.size() != list_num)
+                else
                 {
-                    std::cout << op_name << " op's attr " << attr_name << " len should be " << list_num << std::endl;
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "op {} parse {} attr fail, please check", op_name.c_str(), attr_c_name);
                     return false;
-                }
-                if (!check_list_item_type<T>(list_value))
-                {
-                    std::cout << op_name << " op's attr " << attr_name << " item type wrong!" << std::endl;
-                    return false;
-                }
-                for (int i = 0; i < list_value.size(); i++)
-                {
-                    parsed_value[i] = NEW_T(T(list_value[i]));
                 }
             }
             return true;
         }
 
-        template <class T, class NEW_T>
-        bool parse_dynamic_list(const py::dict &op_info, const std::string &op_name, 
-            const std::string &attr_name, std::vector<NEW_T> &parsed_value, bool necessary = true)
+        template <class T>
+        bool checkListItemType(const json& list_value)
+        {
+            bool ret = true;
+            try
+            {
+                for (int i = 0; i < list_value.size(); i++)
+                {
+                    T temp = list_value[i].get<T>();
+                }
+            }
+            catch(const std::exception& e)
+            {
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "exception occur: {}", e.what());
+                ret = false;
+            }
+            return ret;
+        }
+
+        template <class T, int list_num>
+        bool parseFixList(const json& op_info, const std::string& op_name, 
+            const std::string& attr_name, std::array<T, list_num>& parsed_value, bool necessary = true)
+        {
+            const char* attr_c_name = attr_name.c_str();
+            if (necessary && !op_info.contains(attr_c_name))
+            {
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "op {} should contain {} attr, please check", op_name.c_str(), attr_c_name);
+                return false;
+            }
+            if (op_info.contains(attr_c_name))
+            {
+                if (!op_info[attr_c_name].is_array())
+                {
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "op {}'s attr {} is not list", op_name.c_str(), attr_c_name);
+                    return false;
+                }
+                json list_value = op_info[attr_c_name];
+                if (list_value.size() != list_num)
+                {
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "op {}'s attr {} len should be {}", op_name.c_str(), attr_c_name, list_num);
+                    return false;
+                }
+                if (!checkListItemType<T>(list_value))
+                {
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "op {}'s attr {} item type wrong", op_name.c_str(), attr_c_name);
+                    return false;
+                }
+                for (int i = 0; i < list_value.size(); i++)
+                {
+                    T temp = list_value[i].get<T>();
+                    parsed_value[i] = temp;
+                }
+            }
+            return true;
+        }
+
+        template <class T>
+        bool parseDynamicList(const json& op_info, const std::string& op_name, 
+            const std::string& attr_name, std::vector<T>& parsed_value, bool necessary = true)
         {
             parsed_value.clear();
             const char* attr_c_name = attr_name.c_str();
             if (necessary && !op_info.contains(attr_c_name))
             {
-                std::cout << op_name << " op should contain " << attr_name << " attr, please check!" << std::endl;
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "op {} should contain {} attr, please check", op_name.c_str(), attr_c_name);
                 return false;
             }
             if (op_info.contains(attr_c_name))
             {
-                if (!check_obj_type<py::list>(op_info[attr_c_name]))
+                if (!op_info[attr_c_name].is_array())
                 {
-                    std::cout << op_name << " op's attr " << attr_name << " is not list!" << std::endl;
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "op {}'s attr {} is not list", op_name.c_str(), attr_c_name);
                     return false;
                 }
-                py::list list_value = py::list(op_info[attr_c_name]);
-                if (!check_list_item_type<T>(list_value))
+                json list_value = op_info[attr_c_name];
+                if (!checkListItemType<T>(list_value))
                 {
-                    std::cout << op_name << " op's attr " << attr_name << " item type wrong!" << std::endl;
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "op {}'s attr {} item type wrong", op_name.c_str(), attr_c_name);
                     return false;
                 }
                 for (int i = 0; i < list_value.size(); i++)
                 {
-                    parsed_value.push_back(NEW_T(T(list_value[i])));
+                    T temp = list_value[i].get<T>();
+                    parsed_value.push_back(temp);
                 }
             }
             return true;
@@ -164,23 +178,23 @@ namespace TimVX
     private:
         TimVXOp() = default;
     public:
-        bool add_creator(std::string op_type, OpCreator* creator);
-        OpCreator* get_creator(std::string op_type);
-        static TimVXOp* get_instance()
+        bool addCreator(std::string op_type, OpCreator* creator);
+        OpCreator* getOpCreator(std::string op_type);
+        static TimVXOp* getInstance()
         {
             static TimVXOp instance;
             return &instance;
         }
 
     private:
-        std::map<std::string, OpCreator*> op_creator;
+        std::map<std::string, OpCreator*> m_op_creator_map;
     };
 
 
     #define REGISTER_OP_CREATOR(name, op_type)                       \
-        void op_type##_op_creator() {                                \
+        void register##op_type##OpCreator() {                        \
             static name _temp;                                       \
-            TimVXOp::get_instance()->add_creator(#op_type, &_temp);  \
+            TimVXOp::getInstance()->addCreator(#op_type, &_temp);    \
         }
 
 }  //namespace TimVX

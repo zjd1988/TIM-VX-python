@@ -33,6 +33,7 @@ target_include_directories(pytimvx PUBLIC
     ${PYBIND11_INCLUDE_PATH}
     ${SPDLOG_INCLUDE_PATH}
     ${NLOHMANN_JSON_INCLUDE_PATH}
+    ${PYBIND11_JSON_INCLUDE_PATH}
     ${PROJECT_SOURCE_DIR}/src
 )
 target_link_libraries(pytimvx PUBLIC 

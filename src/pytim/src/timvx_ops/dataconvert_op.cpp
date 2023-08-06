@@ -8,15 +8,15 @@
 
 namespace TimVX
 {
-    bool DataConvertCreator::parse_op_attr(const py::dict &op_info, DataConvertOpAttr &op_attr)
+    bool DataConvertCreator::parseOpAttr(const json& op_info, DataConvertOpAttr& op_attr)
     {
         return true;
     }
 
-    Operation* DataConvertCreator::on_create(std::shared_ptr<Graph> &graph, const py::dict &op_info)
+    Operation* DataConvertCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         DataConvertOpAttr op_attr;
-        if (!parse_op_attr(op_info, op_attr))
+        if (!parseOpAttr(op_info, op_attr))
             return nullptr;
 
         return graph->CreateOperation<ops::DataConvert>().get();

@@ -12,15 +12,15 @@
 namespace TimVX
 {
 
-    extern void register_ops();
+    extern void registerOps();
     #define BITS_PER_BYTE 8
-    TimVXEngine::TimVXEngine(const std::string &graph_name)
+    TimVXEngine::TimVXEngine(const std::string& graph_name)
     {
         m_context.reset();
         m_graph.reset();
         m_graph_name = graph_name;
         static std::once_flag flag;
-        std::call_once(flag, &register_ops);
+        std::call_once(flag,& registerOps);
     }
 
     TimVXEngine::~TimVXEngine()
@@ -31,7 +31,26 @@ namespace TimVX
         m_context.reset();
     }
 
-    uint32_t TimVXEngine::type_get_bits(DataType type)
+    Tensor* TimVXEngine::getTensor(const std::string& tensor_name)
+    {
+        if (m_tensors.find(tensor_name) == m_tensors.end())
+            return nullptr;
+        return m_tensors[tensor_name].get();
+    }
+
+    std::vector<uint32_t> TimVXEngine::getTensorDims(const std::string& tensor_name)
+    {
+        std::vector<uint32_t> tensor_dims;
+        if (m_tensors.find(tensor_name) == m_tensors.end())
+        {
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} not exists!", tensor_name);
+            return tensor_dims;
+        }
+        auto tensor = m_tensors[tensor_name];
+        return tensor->GetShape();
+    }
+
+    uint32_t TimVXEngine::getTypeBits(DataType type)
     {   
         switch( type )
         {
@@ -52,7 +71,7 @@ namespace TimVX
         }
     }  
 
-    size_t TimVXEngine::get_tensor_size(const std::string &tensor_name)
+    size_t TimVXEngine::getTensorSize(const std::string& tensor_name)
     {
         size_t sz;
         size_t i;
@@ -72,7 +91,7 @@ namespace TimVX
         {
             return sz;
         }
-        bits_num = type_get_bits( type );
+        bits_num = getTypeBits( type );
         if( bits_num < BITS_PER_BYTE )
         {
             if(shape[0] % 2 == 0)
@@ -95,7 +114,8 @@ namespace TimVX
         return sz;
     }
 
-    bool TimVXEngine::create_tensor(const std::string &tensor_name, const py::dict &tensor_info)
+    bool TimVXEngine::createTensor(const std::string& tensor_name, const json& tensor_info,
+        const char *weight_data, const int weight_len)
     {
         if (m_graph.get() == nullptr)
         {
@@ -104,57 +124,52 @@ namespace TimVX
         }
         if (m_tensors.find(tensor_name) != m_tensors.end())
         {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "duplicate tensor name is provided, please check again!");
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "duplicate tensor name {} is provided, please check again!", tensor_name);
             return false;
         }
         TensorSpec tensor_spec;
-        if (!TensorSpecConstruct::construct_tensorspec(tensor_info, tensor_name, tensor_spec))
+        if (!TensorSpecConstruct::constructTensorspec(tensor_info, tensor_name, tensor_spec))
         {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "construct tensor spec fail, please check again!");
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "construct tensor {} spec fail, please check again!", tensor_name);
             return false;
         }
         std::shared_ptr<Tensor> tensor;
-        if (!tensor_info.contains("data"))
+        if (!weight_data || 0 == weight_len)
             tensor = m_graph->CreateTensor(tensor_spec);
         else
         {
-            py::array data_array = py::cast<py::array>(tensor_info["data"]);
-            int num_bytes = data_array.nbytes();
-            std::shared_ptr<char> data_array_ptr(new char[num_bytes], [](char* data_array_ptr){delete [] data_array_ptr;});
+            std::shared_ptr<char> data_array_ptr(new char[weight_len], [](char* data_array_ptr){delete [] data_array_ptr;});
             m_tensors_data[tensor_name] = data_array_ptr;
-            memcpy((void*)data_array_ptr.get(), data_array.data(), num_bytes);
+            memcpy((void*)data_array_ptr.get(), weight_data, weight_len);
             tensor = m_graph->CreateTensor(tensor_spec, (void*)data_array_ptr.get());
         }
         if (nullptr == tensor.get())
         {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph create tensor {} fail!", tensor_name);
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "create tensor {} fail!", tensor_name);
             return false;
         }
         m_tensors[tensor_name] = tensor;
         return true;
     }    
 
-    bool TimVXEngine::copy_data_from_tensor(const std::string &tensor_name, py::buffer &np_data)
+    bool TimVXEngine::copyDataFromTensor(const std::string& tensor_name, char* buffer_data, const int buffer_len)
     {
-        py::buffer_info buf = np_data.request();
+        if (nullptr == buffer_data)
+        {
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "dst buffer data ptr is nullptr, when copy from tensor {}", tensor_name);
+            return false;
+        }
         if (m_tensors.find(tensor_name) == m_tensors.end())
         {
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} not exists!", tensor_name);
             return false;
         }
         auto tensor = m_tensors[tensor_name];
-        if (buf.ndim != tensor->GetShape().size())
+        size_t total_tensor_size = getTensorSize(tensor_name);
+        if (total_tensor_size != buffer_len)
         {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} dim_size:{} not equal to numpy data dim_size:{}", 
-                tensor_name, tensor->GetShape().size(), buf.ndim);
-            return false;
-        }
-        size_t total_np_size = buf.size * buf.itemsize;
-        size_t total_tensor_size = get_tensor_size(tensor_name);
-        if (total_tensor_size != total_np_size)
-        {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} size:{} not equal to numpy data size:{}", 
-                tensor_name, total_tensor_size, total_np_size);
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} size:{} not equal to buffer data size:{}", 
+                tensor_name, total_tensor_size, buffer_len);
             return false;
         }
         if (total_tensor_size <= 0)
@@ -162,30 +177,28 @@ namespace TimVX
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} size:{} is invalid!", tensor_name, total_tensor_size);
             return false;
         }
-        return tensor->CopyDataFromTensor(buf.ptr);
+        return tensor->CopyDataFromTensor(buffer_data);
     }
 
-    bool TimVXEngine::copy_data_to_tensor(const std::string &tensor_name, py::buffer &np_data)
+    bool TimVXEngine::copyDataToTensor(const std::string& tensor_name, const char* buffer_data, 
+        const int buffer_len)
     {
-        py::buffer_info buf = np_data.request();
+        if (nullptr == buffer_data)
+        {
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "src buffer data ptr is nullptr, when copy to tensor {}", tensor_name);
+            return false;
+        }
         if (m_tensors.find(tensor_name) == m_tensors.end())
         {
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} not exists!", tensor_name);
             return false;
         }
         auto tensor = m_tensors[tensor_name];
-        // if (buf.ndim != tensor->GetShape().size())
-        // {
-        //     TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor dim:" << tensor->GetShape().size() << " not equal to numpy data dim:" << 
-        //         buf.ndim);
-        //     return false;
-        // }
-        int total_np_size = buf.size * buf.itemsize;
-        int total_tensor_size = get_tensor_size(tensor_name);
-        if (total_tensor_size != total_np_size)
+        int total_tensor_size = getTensorSize(tensor_name);
+        if (total_tensor_size != buffer_len)
         {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} size:{} not equal to numpy data size:{}",
-                tensor_name, total_tensor_size, total_np_size);
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} size:{} not equal to buffer data size:{}",
+                tensor_name, total_tensor_size, buffer_len);
             return false;
         }
         if (total_tensor_size <= 0)
@@ -193,61 +206,61 @@ namespace TimVX
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} size:{} is invalid!", tensor_name, total_tensor_size);
             return false;
         }
-        return tensor->CopyDataToTensor(buf.ptr, total_np_size);
+        return tensor->CopyDataToTensor(buffer_data, buffer_len);
     }
 
-    bool TimVXEngine::create_operation(py::dict &op_info)
+    bool TimVXEngine::createOperation(const json& op_info)
     {
         if (m_graph.get() == nullptr)
         {
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph is invalid, please create graph first!");
             return false;
         }
-        if (!op_info.contains("op_type") || !py::isinstance<py::str>(op_info["op_type"]))
-        {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "op_type item is not contained, or op_type is not string!");
-            return false;
-        }
-        if (!op_info.contains("op_name") || !py::isinstance<py::str>(op_info["op_name"]))
+        if (!op_info.contains("op_name") || !op_info["op_name"].is_string())
         {
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "op_name item is not contained, or op_name is not string!");
             return false;
         }
-        if (!op_info.contains("op_attr") || !py::isinstance<py::dict>(op_info["op_attr"]))
+        std::string op_name = op_info.at("op_name");
+        if (!op_info.contains("op_type") || !op_info["op_type"].is_string())
         {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "op_attr item is not contained, or op_attr is not dict!");
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "{}'s op_type item is not contained, or op_type is not string", op_name);
             return false;
         }
-        if (op_info.contains("rounding_policy") && !py::isinstance<py::dict>(op_info["rounding_policy"]))
+        if (!op_info.contains("op_attr") || !op_info["op_attr"].is_object())
         {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "rounding_policy item is contained, but not dict!");
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "{}'s op_attr item is not contained, or op_attr is not dict", op_name);
             return false;
         }
-        auto op_name = std::string(py::str(op_info["op_name"]));
+        if (op_info.contains("rounding_policy") || !op_info["rounding_policy"].is_object())
+        {
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "{}'s rounding_policy item is not contained, or rounding_policy is not dict", op_name);
+            return false;
+        }
         if (m_operations.find(op_name) != m_operations.end())
         {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "{} is duplicate!", op_name);
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "op_name {}  is duplicate", op_name);
             return false;
         }
-        auto op_type = std::string(py::str(op_info["op_type"]));
-        OpCreator* op_creator = TimVXOp::get_instance()->get_creator(op_type);
+        std::string op_type = op_info.at("op_type");
+        OpCreator* op_creator = TimVXOp::getInstance()->getOpCreator(op_type);
         if (nullptr == op_creator)
         {
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "op {} creator not find!", op_type);
             return false;
         }
-        auto op_node = op_creator->on_create(m_graph, py::dict(op_info["op_attr"]));
+        auto op_node = op_creator->onCreate(m_graph, op_info["op_attr"]);
         if (nullptr != op_node && op_info.contains("rounding_policy"))
         {
-            py::dict rounding_policy = py::dict(op_info["rounding_policy"]);
+            json rounding_policy = op_info["rounding_policy"];
             OverflowPolicy overflow_policy_type = OverflowPolicy::SATURATE;
             RoundingPolicy rounding_policy_type = RoundingPolicy::RTNE;
             RoundType      round_type           = RoundType::FLOOR;
             uint32_t       accumulator_bits     = 0;
-            op_creator->parse_overflow_policy_type(rounding_policy, op_name, "overflow_policy", overflow_policy_type, false);
-            op_creator->parse_rounding_policy_type(rounding_policy, op_name, "rounding_policy", rounding_policy_type, false);
-            op_creator->parse_round_type(rounding_policy, op_name, "down_scale_size_rounding", round_type, false);
-            op_creator->parse_value<py::int_, uint>(rounding_policy, op_name, "accumulator_bits", accumulator_bits, false);
+            op_creator->parseOverflowPolicyType(rounding_policy, op_name, "overflow_policy", overflow_policy_type, -1);
+            op_creator->parseRoundingPolicyType(rounding_policy, op_name, "rounding_policy", rounding_policy_type, -1);
+            op_creator->parseRoundType(rounding_policy, op_name, "down_scale_size_rounding", round_type, -1);
+            op_creator->parseValue<uint32_t>(rounding_policy, op_name, "accumulator_bits", accumulator_bits, -1);
             op_node->SetRoundingPolicy(overflow_policy_type, rounding_policy_type, round_type, accumulator_bits);
         }
         if (nullptr != op_node)
@@ -259,7 +272,7 @@ namespace TimVX
         return false;
     }
 
-    bool TimVXEngine::bind_inputs(const std::string &op_name, const std::vector<std::string> &input_list)
+    bool TimVXEngine::bindInputs(const std::string& op_name, const std::vector<std::string>& input_list)
     {
         if (m_graph.get() == nullptr)
         {
@@ -292,7 +305,7 @@ namespace TimVX
         return true;
     }
 
-    bool TimVXEngine::bind_outputs(const std::string &op_name, const std::vector<std::string> &output_list)
+    bool TimVXEngine::bindOutputs(const std::string& op_name, const std::vector<std::string>& output_list)
     {
         if (m_graph.get() == nullptr)
         {
@@ -325,7 +338,7 @@ namespace TimVX
         return true;
     }
 
-    bool TimVXEngine::bind_input(const std::string &op_name, const std::string &input_name)
+    bool TimVXEngine::bindInput(const std::string& op_name, const std::string& input_name)
     {
         if (m_graph.get() == nullptr)
         {
@@ -348,7 +361,7 @@ namespace TimVX
         return true;
     }
 
-    bool TimVXEngine::bind_output(const std::string &op_name, const std::string &output_name)
+    bool TimVXEngine::bindOutput(const std::string& op_name, const std::string& output_name)
     {
         if (m_graph.get() == nullptr)
         {
@@ -371,34 +384,18 @@ namespace TimVX
         return true;
     }
     
-    
-    // bool TimVXEngine::set_rounding_policy(const std::string &op_name, const py::dict &rounding_policy)
-    // {
-    //     if (m_graph.get() == nullptr)
-    //     {
-    //         TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph is invalid, please create graph first!");
-    //         return false;
-    //     }
-    //     if (m_operations.find(op_name) == m_operations.end())
-    //     {
-    //         TIMVX_LOG(TIMVX_LEVEL_ERROR, "op " << op_name <<" not exists!");
-    //         return false;
-    //     }
-    //     return true;
-    // }
-
-    py::dict TimVXEngine::get_op_info(const std::string &op_name)
+    json TimVXEngine::getOpInfo(const std::string& op_name)
     {
+        json op_json;
         if (m_op_info.find(op_name) != m_op_info.end())
         {
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "op {} not exists!", op_name);
-            py::dict ret;
-            return ret;
+            return op_json;
         }
         return m_op_info[op_name];
     }
 
-    bool TimVXEngine::create_graph()
+    bool TimVXEngine::createGraph()
     {
         m_context = tim::vx::Context::Create();
         if (nullptr == m_context.get())
@@ -416,7 +413,7 @@ namespace TimVX
         return true;
     }
 
-    bool TimVXEngine::verify_graph()
+    bool TimVXEngine::verifyGraph()
     {
         if (nullptr == m_context.get())
         {
@@ -437,7 +434,7 @@ namespace TimVX
         return true;
     }
 
-    bool TimVXEngine::compile_graph()
+    bool TimVXEngine::compileGraph()
     {
         if (nullptr == m_graph.get() && nullptr == m_layout_infered.first.get())
         {
@@ -453,7 +450,7 @@ namespace TimVX
         return m_graph->Compile();
     }
 
-    bool TimVXEngine::run_graph()
+    bool TimVXEngine::runGraph()
     {
         if (m_graph.get() == nullptr)
         {
@@ -463,39 +460,39 @@ namespace TimVX
         return m_graph->Run();
     }
 
-    py::bytearray TimVXEngine::compile_to_binary()
+    bool TimVXEngine::compileToBinary(std::vector<uint8_t>& nbg_buf, size_t& bin_size)
     {
-        size_t bin_size = 0;
-        std::vector<uint8_t> nbg_buf;
         Graph* graph = nullptr;
         if (nullptr == m_graph.get() && nullptr == m_layout_infered.first.get())
         {
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph is invalid, please create graph first!");
-            return py::bytearray();
+            return false;
         }
 
         graph = m_graph.get();
         if (nullptr != m_layout_infered.first.get())
         {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "use layout infered graph compile to binary buffer ...");
+            TIMVX_LOG(TIMVX_LEVEL_INFO, "use layout infered graph compile to binary buffer ...");
             graph = m_layout_infered.first.get();
         }
-        if (false == graph->CompileToBinary(nullptr, &bin_size) || 0 == bin_size)
+
+        // call compile to binary
+        if (false == graph->CompileToBinary(nullptr,& bin_size) || 0 == bin_size)
         {
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph compile to get binary buffer size fail ...");
-            return py::bytearray();
+            return false;
         }
 
         // generate binary graph does't require input data
-        if (false == graph->CompileToBinary(nbg_buf.data(), &bin_size))
+        if (false == graph->CompileToBinary(nbg_buf.data(),& bin_size))
         {
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph compile to binary buffer fail ...");
-            return py::bytearray();
+            return false;
         }
-        return py::bytearray((char*)nbg_buf.data(), bin_size);
+        return true;
     }
 
-    std::string TimVXEngine::get_graph_name()
+    std::string TimVXEngine::getGraphName()
     {
         return m_graph_name;
     }

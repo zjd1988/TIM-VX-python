@@ -25,17 +25,17 @@ namespace TimVX
             DataLayout              kernel_layout;
         };
 
-        virtual Operation* on_create(std::shared_ptr<Graph> &graph, const py::dict &op_info) override;
+        virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
-        bool parse_padding(const py::dict &op_info, GroupedConv2dOpAttr &op_attr);
-        bool parse_stride(const py::dict &op_info, GroupedConv2dOpAttr &op_attr);
-        bool parse_dilation(const py::dict &op_info, GroupedConv2dOpAttr &op_attr);
-        bool parse_pad(const py::dict &op_info, GroupedConv2dOpAttr &op_attr);
-        bool parse_grouped_number(const py::dict &op_info, GroupedConv2dOpAttr &op_attr);
-        bool parse_input_layout(const py::dict &op_info, GroupedConv2dOpAttr &op_attr);
-        bool parse_kernel_layout(const py::dict &op_info, GroupedConv2dOpAttr &op_attr);
-        bool parse_op_attr(const py::dict &op_info, GroupedConv2dOpAttr &op_attr);
+        bool parse_padding(const json& op_info, GroupedConv2dOpAttr& op_attr);
+        bool parse_stride(const json& op_info, GroupedConv2dOpAttr& op_attr);
+        bool parse_dilation(const json& op_info, GroupedConv2dOpAttr& op_attr);
+        bool parse_pad(const json& op_info, GroupedConv2dOpAttr& op_attr);
+        bool parse_grouped_number(const json& op_info, GroupedConv2dOpAttr& op_attr);
+        bool parse_input_layout(const json& op_info, GroupedConv2dOpAttr& op_attr);
+        bool parse_kernel_layout(const json& op_info, GroupedConv2dOpAttr& op_attr);
+        bool parseOpAttr(const json& op_info, GroupedConv2dOpAttr& op_attr);
 
     private:
         std::string m_op_name = "GroupedConv2d";
