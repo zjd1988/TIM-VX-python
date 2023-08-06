@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
+import copy
 import json
 import numpy as np
-from .lib import *
+from .lib.pytimvx import *
 
 TimVxDataType = ["INT8", "UINT8", "INT16", "UINT16", "INT32", "UINT32", "FLOAT16", "FLOAT32", "BOOL8"]
 
 class Engine():
     def __init__(self, name:str):
-        self.engine = timvx_engine(name)
+        self.engine = TimVXEngine(name)
         self.mean_value = {}
         self.std_value = {}
         self.reorder = {}
@@ -60,7 +61,7 @@ class Engine():
     def add_tensors_info(self, tensor_info:dict):
         tensor_name = tensor_info["name"]
         self.tensors_info.append(tensor_info)
-        # print("add tensor {}:\n{}".format(tensor_name, tensor_info))
+        print("add tensor {}:\n{}".format(tensor_name, tensor_info))
 
 
     def convert_np_dtype_to_tim_dtype(self, datatype):
@@ -110,11 +111,11 @@ class Engine():
 
 
     def get_graph_name(self):
-        return self.engine.get_graph_name()
+        return get_graph_name(self.engine)
 
 
     def get_tensor_size(self, tensor_name:str):
-        return self.engine.get_tensor_size(tensor_name)
+        return get_tensor_size(self.engine, tensor_name)
 
 
     def create_tensor(self, tensor_name:str, tensor_dtype:str, tensor_attr:str, \
@@ -127,9 +128,7 @@ class Engine():
         tensor_info["attribute"] = tensor_attr
         if len(quant_info.keys()) != 0:
             tensor_info["quant_info"] = quant_info
-        if np_data.size != 0:
-            tensor_info["data"] = np_data
-        assert self.engine.create_tensor(tensor_name, tensor_info), "creat tensor {} fail!".format(tensor_name)
+        assert create_tensor(self.engine, tensor_name, tensor_info, np_data), "creat tensor {} fail!".format(tensor_name)
         # add engine tensor_info stat
         tensor_stat_info = {}
         tensor_stat_info["name"] = tensor_name
@@ -151,70 +150,60 @@ class Engine():
 
 
     def copy_data_from_tensor(self, tensor_name:str, np_data:np.array):
-        return self.engine.copy_data_from_tensor(tensor_name, np_data)
+        return copy_data_from_tensor(self.engine, tensor_name, np_data)
 
 
     def copy_data_to_tensor(self, tensor_name:str, np_data:np.array):
-        return self.engine.copy_data_to_tensor(tensor_name, np_data)
+        return copy_data_to_tensor(self.engine, tensor_name, np_data)
 
 
     def create_operation(self, op_info:dict):
-        ret = self.engine.create_operation(json.dumps(op_info))
+        ret = create_operation(self.engine, op_info)
         op_name = op_info["op_name"]
         if ret and "op_inputs" in op_info.keys():
             op_inputs = op_info["op_inputs"]
-            ret = self.engine.bind_inputs(op_name, op_inputs)
+            ret = bind_inputs(self.engine, op_name, op_inputs)
         if ret and "op_outputs" in op_info.keys():
             op_outputs = op_info["op_outputs"]
-            ret = self.engine.bind_outputs(op_name, op_outputs)
+            ret = bind_outputs(self.engine, op_name, op_outputs)
         self.add_nodes_info(op_info)
         return ret
 
 
     def get_op_info(self, op_name:str):
-        self.engine.get_op_info(op_name)
+        return get_op_info(self.engine, op_name)
 
 
     def bind_input(self, op_name:str, tensor_name:str):
-        return self.engine.bind_input(op_name, tensor_name)
+        return bind_input(self.engine, op_name, tensor_name)
 
 
     def bind_output(self, op_name:str, tensor_name:str):
-        return self.engine.bind_output(op_name, tensor_name)
+        return bind_output(self.engine, op_name, tensor_name)
 
 
     def bind_inputs(self, op_name:str, tensor_names:list):
-        return self.engine.bind_inputs(op_name, tensor_names)
+        return bind_inputs(self.engine, op_name, tensor_names)
 
 
     def bind_outputs(self, op_name:str, tensor_names:list):
-        return self.engine.bind_outputs(op_name, tensor_names)
-
-
-    # def set_rounding_policy(self, op_name:str, overflow_policy:str="SATURATE", rounding_policy:str="RTNE",
-    #  down_scale_size_rounding:str="FLOOR", accumulator_bits:int=0):
-    #     rounding_policy_dict = {}
-    #     rounding_policy_dict["overflow_policy"] = overflow_policy
-    #     rounding_policy_dict["rounding_policy"] = rounding_policy
-    #     rounding_policy_dict["down_scale_size_rounding"] = down_scale_size_rounding
-    #     rounding_policy_dict["accumulator_bits"] = accumulator_bits
-    #     return self.engine.set_rounding_policy(op_name, rounding_policy_dict)
+        return bind_outputs(self.engine, op_name, tensor_names)
 
 
     def create_graph(self):
-        return self.engine.create_graph()
+        return create_graph(self.engine)
 
 
     def verify_graph(self):
-        return self.engine.verify_graph()
+        return verify_graph(self.engine)
 
 
     def compile_graph(self):
-        return self.engine.compile_graph()
+        return compile_graph(self.engine)
 
 
     def compile_to_binary(self):
-        return self.engine.compile_to_binary()
+        return compile_to_binary(self.engine)
 
 
     def run_graph(self, input_dict:dict, output_name_list:list=[]):
@@ -225,9 +214,6 @@ class Engine():
             if input_tensor_name in self.inputs_alias.keys():
                 input_tensor_name = self.inputs_alias[input_tensor_name]
             input_data = input_dict[input_tensor_name]
-            assert len(input_data.shape) == 3, "need a hwc format input, please check!"
-            h,w,c = input_data.shape
-            assert c == 3 or c == 1, "input channel should be 1 or 3"
             assert type(input_dict[input_tensor_name]) == np.ndarray, "{} tensor data only support numpy array"
             mean_value = [0.0, ]
             std_value = [1.0, ]
@@ -237,10 +223,16 @@ class Engine():
                 std_value = self.std_value[input_tensor_name]
             engine_input = (input_data.astype(np.float32) - mean_value) / std_value
             if self.reorder == [2, 1, 0]:
+                assert len(input_data.shape) == 3, "need a hwc format input, please check!"
+                h,w,c = input_data.shape
+                assert c == 3 or c == 1, "input channel should be 1 or 3"
                 engine_input = engine_input[:,:,::-1]
-            engine_input = engine_input.transpose((2, 0, 1))
-            shape = self.inputs_info[input_tensor_name]["shape"]
+                engine_input = engine_input.transpose((2, 0, 1))
+            # timvx tensor dims is reverse order with np dims
+            shape = copy.deepcopy(self.inputs_info[input_tensor_name]["shape"])
+            shape.reverse()
             dtype = self.inputs_info[input_tensor_name]["dtype"]
+
             scale = 1.0
             zero_point = 0.0
             if "scale" in self.inputs_info[input_tensor_name]["quant_info"]:
@@ -248,11 +240,10 @@ class Engine():
             if "zero_point" in self.inputs_info[input_tensor_name]["quant_info"]:
                 zero_point = self.inputs_info[input_tensor_name]["quant_info"]["zero_point"]
             engine_input = (engine_input / scale + zero_point).reshape(shape).astype(dtype)
-            input_bytes = engine_input.tobytes()
-            assert self.engine.copy_data_to_tensor(input_tensor_name, input_bytes), \
+            assert self.copy_data_to_tensor(input_tensor_name, engine_input), \
                 "set input {} fail!".format(input_name)
 
-        assert self.engine.run_graph(), "run graph fail!"
+        assert run_graph(self.engine), "run graph fail!"
 
         outputs = []
         if output_name_list == []:
@@ -267,8 +258,11 @@ class Engine():
                 output_tensor_name = self.outputs_alias[output_tensor_name]
             assert output_tensor_name in self.outputs_info.keys(), \
                 "{} not a valid output tensor".format(output_name)
+            # timvx tensor dims is reverse order with np dims
+            shape = copy.deepcopy(self.outputs_info[output_tensor_name]["shape"])
+            shape.reverse()
             dtype = self.outputs_info[output_tensor_name]["dtype"]
-            shape = self.outputs_info[output_tensor_name]["shape"]
+
             scale = 1.0
             zero_point = 0.0
             if "scale" in self.outputs_info[output_tensor_name]["quant_info"]:
@@ -276,7 +270,7 @@ class Engine():
             if "zero_point" in self.outputs_info[output_tensor_name]["quant_info"]:
                 zero_point = self.outputs_info[output_tensor_name]["quant_info"]["zero_point"]
             output_data = np.zeros(shape).astype(dtype)
-            assert self.engine.copy_data_from_tensor(output_tensor_name, output_data), \
+            assert self.copy_data_from_tensor(output_tensor_name, output_data), \
                 "get output {} fail!".format(output_name)
             output_data = output_data.astype(np.float32)
             output_data = (output_data - zero_point) * scale

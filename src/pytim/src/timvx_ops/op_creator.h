@@ -20,7 +20,6 @@ using namespace std;
 namespace TimVX
 {
 
-    void registerOps();
     class OpCreator 
     {
     public:

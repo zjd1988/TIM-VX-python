@@ -12,15 +12,12 @@
 namespace TimVX
 {
 
-    extern void registerOps();
     #define BITS_PER_BYTE 8
     TimVXEngine::TimVXEngine(const std::string& graph_name)
     {
         m_context.reset();
         m_graph.reset();
         m_graph_name = graph_name;
-        static std::once_flag flag;
-        std::call_once(flag,& registerOps);
     }
 
     TimVXEngine::~TimVXEngine()
@@ -232,16 +229,17 @@ namespace TimVX
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "{}'s op_attr item is not contained, or op_attr is not dict", op_name);
             return false;
         }
-        if (op_info.contains("rounding_policy") || !op_info["rounding_policy"].is_object())
+        if (op_info.contains("rounding_policy") && !op_info["rounding_policy"].is_object())
         {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "{}'s rounding_policy item is not contained, or rounding_policy is not dict", op_name);
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "{}'s rounding_policy item is contained, but rounding_policy is not dict", op_name);
             return false;
         }
         if (m_operations.find(op_name) != m_operations.end())
         {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "op_name {}  is duplicate", op_name);
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "op_name {} is duplicate", op_name);
             return false;
         }
+
         std::string op_type = op_info.at("op_type");
         OpCreator* op_creator = TimVXOp::getInstance()->getOpCreator(op_type);
         if (nullptr == op_creator)
@@ -446,7 +444,7 @@ namespace TimVX
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "layout infered graph compile ...");
             return m_layout_infered.first->Compile();
         }
-        TIMVX_LOG(TIMVX_LEVEL_INFO, "origin graph compile ...");
+        TIMVX_LOG(TIMVX_LEVEL_INFO, "compile graph ...");
         return m_graph->Compile();
     }
 
@@ -477,14 +475,17 @@ namespace TimVX
         }
 
         // call compile to binary
-        if (false == graph->CompileToBinary(nullptr,& bin_size) || 0 == bin_size)
+        bin_size = -1;
+        if (false == graph->CompileToBinary(nullptr, &bin_size) || 0 >= bin_size)
         {
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph compile to get binary buffer size fail ...");
             return false;
         }
 
         // generate binary graph does't require input data
-        if (false == graph->CompileToBinary(nbg_buf.data(),& bin_size))
+        TIMVX_LOG(TIMVX_LEVEL_INFO, "compie binary file size is {}", bin_size);
+        nbg_buf.resize(bin_size);
+        if (false == graph->CompileToBinary(nbg_buf.data(), &bin_size))
         {
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph compile to binary buffer fail ...");
             return false;

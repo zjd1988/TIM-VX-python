@@ -8,34 +8,6 @@
 namespace TimVX
 {
 
-    extern void ActivationOpCreator();
-    extern void EltwiseOpCreator();
-    extern void Conv2dOpCreator();
-    extern void FullyConnectedOpCreator();
-    extern void SoftmaxOpCreator();
-    extern void Pool2dOpCreator();
-    extern void ReshapeOpCreator();
-    extern void ResizeOpCreator();
-    extern void TransposeOpCreator();
-    extern void ConcatOpCreator();
-    extern void DataConvertOpCreator();
-    extern void GroupedConv2dOpCreator();
-    void registerOps()
-    {
-        ActivationOpCreator();
-        EltwiseOpCreator();
-        Conv2dOpCreator();
-        FullyConnectedOpCreator();
-        SoftmaxOpCreator();
-        Pool2dOpCreator();
-        ReshapeOpCreator();
-        ResizeOpCreator();
-        TransposeOpCreator();
-        ConcatOpCreator();
-        DataConvertOpCreator();
-        GroupedConv2dOpCreator();
-    }
-
     bool OpCreator::parsePoolType(const json &op_info, const std::string &op_name, 
         const std::string &attr_name, PoolType &pool_type, bool necessary)
     {

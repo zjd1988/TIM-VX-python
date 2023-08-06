@@ -73,7 +73,7 @@ def ConstructActivationOpConfig(op_name:str, activation_type:str, parameter:dict
     # 3 linear parameter
     # a = None b = 0.0
     # 4 gelu parameter
-    # approximate = True    
+    # approximate = True 
     valid_act_type = ["Relu", "Relu1", "Relu6", "Elu", "Sigmoid", "Mish", "HardSigmoid",
         "SoftRelu", "HardSwish", "Swish", "Prelu", "Tanh", "LeakyRelu", "Linear", "Gelu"]
     assert activation_type in valid_act_type, "activation_type:{} is not in {}".format(activation_type, valid_act_type)

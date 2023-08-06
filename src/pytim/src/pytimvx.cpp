@@ -17,25 +17,35 @@
 namespace py = pybind11;
 using namespace TimVX;
 
-bool compareDims(std::vector<uint32_t> left, std::vector<uint32_t> right)
+bool compareDims(std::vector<uint32_t> left, std::vector<uint32_t> right, bool reverse = false)
 {
     if (left.size() != right.size())
         return false;
-    for (int i = 0; i < left.size(); i++)
+    int n_dims = left.size();
+    for (int i = 0; i < n_dims; i++)
     {
-        if (left[i] != right[i])
+        // np array dims reverse order with timvx tensor dims
+        if (true == reverse && left[i] != right[n_dims - 1 - i])
             return false;
+        else if (false == reverse && left[i] != right[i])
+            return false;
+        else
+            continue;
     }
     return true;
 }
 
-std::string dimsToString(std::vector<uint32_t> dims)
+std::string dimsToString(std::vector<uint32_t> dims, bool reverse = false)
 {
     std::string dims_str;
     dims_str += "[";
-    for (int i = 0; i < dims.size() && i < 10; i++)
+    int n_dims = dims.size();
+    for (int i = 0; i < n_dims && i < 10; i++)
     {
-        dims_str += std::to_string(dims[i]);
+        if (reverse)
+            dims_str += std::to_string(dims[n_dims - 1 - i]);
+        else
+            dims_str += std::to_string(dims[i]);
         dims_str += ",";
     }
     dims_str += "]";
@@ -63,12 +73,20 @@ bool createTensor(TimVXEngine* timvx_engine, const std::string tensor_name,
     std::shared_ptr<char> data_array_ptr;
     int num_bytes = data_array.nbytes();
     if (0 < num_bytes)
+    {
         data_array_ptr.reset(new char[num_bytes], [](char* data_array_ptr){delete [] data_array_ptr;});
+        if (nullptr == data_array_ptr.get())
+        {
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "malloc memory buffer for tensor {} fail!", tensor_name);
+            return false;
+        }
+        memcpy((void*)data_array_ptr.get(), data_array.data(), num_bytes);
+    }
     nl::json tensor_json_info = tensor_dict_info;
     return timvx_engine->createTensor(tensor_name, tensor_json_info, data_array_ptr.get(), num_bytes);
 }
 
-bool copyDataFromTensor(TimVXEngine* timvx_engine, const std::string tensor_name, const py::buffer& np_data)
+bool copyDataFromTensor(TimVXEngine* timvx_engine, const std::string tensor_name, py::array& data_array)
 {
     if (nullptr == timvx_engine)
     {
@@ -84,33 +102,32 @@ bool copyDataFromTensor(TimVXEngine* timvx_engine, const std::string tensor_name
     }
 
     // compare np byte size with tensor byte size
-    py::buffer_info buf = np_data.request();
-    size_t total_np_size = buf.size * buf.itemsize;
+    size_t total_np_size = data_array.nbytes();
     size_t total_tensor_size = timvx_engine->getTensorSize(tensor_name);
     if (total_tensor_size != total_np_size)
     {
-        TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} size:{} not equal to numpy data size:{}", 
+        TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} size:{} not equal to numpy array size:{}", 
             tensor_name, total_tensor_size, total_np_size);
         return false;
     }
 
     // compare np dims with tensor dims
-    std::vector<uint32_t> np_dims(buf.shape.begin(), buf.shape.end());
+    std::vector<uint32_t> np_dims(data_array.shape(), data_array.shape() + data_array.ndim());
     std::vector<uint32_t> tensor_dims = tensor->GetShape();
-    if (false == compareDims(np_dims, tensor_dims))
+    if (false == compareDims(np_dims, tensor_dims, true))
     {
         auto np_dims_str = dimsToString(np_dims);
-        auto tensor_dims_str = dimsToString(tensor_dims);
-        TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} dims:{} not equal to numpy data dims:{}", 
+        auto tensor_dims_str = dimsToString(tensor_dims, true);
+        TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} dims:{} not equal to numpy array dims:{}", 
             tensor_name, tensor_dims_str, np_dims_str);
         return false;
     }
-    char* buffer_data = (char*)buf.ptr;
+    char* buffer_data = (char*)data_array.mutable_data();
     int buffer_len = total_np_size;
     return timvx_engine->copyDataFromTensor(tensor_name, buffer_data, buffer_len);
 }
 
-bool copyDataToTensor(TimVXEngine* timvx_engine, const std::string tensor_name, py::buffer& np_data)
+bool copyDataToTensor(TimVXEngine* timvx_engine, const std::string tensor_name, const py::array& data_array)
 {
     if (nullptr == timvx_engine)
     {
@@ -126,41 +143,40 @@ bool copyDataToTensor(TimVXEngine* timvx_engine, const std::string tensor_name, 
     }
 
     // compare np byte size with tensor byte size
-    py::buffer_info buf = np_data.request();
-    size_t total_np_size = buf.size * buf.itemsize;
+    size_t total_np_size = data_array.nbytes();
     size_t total_tensor_size = timvx_engine->getTensorSize(tensor_name);
     if (total_tensor_size != total_np_size)
     {
-        TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} size:{} not equal to numpy data size:{}", 
+        TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} size:{} not equal to numpy array size:{}", 
             tensor_name, total_tensor_size, total_np_size);
         return false;
     }
 
     // compare np dims with tensor dims
-    std::vector<uint32_t> np_dims(buf.shape.begin(), buf.shape.end());
+    std::vector<uint32_t> np_dims(data_array.shape(), data_array.shape() + data_array.ndim());
     std::vector<uint32_t> tensor_dims = tensor->GetShape();
-    if (false == compareDims(np_dims, tensor_dims))
+    if (false == compareDims(np_dims, tensor_dims, true))
     {
         auto np_dims_str = dimsToString(np_dims);
-        auto tensor_dims_str = dimsToString(tensor_dims);
-        TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} dims:{} not equal to numpy data dims:{}", 
+        auto tensor_dims_str = dimsToString(tensor_dims, true);
+        TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} dims:{} not equal to numpy array dims:{}", 
             tensor_name, tensor_dims_str, np_dims_str);
         return false;
     }
-    char* buffer_data = (char*)buf.ptr;
+    const char* buffer_data = (const char*)data_array.data();
     int buffer_len = total_np_size;
     return timvx_engine->copyDataToTensor(tensor_name, buffer_data, buffer_len);
-    return true;
 }
 
-bool createOperation(TimVXEngine* timvx_engine, py::dict& op_info)
+bool createOperation(TimVXEngine* timvx_engine, py::dict& op_dict_info)
 {
     if (nullptr == timvx_engine)
     {
         TIMVX_LOG(TIMVX_LEVEL_ERROR, "input timvx engine parameter is nullptr!");
         return false;
     }
-    return true;
+    nl::json op_json_info = op_dict_info;
+    return timvx_engine->createOperation(op_json_info);
 }
 
 py::dict getOpInfo(TimVXEngine* timvx_engine, const std::string op_name)
@@ -288,9 +304,9 @@ PYBIND11_MODULE(pytimvx, m)
     m.def("get_tensor_size",        &getTensorSize,           "get graph's tensor size by tensor name in ");
     m.def("create_tensor",          &createTensor,            "create graph's tensor with tensor info");
     m.def("copy_data_from_tensor",  &copyDataFromTensor,      "copy data form graph's tensor");
-    // m.def("copy_data_to_tensor",    &copyDataToTensor,        "copy data to graph's tensor");
-    // m.def("create_operation",       &createOperation,         "create graph's operation with op info");
-    // m.def("get_op_info",            &getOpInfo,               "get graph's op info by op name");
+    m.def("copy_data_to_tensor",    &copyDataToTensor,        "copy data to graph's tensor");
+    m.def("create_operation",       &createOperation,         "create graph's operation with op info");
+    m.def("get_op_info",            &getOpInfo,               "get graph's op info by op name");
     m.def("bind_inputs",            &bindInputs,              "bind graph's operation inputs");
     m.def("bind_outputs",           &bindOutputs,             "bind graph's operation outputs");
     m.def("bind_input",             &bindInput,               "bind graph's operation input");
@@ -302,6 +318,6 @@ PYBIND11_MODULE(pytimvx, m)
     m.def("get_graph_name",         &getGraphName,            "get graph's name");
     m.def("compile_to_binary",      &compileToBinary,         "compile graph to binary data");
 
-    py::class_<TimVXEngine>(m, "timvx_engine")
+    py::class_<TimVXEngine>(m, "TimVXEngine")
     .def(py::init<const std::string>());
 }

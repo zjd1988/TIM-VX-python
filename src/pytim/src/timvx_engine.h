@@ -64,7 +64,6 @@ namespace TimVX
         std::vector<std::string>                                            m_output_tensor_names;
         // tensors
         std::map<std::string, std::shared_ptr<Tensor>>                      m_tensors;
-        // std::map<std::string, TensorSpec>              m_tensors_spec;
         std::map<std::string, std::shared_ptr<char>>                        m_tensors_data;
         // operation
         std::map<std::string, Operation*>                                   m_operations;
