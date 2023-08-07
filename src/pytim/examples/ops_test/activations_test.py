@@ -12,12 +12,13 @@ def test_Linear_shape_5_1_fp32():
     assert timvx_engine.create_graph(), "engine create grah fail!"
 
     # construct tensors
+    tensor_shape = [5, 1]
     input_name = "input"
-    assert timvx_engine.create_tensor(input_name, "FLOAT32", "INPUT", [5, 1]), \
+    assert timvx_engine.create_tensor(input_name, "FLOAT32", "INPUT", tensor_shape), \
         "construct tensor {} fail!".format(input_name)
 
     output_name = "output"
-    assert timvx_engine.create_tensor(output_name, "FLOAT32", "OUTPUT", [5, 1]), \
+    assert timvx_engine.create_tensor(output_name, "FLOAT32", "OUTPUT", tensor_shape), \
         "construct tensor {} fail!".format(output_name)
 
     # construct operations
@@ -35,13 +36,17 @@ def test_Linear_shape_5_1_fp32():
     assert timvx_engine.compile_graph(), "compile graph fail...."
 
     # run graph with input data
-    input_data = np.array([-2.5, -0.1, 0, 0.55, float('inf')]).reshape((5,1)).astype(np.float32)
+    ###################################################################
+    ######note: timvx tensor dims is reverse order with np dims########
+    ###################################################################
+    np_shape = [1, 5]
+    input_data = np.array([-2.5, -0.1, 0, 0.55, float('inf')]).reshape(np_shape).astype(np.float32)
     input_dict = {}
     input_dict["input"] = input_data
     output_data = timvx_engine.run_graph(input_dict)
 
     # compare gloden data with output data
-    golden_data = np.array([-0.5, 1.9, 2.0, 2.55, float('inf')]).reshape((5,1)).astype(np.float32)
+    golden_data = np.array([-0.5, 1.9, 2.0, 2.55, float('inf')]).reshape(np_shape).astype(np.float32)
     assert np.allclose(golden_data, output_data[0], atol=1.e-6), \
         "check gloden data with output data not equal!\n gloden:{}\n output:{}".format(golden_data, output_data[0])
 
@@ -51,12 +56,13 @@ def test_Linear_shape_5_1_fp32_omit_b():
     assert timvx_engine.create_graph(), "engine create grah fail!"
 
     # construct tensors
+    tensor_shape = [5, 1]
     input_name = "input"
-    assert timvx_engine.create_tensor(input_name, "FLOAT32", "INPUT", [5, 1]), \
+    assert timvx_engine.create_tensor(input_name, "FLOAT32", "INPUT", tensor_shape), \
         "construct tensor {} fail!".format(input_name)
 
     output_name = "output"
-    assert timvx_engine.create_tensor(output_name, "FLOAT32", "OUTPUT", [5, 1]), \
+    assert timvx_engine.create_tensor(output_name, "FLOAT32", "OUTPUT", tensor_shape), \
         "construct tensor {} fail!".format(output_name)
 
     # construct operations
@@ -73,16 +79,20 @@ def test_Linear_shape_5_1_fp32_omit_b():
     assert timvx_engine.compile_graph(), "compile graph fail...."
     
     # run graph with input data
-    input_data = np.array([-2.5, -0.1, 0, 0.55, float('inf')]).reshape((5,1)).astype(np.float32)
+    ###################################################################
+    ######note: timvx tensor dims is reverse order with np dims########
+    ###################################################################
+    np_shape = [1, 5]
+    input_data = np.array([-2.5, -0.1, 0, 0.55, float('inf')]).reshape(np_shape).astype(np.float32)
     input_dict = {}
     input_dict["input"] = input_data
     output_data = timvx_engine.run_graph(input_dict)
 
     # compare gloden data with output data
-    golden_data = np.array([-5.0, -0.2, 0, 1.1, float('inf')]).reshape((5,1)).astype(np.float32)
+    golden_data = np.array([-5.0, -0.2, 0, 1.1, float('inf')]).reshape(np_shape).astype(np.float32)
     assert np.allclose(golden_data, output_data[0], atol=1.e-6), \
         "check gloden data with output data not equal!\n gloden:{}\n output:{}".format(golden_data, output_data[0])
-    
+
 if __name__ == "__main__":
     test_Linear_shape_5_1_fp32()
     print("test_Linear_shape_5_1_fp32 test success")

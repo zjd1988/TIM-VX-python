@@ -206,45 +206,64 @@ class Engine():
         return compile_to_binary(self.engine)
 
 
-    def run_graph(self, input_dict:dict, output_name_list:list=[]):
+    def run_graph(self, input_dict:dict, output_name_list:list=[], pass_through:bool=True, want_float:bool=False):
         for input_name in input_dict.keys():
-            input_tensor_name = input_name
-            assert input_tensor_name in self.inputs_info.keys() or input_tensor_name in self.inputs_alias.keys(), \
-                "invalid input tensor name {}".format(input_tensor_name)
-            if input_tensor_name in self.inputs_alias.keys():
-                input_tensor_name = self.inputs_alias[input_tensor_name]
-            input_data = input_dict[input_tensor_name]
-            assert type(input_dict[input_tensor_name]) == np.ndarray, "{} tensor data only support numpy array"
-            mean_value = [0.0, ]
-            std_value = [1.0, ]
-            if input_tensor_name in self.mean_value.keys():
-                mean_value = self.mean_value[input_tensor_name]
-            if input_tensor_name in self.std_value.keys():
-                std_value = self.std_value[input_tensor_name]
-            engine_input = (input_data.astype(np.float32) - mean_value) / std_value
-            if self.reorder == [2, 1, 0]:
-                assert len(input_data.shape) == 3, "need a hwc format input, please check!"
-                h,w,c = input_data.shape
-                assert c == 3 or c == 1, "input channel should be 1 or 3"
-                engine_input = engine_input[:,:,::-1]
-                engine_input = engine_input.transpose((2, 0, 1))
+            # check input tensor name valid
+            assert input_name in self.inputs_info.keys() or input_name in self.inputs_alias.keys(), \
+                "invalid input tensor name {}".format(input_name)
+
+            # get real input name if contain alias
+            real_input_name = input_name
+            if input_name in self.inputs_alias.keys():
+                real_input_name = self.inputs_alias[input_name]
+
+            # get input tensor infos
+            tensor_info = self.inputs_info[real_input_name]
+
+            # check input data type
+            input_data = input_dict[input_name]
+            assert type(input_data) == np.ndarray, "input tensor {} data only support numpy array".format(input_name)
+
+            # check input data shape
             # timvx tensor dims is reverse order with np dims
-            shape = copy.deepcopy(self.inputs_info[input_tensor_name]["shape"])
-            shape.reverse()
-            dtype = self.inputs_info[input_tensor_name]["dtype"]
+            np_shape = input_data.shape
+            tensor_dtype = tensor_info["dtype"]
+            tensor_shape = copy.deepcopy(tensor_info["shape"])
+            tensor_shape.reverse()
 
-            scale = 1.0
-            zero_point = 0.0
-            if "scale" in self.inputs_info[input_tensor_name]["quant_info"]:
-                scale = self.inputs_info[input_tensor_name]["quant_info"]["scale"]
-            if "zero_point" in self.inputs_info[input_tensor_name]["quant_info"]:
-                zero_point = self.inputs_info[input_tensor_name]["quant_info"]["zero_point"]
-            engine_input = (engine_input / scale + zero_point).reshape(shape).astype(dtype)
-            assert self.copy_data_to_tensor(input_tensor_name, engine_input), \
-                "set input {} fail!".format(input_name)
+            # set input tensor data
+            if pass_through:
+                assert tensor_shape != np_shape, \
+                    "input tensor {} numpy shape:{} not equal to tensor shape:{}".format(input_name, np_shape, tensor_shape)
+                engine_input = input_data
+            else:
+                mean_value = [0.0, ]
+                std_value = [1.0, ]
+                if real_input_name in self.mean_value.keys():
+                    mean_value = self.mean_value[real_input_name]
+                if real_input_name in self.std_value.keys():
+                    std_value = self.std_value[real_input_name]
+                engine_input = (input_data.astype(np.float32) - mean_value) / std_value
+                if self.reorder == [2, 1, 0]:
+                    assert len(np_shape) == 3, "need a hwc format input, please check!"
+                    h,w,c = np_shape
+                    assert c == 3 or c == 1, "input channel should be 1 or 3"
+                    engine_input = engine_input[:,:,::-1]
+                    engine_input = engine_input.transpose((2, 0, 1))
 
+                scale = 1.0
+                zero_point = 0.0
+                if "scale" in tensor_info["quant_info"]:
+                    scale = tensor_info["quant_info"]["scale"]
+                if "zero_point" in tensor_info["quant_info"]:
+                    zero_point = tensor_info["quant_info"]["zero_point"]
+                engine_input = (engine_input / scale + zero_point).reshape(tensor_shape).astype(tensor_dtype)
+            assert self.copy_data_to_tensor(input_name, engine_input), "set input tensor {} fail!".format(input_name)
+
+        # run graph
         assert run_graph(self.engine), "run graph fail!"
 
+        # get output tensors
         outputs = []
         if output_name_list == []:
             if self.outputs_alias != {}:
@@ -253,28 +272,30 @@ class Engine():
                 output_name_list = list(self.outputs_info.keys())
         for output_index in range(len(output_name_list)):
             output_name = output_name_list[output_index]
-            output_tensor_name = output_name
-            if output_tensor_name in self.outputs_alias.keys():
-                output_tensor_name = self.outputs_alias[output_tensor_name]
-            assert output_tensor_name in self.outputs_info.keys(), \
-                "{} not a valid output tensor".format(output_name)
-            # timvx tensor dims is reverse order with np dims
-            shape = copy.deepcopy(self.outputs_info[output_tensor_name]["shape"])
-            shape.reverse()
-            dtype = self.outputs_info[output_tensor_name]["dtype"]
+            real_output_name = output_name
+            if output_name in self.outputs_alias.keys():
+                real_output_name = self.outputs_alias[output_name]
+            assert real_output_name in self.outputs_info.keys(), "invalid output tensor name {}".format(output_name)
 
-            scale = 1.0
-            zero_point = 0.0
-            if "scale" in self.outputs_info[output_tensor_name]["quant_info"]:
-                scale = self.outputs_info[output_tensor_name]["quant_info"]["scale"]
-            if "zero_point" in self.outputs_info[output_tensor_name]["quant_info"]:
-                zero_point = self.outputs_info[output_tensor_name]["quant_info"]["zero_point"]
-            output_data = np.zeros(shape).astype(dtype)
-            assert self.copy_data_from_tensor(output_tensor_name, output_data), \
-                "get output {} fail!".format(output_name)
-            output_data = output_data.astype(np.float32)
-            output_data = (output_data - zero_point) * scale
-            output_data = output_data.reshape(shape[::-1])
+            # get input tensor infos
+            tensor_info = self.outputs_info[real_output_name]
+
+            # timvx tensor dims is reverse order with np dims
+            tensor_shape = copy.deepcopy(tensor_info["shape"])
+            tensor_shape.reverse()
+            tensor_dtype = tensor_info["dtype"]
+            output_data = np.zeros(tensor_shape).astype(tensor_dtype)
+            assert self.copy_data_from_tensor(output_name, output_data), "get output tensor {} fail!".format(output_name)
+
+            if want_float:
+                scale = 1.0
+                zero_point = 0.0
+                if "scale" in tensor_info["quant_info"]:
+                    scale = tensor_info["quant_info"]["scale"]
+                if "zero_point" in tensor_info["quant_info"]:
+                    zero_point = tensor_info["quant_info"]["zero_point"]
+                output_data = output_data.astype(np.float32)
+                output_data = (output_data - zero_point) * scale
             outputs.append(output_data)
         return outputs
 
