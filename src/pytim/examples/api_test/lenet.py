@@ -230,20 +230,13 @@ if __name__ == "__main__":
     assert engine.compile_graph(), "compile graph fail...."
     print("3 compile graph end....")
 
-    print("4 set input begin....")
-    lenet_input_data = np.load("./examples/api_test/input.npy").reshape((28, 28, 1))
+    print("4 prepare input begin....")
+    lenet_input_data = np.load("./examples/api_test/input.npy")
     input_dict = {}
     input_dict["input"] = lenet_input_data
-    print("4 set input end....")
+    print("4 prepare input end....")
 
     print("5 run graph begin....")
     outputs = engine.run_graph(input_dict)
     print("5 run graph end....")
     print(outputs)
-
-    print("6 compile graph to binary begin....")
-    ngb_buffer = engine.compile_to_binary()
-    assert 0 != len(ngb_buffer), "compile graph to binary fail...."
-    with open("lenet.nbg", "wb") as f:
-        f.write(ngb_buffer)
-    print("6 compile graph to binary end....")

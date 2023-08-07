@@ -45,15 +45,15 @@ namespace TimVX
     {
         op_attr.gelu.approximate = true;
         op_attr.linear.b = 0.0f;
-        if ("prelu" == op_type)
+        if ("Prelu" == op_type)
             return parsePreluAttr(op_info, op_attr);
-        else if ("leakyrelu" == op_type)
+        else if ("Leakyrelu" == op_type)
             return parseLeakyreluAttr(op_info, op_attr);
-        else if ("linear" == op_type)
+        else if ("Linear" == op_type)
             return parseLinearAttr(op_info, op_attr);
-        else if ("gelu" == op_type)
+        else if ("Gelu" == op_type)
             return parseGeluAttr(op_info, op_attr);
-        else if ("hardsigmoid" == op_type)
+        else if ("HardSigmoid" == op_type)
             return parseHardsigmoidAttr(op_info, op_attr);
         else
             return true;
@@ -107,7 +107,7 @@ namespace TimVX
         {
             int axis = op_attr.prelu.axis;
             return graph->CreateOperation<ops::Prelu>(axis).get();
-        }        
+        }
         else if ("Tanh" == activation_type)
         {
             return graph->CreateOperation<ops::Tanh>().get();
