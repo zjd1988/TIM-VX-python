@@ -7,6 +7,33 @@ RoundingPolicy = ["TO_ZERO", "RTNE"]
 ResizeType = ["NEAREST_NEIGHBOR", "BILINEAR", "AREA"]
 DataLayout = [ "ANY", "WHCN", "CWHN", "IcWHOc", "OcIcWH", "IcOcWH", "WHIcOc", "WCN", "WIcOc"]
 
+def ConstructConv1dOpConfig(op_name:str, stride:int, dilation:int, ksize:int=0, padding:str="AUTO", 
+    pad:list=[0, 0], weights:int=0, multiplier:int=0, kernel_layout:str="WHIcOc", 
+    op_inputs:list=[], op_outputs:list=[])->dict:
+
+    assert padding in PadType, "padding:{} is not in {}".format(padding, PadType)
+    assert kernel_layout in DataLayout, "kernel_layout:{} is not in {}".format(kernel_layout, DataLayout)
+    op_info_dict = {}
+    op_info_dict["op_name"] = op_name
+    op_info_dict["op_type"] = "Conv1d"
+    op_attr = {}
+    op_attr["ksize"] = ksize
+    op_attr["stride"] = stride
+    op_attr["dilation"] = dilation
+    op_attr["padding"] = padding
+    op_attr["pad"] = pad
+    op_attr["weights"] = weights
+    op_attr["multiplier"] = multiplier
+    op_attr["kernel_layout"] = kernel_layout
+    op_info_dict["op_attr"] = op_attr
+    if len(op_inputs) > 0:
+        op_info_dict["op_inputs"] = op_inputs
+    if len(op_outputs) > 0:
+        op_info_dict["op_outputs"] = op_outputs
+
+    return op_info_dict
+
+
 def ConstructConv2dOpConfig(op_name:str, stride:list, dilation:list, ksize:list=[0, 0], padding:str="AUTO", 
     pad:list=[0, 0, 0, 0], weights:int=0, multiplier:int=0, input_layout:str="WHCN", 
     kernel_layout:str="WHIcOc", op_inputs:list=[], op_outputs:list=[])->dict:
