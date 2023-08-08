@@ -233,10 +233,15 @@ if __name__ == "__main__":
     print("4 prepare input begin....")
     lenet_input_data = np.load("./examples/api_test/input.npy")
     input_dict = {}
-    input_dict["input"] = lenet_input_data
+    input_dict["input"] = lenet_input_data.reshape((1, 1, 28, 28))
     print("4 prepare input end....")
 
     print("5 run graph begin....")
     outputs = engine.run_graph(input_dict)
     print("5 run graph end....")
-    print(outputs)
+    out = outputs[0].reshape((-1))
+    indices = np.argsort(-out)
+    print("--- Top5 ---")
+    for i in range(5):
+        index = indices[i]
+        print("{}: {:.6f}".format(index, out[index]))
