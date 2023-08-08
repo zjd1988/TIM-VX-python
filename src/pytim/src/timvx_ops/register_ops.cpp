@@ -10,6 +10,7 @@ namespace TimVX
 
     extern void registerActivationOpCreator();
     extern void registerEltwiseOpCreator();
+    extern void registerConv1dOpCreator();
     extern void registerConv2dOpCreator();
     extern void registerGroupedConv2dOpCreator();
     extern void registerFullyConnectedOpCreator();
@@ -28,6 +29,7 @@ namespace TimVX
         {
             registerActivationOpCreator();
             registerEltwiseOpCreator();
+            registerConv1dOpCreator();
             registerConv2dOpCreator();
             registerGroupedConv2dOpCreator();
             registerFullyConnectedOpCreator();
