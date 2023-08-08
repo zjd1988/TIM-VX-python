@@ -93,9 +93,12 @@ def test_Linear_shape_5_1_fp32_omit_b():
     assert np.allclose(golden_data, output_data[0], atol=1.e-6), \
         "check gloden data with output data not equal!\n gloden:{}\n output:{}".format(golden_data, output_data[0])
 
-if __name__ == "__main__":
+def test_activations_op():
     test_Linear_shape_5_1_fp32()
-    print("test_Linear_shape_5_1_fp32 test success")
+    print("test_Linear_shape_5_1_fp32 success")
     test_Linear_shape_5_1_fp32_omit_b()
-    print("test_Linear_shape_5_1_fp32_omit_b test success")
+    print("test_Linear_shape_5_1_fp32_omit_b success")
+
+if __name__ == "__main__":
+    test_activations_op()
 

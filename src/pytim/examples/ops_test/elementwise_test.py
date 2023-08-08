@@ -104,25 +104,29 @@ def test_FloorDiv_shape_5_1_broadcast_uint8():
     # construct tensors
     input_name1 = "x"
     input_tensor_shape1 = [1,]
-    quant_info = {}
-    quant_info["scale"] = 1
-    quant_info["zero_point"] = 0
-    quant_info["quant_type"] = "ASYMMETRIC"
-    assert timvx_engine.create_tensor(input_name1, "UINT8", "INPUT", input_tensor_shape1, quant_info=quant_info), \
+    input_quant_info1 = {}
+    input_quant_info1["scale"] = 1
+    input_quant_info1["zero_point"] = 0
+    input_quant_info1["quant_type"] = "ASYMMETRIC"
+    assert timvx_engine.create_tensor(input_name1, "UINT8", "INPUT", input_tensor_shape1, quant_info=input_quant_info1), \
         "construct tensor {} fail!".format(input_name1)
 
     input_name2 = "y"
     input_tensor_shape2 = [5, 1]
-    assert timvx_engine.create_tensor(input_name2, "UINT8", "INPUT", input_tensor_shape2, quant_info=quant_info), \
+    input_quant_info2 = {}
+    input_quant_info2["scale"] = 1
+    input_quant_info2["zero_point"] = 0
+    input_quant_info2["quant_type"] = "ASYMMETRIC"
+    assert timvx_engine.create_tensor(input_name2, "UINT8", "INPUT", input_tensor_shape2, quant_info=input_quant_info2), \
         "construct tensor {} fail!".format(input_name2)
 
     output_name = "output"
     output_tensor_shape = [5, 1]
-    quant_output_info = {}
-    quant_output_info["scale"] = 0.5
-    quant_output_info["zero_point"] = 0
-    quant_output_info["quant_type"] = "ASYMMETRIC"
-    assert timvx_engine.create_tensor(output_name, "UINT8", "OUTPUT", output_tensor_shape, quant_info=quant_output_info), \
+    output_quant_info = {}
+    output_quant_info["scale"] = 0.5
+    output_quant_info["zero_point"] = 0
+    output_quant_info["quant_type"] = "ASYMMETRIC"
+    assert timvx_engine.create_tensor(output_name, "UINT8", "OUTPUT", output_tensor_shape, quant_info=output_quant_info), \
         "construct tensor {} fail!".format(output_name)
 
     # construct operations
@@ -152,10 +156,13 @@ def test_FloorDiv_shape_5_1_broadcast_uint8():
     assert np.allclose(golden_data, output_data[0], atol=1.e-6), \
         "check gloden data with output data not equal!\n gloden:{}\n output:{}".format(golden_data, output_data[0])
 
-if __name__ == "__main__":
+def test_elementwise_op():
     test_FloorDiv_shape_1_fp32()
-    print("test_FloorDiv_shape_1_fp32 test success")
+    print("test_FloorDiv_shape_1_fp32 success")
     test_FloorDiv_shape_5_1_broadcast_float32()
-    print("test_FloorDiv_shape_5_1_broadcast_float32 test success")
+    print("test_FloorDiv_shape_5_1_broadcast_float32 success")
     test_FloorDiv_shape_5_1_broadcast_uint8()
-    print("test_FloorDiv_shape_5_1_broadcast_uint8 test success")
+    print("test_FloorDiv_shape_5_1_broadcast_uint8 success")
+
+if __name__ == "__main__":
+    test_elementwise_op()
