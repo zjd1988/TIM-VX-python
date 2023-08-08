@@ -85,7 +85,7 @@ namespace TimVX
         int32_t                 multiplier     = op_attr.multiplier;
         DataLayout              input_layout   = op_attr.input_layout;
         DataLayout              kernel_layout  = op_attr.kernel_layout;
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "weights: {}");
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "weights: {}", weights);
         TIMVX_LOG(TIMVX_LEVEL_DEBUG, "padding: {}", (int)padding);
         TIMVX_LOG(TIMVX_LEVEL_DEBUG, "ksize: {} {}", ksize[0], ksize[1]);
         TIMVX_LOG(TIMVX_LEVEL_DEBUG, "stride: {} {}", stride[0], stride[1]);

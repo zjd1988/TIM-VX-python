@@ -6,6 +6,14 @@ from .lib.pytimvx import *
 
 TimVxDataType = ["INT8", "UINT8", "INT16", "UINT16", "INT32", "UINT32", "FLOAT16", "FLOAT32", "BOOL8"]
 
+def setLogLevel(log_level:str="DEBUG"):
+    LOG_LEVEL_MAP = {"TRACE" : 0,
+                     "DEBUG" : 1,
+                     "INFO"  : 2,
+                     "WARN"  : 3,
+                     "ERROR" : 4}
+    return set_log_level(LOG_LEVEL_MAP[log_level])
+
 class Engine():
     def __init__(self, name:str):
         self.engine = TimVXEngine(name)

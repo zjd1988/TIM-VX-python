@@ -298,6 +298,13 @@ std::string getGraphName(TimVXEngine* timvx_engine)
     return timvx_engine->getGraphName();
 }
 
+void setLogLevel(int log_level)
+{
+    // spdlog::set_level(static_cast<spdlog::level::level_enum>(log_level));
+    spdlog::default_logger_raw()->set_level(static_cast<spdlog::level::level_enum>(log_level));
+    return;
+}
+
 PYBIND11_MODULE(pytimvx, m)
 {
     m.doc() = "timvx python interface, convert rknn/tflite to timvx model and run model with timvx engine";
@@ -317,6 +324,7 @@ PYBIND11_MODULE(pytimvx, m)
     m.def("run_graph",              &runGraph,                "run graph");
     m.def("get_graph_name",         &getGraphName,            "get graph's name");
     m.def("compile_to_binary",      &compileToBinary,         "compile graph to binary data");
+    m.def("set_log_level",          &setLogLevel,             "set log level");
 
     py::class_<TimVXEngine>(m, "TimVXEngine")
     .def(py::init<const std::string>());

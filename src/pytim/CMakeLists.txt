@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.4.1)
 project(pytimvx)
 
+option(ENABLE_DEBUG_LOG "enable pytimvx print debug log" ON)
+if(ENABLE_DEBUG_LOG)
+    add_definitions(-DSPDLOG_ACTIVE_LEVEL=1)
+endif()
+
 if(TIMVX_INSTALL_DIR)
     set(TIM_VX_INCLUDE_PATH ${TIMVX_INSTALL_DIR}/include)
     set(TIM_VX_LIB_PATH ${TIMVX_INSTALL_DIR}/lib)

@@ -3,7 +3,7 @@ from .version import __version__, short_version
 from .timvx import *
 from .frontends import *
 
-__all__ = ['__version__', 'short_version', 'Rknn2TimVxEngine', 'Tflite2TimVxEngine', 'Engine', 
+__all__ = ['__version__', 'short_version', 'Rknn2TimVxEngine', 'Tflite2TimVxEngine', 'Engine', "setLogLevel",
     'ConstructConv1dOpConfig', 'ConstructConv2dOpConfig', 
     'ConstructActivationOpConfig', 'ConstructEltwiseOpConfig', 'ConstructFullyConnectedOpConfig', 
     'ConstructPool2dOpConfig', 'ConstructReshapeOpConfig', 'ConstructResizeOpConfig', 
