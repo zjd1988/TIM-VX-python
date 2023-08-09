@@ -156,13 +156,25 @@ def test_FloorDiv_shape_5_1_broadcast_uint8():
     assert np.allclose(golden_data, output_data[0], atol=1.e-6), \
         "check gloden data with output data not equal!\n gloden:{}\n output:{}".format(golden_data, output_data[0])
 
+test_func_map = {}
+test_func_map["FloorDiv_shape_1_fp32"] = test_FloorDiv_shape_1_fp32
+test_func_map["FloorDiv_shape_5_1_broadcast_float32"] = test_FloorDiv_shape_5_1_broadcast_float32
+test_func_map["FloorDiv_shape_5_1_broadcast_uint8"] = test_FloorDiv_shape_5_1_broadcast_uint8
+
 def test_elementwise_op():
-    test_FloorDiv_shape_1_fp32()
-    print("test_FloorDiv_shape_1_fp32 success")
-    test_FloorDiv_shape_5_1_broadcast_float32()
-    print("test_FloorDiv_shape_5_1_broadcast_float32 success")
-    test_FloorDiv_shape_5_1_broadcast_uint8()
-    print("test_FloorDiv_shape_5_1_broadcast_uint8 success")
+    test_result = {}
+    for key, value in test_func_map.items():
+        try:
+            print("[ RUN      ] test_{}".format(key))
+            test_func_map[key]()
+            test_result[key] = "success"
+            print("[       OK ]")
+        except Exception as e:
+            test_result[key] = "fail"
+            print("[       FAIL ]")
+            # print("exception:\n{}".format(e))
+            traceback.print_exc()
+    return test_result
 
 if __name__ == "__main__":
     test_elementwise_op()

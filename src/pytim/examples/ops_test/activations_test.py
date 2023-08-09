@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import traceback
 import numpy as np
 cwd_path = os.getcwd()
 sys.path.append(cwd_path)
@@ -93,11 +94,24 @@ def test_Linear_shape_5_1_fp32_omit_b():
     assert np.allclose(golden_data, output_data[0], atol=1.e-6), \
         "check gloden data with output data not equal!\n gloden:{}\n output:{}".format(golden_data, output_data[0])
 
+test_func_map = {}
+test_func_map["Linear_shape_5_1_fp32"] = test_Linear_shape_5_1_fp32
+test_func_map["Linear_shape_5_1_fp32_omit_b"] = test_Linear_shape_5_1_fp32_omit_b
+
 def test_activations_op():
-    test_Linear_shape_5_1_fp32()
-    print("test_Linear_shape_5_1_fp32 success")
-    test_Linear_shape_5_1_fp32_omit_b()
-    print("test_Linear_shape_5_1_fp32_omit_b success")
+    test_result = {}
+    for key, value in test_func_map.items():
+        try:
+            print("[ RUN      ] test_{}".format(key))
+            test_func_map[key]()
+            test_result[key] = "success"
+            print("[       OK ]")
+        except Exception as e:
+            test_result[key] = "fail"
+            print("[       FAIL ]")
+            # print("exception:\n{}".format(e))
+            traceback.print_exc()
+    return test_result
 
 if __name__ == "__main__":
     test_activations_op()

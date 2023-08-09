@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import traceback
 import numpy as np
 cwd_path = os.getcwd()
 sys.path.append(cwd_path)
@@ -219,13 +220,26 @@ def test_Conv1d_shape_6_2_1_uint8_ksize_3_stride_1_pad_1_weights_2_no_bias_whcn(
     assert np.allclose(golden_data, output_data[0], atol=1.e-6), \
         "check gloden data with output data not equal!\n gloden:{}\n output:{}".format(golden_data, output_data[0])
 
+
+test_func_map = {}
+test_func_map["Conv1d_shape_3_6_1_float_ksize_1_stride_1_weights_3_no_bias_whcn"] = test_Conv1d_shape_3_6_1_float_ksize_1_stride_1_weights_3_no_bias_whcn
+test_func_map["Conv1d_shape_6_2_1_uint8_ksize_6_stride_1_weights_2_whcn"] = test_Conv1d_shape_6_2_1_uint8_ksize_6_stride_1_weights_2_whcn
+test_func_map["Conv1d_shape_6_2_1_uint8_ksize_3_stride_1_pad_1_weights_2_no_bias_whcn"] = test_Conv1d_shape_6_2_1_uint8_ksize_3_stride_1_pad_1_weights_2_no_bias_whcn
+
 def test_conv1d_op():
-    test_Conv1d_shape_3_6_1_float_ksize_1_stride_1_weights_3_no_bias_whcn()
-    print("test_Conv1d_shape_3_6_1_float_ksize_1_stride_1_weights_3_no_bias_whcn success")
-    test_Conv1d_shape_6_2_1_uint8_ksize_6_stride_1_weights_2_whcn()
-    print("test_Conv1d_shape_6_2_1_uint8_ksize_6_stride_1_weights_2_whcn success")
-    test_Conv1d_shape_6_2_1_uint8_ksize_3_stride_1_pad_1_weights_2_no_bias_whcn()
-    print("test_Conv1d_shape_6_2_1_uint8_ksize_3_stride_1_pad_1_weights_2_no_bias_whcn success") 
+    test_result = {}
+    for key, value in test_func_map.items():
+        try:
+            print("[ RUN      ] test_{}".format(key))
+            test_func_map[key]()
+            test_result[key] = "success"
+            print("[       OK ]")
+        except Exception as e:
+            test_result[key] = "fail"
+            print("[       FAIL ]")
+            # print("exception:\n{}".format(e))
+            traceback.print_exc()
+    return test_result
 
 if __name__ == "__main__":
     test_conv1d_op()
