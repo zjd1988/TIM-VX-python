@@ -1,5 +1,5 @@
 /***********************************
-******  conv2d_op.cpp
+******  conv1d_op.cpp
 ******
 ******  Created by zhaojd on 2022/04/27.
 ***********************************/
@@ -79,14 +79,14 @@ namespace TimVX
         int32_t                 multiplier     = op_attr.multiplier;
         DataLayout              input_layout   = op_attr.input_layout;
         DataLayout              kernel_layout  = op_attr.kernel_layout;
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "weights: {}");
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "padding: {}", (int)padding);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "ksize: {}", ksize);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "stride: {}", stride);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "dilation: {}", dilation);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "pad: {} {}", pad[0], pad[1]);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "multiplier: {}", multiplier);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "kernel_layout: {}", (int)kernel_layout);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "weights       : {}");
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "padding       : {}", (int)padding);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "ksize         : {}", ksize);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "stride        : {}", stride);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "dilation      : {}", dilation);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "pad           : {} {}", pad[0], pad[1]);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "multiplier    : {}", multiplier);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "kernel_layout : {}", (int)kernel_layout);
         return graph->CreateOperation<ops::Conv1d>(weights, padding, ksize, stride, 
             dilation, pad, multiplier, input_layout, kernel_layout).get();
     }

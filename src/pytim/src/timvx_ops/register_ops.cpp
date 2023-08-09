@@ -12,6 +12,8 @@ namespace TimVX
     extern void registerEltwiseOpCreator();
     extern void registerConv1dOpCreator();
     extern void registerConv2dOpCreator();
+    extern void registerDeConv1dOpCreator();
+    extern void registerDeConv2dOpCreator();
     extern void registerGroupedConv2dOpCreator();
     extern void registerFullyConnectedOpCreator();
     extern void registerSoftmaxOpCreator();
@@ -31,6 +33,8 @@ namespace TimVX
             registerEltwiseOpCreator();
             registerConv1dOpCreator();
             registerConv2dOpCreator();
+            registerDeConv1dOpCreator();
+            registerDeConv2dOpCreator();
             registerGroupedConv2dOpCreator();
             registerFullyConnectedOpCreator();
             registerSoftmaxOpCreator();

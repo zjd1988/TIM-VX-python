@@ -85,15 +85,15 @@ namespace TimVX
         int32_t                 multiplier     = op_attr.multiplier;
         DataLayout              input_layout   = op_attr.input_layout;
         DataLayout              kernel_layout  = op_attr.kernel_layout;
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "weights: {}", weights);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "padding: {}", (int)padding);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "ksize: {} {}", ksize[0], ksize[1]);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "stride: {} {}", stride[0], stride[1]);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "dilation: {} {}", dilation[0], dilation[1]);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "pad: {} {} {} {}", pad[0], pad[1], pad[2], pad[3]);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "multiplier: {}", multiplier);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "input_layout: {}", (int)input_layout);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "kernel_layout: {}", (int)kernel_layout);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "weights       : {}", weights);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "padding       : {}", (int)padding);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "ksize         : {} {}", ksize[0], ksize[1]);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "stride        : {} {}", stride[0], stride[1]);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "dilation      : {} {}", dilation[0], dilation[1]);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "pad           : {} {} {} {}", pad[0], pad[1], pad[2], pad[3]);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "multiplier    : {}", multiplier);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "input_layout  : {}", (int)input_layout);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "kernel_layout : {}", (int)kernel_layout);
         return graph->CreateOperation<ops::Conv2d>(weights, padding, ksize, stride, 
             dilation, pad, multiplier, input_layout, kernel_layout).get();
     }
