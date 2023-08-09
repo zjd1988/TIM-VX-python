@@ -3,16 +3,10 @@ import copy
 import json
 import numpy as np
 from .lib.pytimvx import *
+from .common import TimVxDataType
+from .logging import get_logger
 
-TimVxDataType = ["INT8", "UINT8", "INT16", "UINT16", "INT32", "UINT32", "FLOAT16", "FLOAT32", "BOOL8"]
-
-def setLogLevel(log_level:str="DEBUG"):
-    LOG_LEVEL_MAP = {"TRACE" : 0,
-                     "DEBUG" : 1,
-                     "INFO"  : 2,
-                     "WARN"  : 3,
-                     "ERROR" : 4}
-    return set_log_level(LOG_LEVEL_MAP[log_level])
+engine_logger = get_logger(__name__)
 
 class Engine():
     def __init__(self, name:str):
@@ -28,51 +22,51 @@ class Engine():
         self.outputs_alias = {}
 
 
-    def set_mean_value(self, input_name:str, mean_value:list):
+    def set_mean_value(self, input_name:str, mean_value:list)->None:
         self.mean_value[input_name] = mean_value
 
 
-    def set_std_value(self, input_name:str, std_value:list):
+    def set_std_value(self, input_name:str, std_value:list)->None:
         self.std_value[input_name] = std_value
 
 
-    def set_reorder(self, input_name:str, reorder:list):
+    def set_reorder(self, input_name:str, reorder:list)->None:
         if reorder != [0, 1, 2] and reorder != [2, 1, 0]:
             assert False, "invaid channel reorder {}".format(reorder)
         self.reorder[input_name] = reorder
 
 
-    def add_inputs_info(self, tensor_info:dict):
+    def add_inputs_info(self, tensor_info:dict)->None:
         input_name = tensor_info["name"]
         assert input_name not in self.inputs_info, "tensor {} already exists!".format(input_name)
         self.inputs_info[input_name] = tensor_info
         if "alias" in tensor_info.keys():
             alias_name = tensor_info["alias"]
             self.inputs_alias[alias_name] = input_name
-        print("add input tensor {}:\n{}".format(input_name, tensor_info))
+        engine_logger.info("add input tensor {}:\n{}".format(input_name, tensor_info))
 
 
-    def add_outputs_info(self, tensor_info:dict):
+    def add_outputs_info(self, tensor_info:dict)->None:
         output_name = tensor_info["name"]
         assert output_name not in self.outputs_info, "tensor {} already exists!".format(output_name)
         self.outputs_info[output_name] = tensor_info
         if "alias" in tensor_info.keys():
             alias_name = tensor_info["alias"]
             self.outputs_alias[alias_name] = output_name
-        print("add output tensor {}:\n{}".format(output_name, tensor_info))
+        engine_logger.info("add output tensor {}:\n{}".format(output_name, tensor_info))
 
 
-    def add_nodes_info(self, node_info:dict):
+    def add_nodes_info(self, node_info:dict)->None:
         self.nodes_info.append(node_info)
 
 
-    def add_tensors_info(self, tensor_info:dict):
+    def add_tensors_info(self, tensor_info:dict)->None:
         tensor_name = tensor_info["name"]
         self.tensors_info.append(tensor_info)
-        print("add tensor {}:\n{}".format(tensor_name, tensor_info))
+        engine_logger.info("add tensor {}:\n{}".format(tensor_name, tensor_info))
 
 
-    def convert_np_dtype_to_tim_dtype(self, datatype):
+    def convert_np_dtype_to_tim_dtype(self, datatype)->str:
         if datatype == np.int8:
             return "INT8"
         elif datatype == np.uint8:
@@ -95,7 +89,7 @@ class Engine():
             assert False, "unspoorted datatype {}, when convert np type to tim type".format(datatype)
 
 
-    def convert_tim_dtype_to_np_dtype(self, datatype:str):
+    def convert_tim_dtype_to_np_dtype(self, datatype:str)->type:
         if datatype == "INT8":
             return np.int8
         elif datatype == "UINT8":
@@ -118,16 +112,16 @@ class Engine():
             assert False, "unspoorted datatype {}, when convert tim tensor type to np type".format(datatype)
 
 
-    def get_graph_name(self):
+    def get_graph_name(self)->str:
         return get_graph_name(self.engine)
 
 
-    def get_tensor_size(self, tensor_name:str):
+    def get_tensor_size(self, tensor_name:str)->int:
         return get_tensor_size(self.engine, tensor_name)
 
 
     def create_tensor(self, tensor_name:str, tensor_dtype:str, tensor_attr:str, \
-        tensor_shape:list, alias_name:str="", quant_info:dict={}, np_data:np.array=np.array([])):
+        tensor_shape:list, alias_name:str="", quant_info:dict={}, np_data:np.array=np.array([]))->dict:
 
         assert tensor_dtype in TimVxDataType, "tim-vx not support {} datatype".format(tensor_dtype)
         tensor_info = {}
@@ -157,15 +151,15 @@ class Engine():
         return tensor_stat_info
 
 
-    def copy_data_from_tensor(self, tensor_name:str, np_data:np.array):
+    def copy_data_from_tensor(self, tensor_name:str, np_data:np.array)->bool:
         return copy_data_from_tensor(self.engine, tensor_name, np_data)
 
 
-    def copy_data_to_tensor(self, tensor_name:str, np_data:np.array):
+    def copy_data_to_tensor(self, tensor_name:str, np_data:np.array)->bool:
         return copy_data_to_tensor(self.engine, tensor_name, np_data)
 
 
-    def create_operation(self, op_info:dict):
+    def create_operation(self, op_info:dict)->bool:
         ret = create_operation(self.engine, op_info)
         op_name = op_info["op_name"]
         if ret and "op_inputs" in op_info.keys():
@@ -178,43 +172,43 @@ class Engine():
         return ret
 
 
-    def get_op_info(self, op_name:str):
+    def get_op_info(self, op_name:str)->dict:
         return get_op_info(self.engine, op_name)
 
 
-    def bind_input(self, op_name:str, tensor_name:str):
+    def bind_input(self, op_name:str, tensor_name:str)->bool:
         return bind_input(self.engine, op_name, tensor_name)
 
 
-    def bind_output(self, op_name:str, tensor_name:str):
+    def bind_output(self, op_name:str, tensor_name:str)->bool:
         return bind_output(self.engine, op_name, tensor_name)
 
 
-    def bind_inputs(self, op_name:str, tensor_names:list):
+    def bind_inputs(self, op_name:str, tensor_names:list)->bool:
         return bind_inputs(self.engine, op_name, tensor_names)
 
 
-    def bind_outputs(self, op_name:str, tensor_names:list):
+    def bind_outputs(self, op_name:str, tensor_names:list)->bool:
         return bind_outputs(self.engine, op_name, tensor_names)
 
 
-    def create_graph(self):
+    def create_graph(self)->bool:
         return create_graph(self.engine)
 
 
-    def verify_graph(self):
+    def verify_graph(self)->bool:
         return verify_graph(self.engine)
 
 
-    def compile_graph(self):
+    def compile_graph(self)->bool:
         return compile_graph(self.engine)
 
 
-    def compile_to_binary(self):
+    def compile_to_binary(self)->bytearray:
         return compile_to_binary(self.engine)
 
 
-    def run_graph(self, input_dict:dict, output_name_list:list=[], pass_through:bool=True, want_float:bool=False):
+    def run_graph(self, input_dict:dict, output_name_list:list=[], pass_through:bool=True, want_float:bool=False)->list:
         for input_name in input_dict.keys():
             # check input tensor name valid
             assert input_name in self.inputs_info.keys() or input_name in self.inputs_alias.keys(), \
@@ -308,20 +302,20 @@ class Engine():
         return outputs
 
 
-    def export_graph(self, graph_json_file:str, weight_bin_file:str, log_flag:bool=False):
+    def export_graph(self, graph_json_file:str, weight_bin_file:str, log_flag:bool=False)->bool:
         graph_json_dict = {}
         # init norm_info
-        print("prepare norm ...")
+        engine_logger.info("prepare norm ...")
         norm_info = {}
         norm_info["mean"] = self.mean_value
         norm_info["std"] = self.std_value
         norm_info["reorder"] = self.reorder
         graph_json_dict["norm"] = norm_info
         if log_flag:
-            print(graph_json_dict["norm"])
+            engine_logger.info(graph_json_dict["norm"])
 
         # init inputs_info
-        print("prepare inputs ...")
+        engine_logger.info("prepare inputs ...")
         inputs_info = []
         for input_name in self.inputs_info.keys():
             input_tensor = {}
@@ -332,12 +326,12 @@ class Engine():
                     item_value = self.convert_np_dtype_to_tim_dtype(item_value)
                 input_tensor[item_key] = item_value
             if log_flag:
-                print(input_tensor)
+                engine_logger.info(input_tensor)
             inputs_info.append(input_tensor)
         graph_json_dict["inputs"] = inputs_info
 
         # init outputs_info
-        print("prepare outputs ...")
+        engine_logger.info("prepare outputs ...")
         outputs_info = []
         for output_name in self.outputs_info.keys():
             output_tensor = {}
@@ -348,12 +342,12 @@ class Engine():
                     item_value = self.convert_np_dtype_to_tim_dtype(item_value)
                 output_tensor[item_key] = item_value
             if log_flag:
-                print(output_tensor)
+                engine_logger.info(output_tensor)
             outputs_info.append(output_tensor)
         graph_json_dict["outputs"] = outputs_info
 
         # init tensors_info
-        print("prepare tensors ...")
+        engine_logger.info("prepare tensors ...")
         weight_offset = 0
         weight_bin_list = []
         tensors_info = []
@@ -371,21 +365,21 @@ class Engine():
                     item_key = "offset"
                 new_tensor_info[item_key] = item_value
             if log_flag:
-                print(new_tensor_info)
+                engine_logger.info(new_tensor_info)
             tensors_info.append(new_tensor_info)
         graph_json_dict["tensors"] = tensors_info
 
         # init nodes_info/inputs_alias/outputs_alias
-        print("prepare nodes/inputs_alias/outputs_alias ...")
+        engine_logger.info("prepare nodes/inputs_alias/outputs_alias ...")
         graph_json_dict["nodes"] = self.nodes_info
         graph_json_dict["inputs_alias"] = self.inputs_alias
         graph_json_dict["outputs_alias"] = self.outputs_alias
         if log_flag:
-            print(graph_json_dict["nodes"])
-            print(graph_json_dict["inputs_alias"])
-            print(graph_json_dict["outputs_alias"])
+            engine_logger.info(graph_json_dict["nodes"])
+            engine_logger.info(graph_json_dict["inputs_alias"])
+            engine_logger.info(graph_json_dict["outputs_alias"])
         # dump to json file/bin file
-        print("write to file ...")
+        engine_logger.info("write to file ...")
         graph_json_obj = json.dumps(graph_json_dict, indent=4)
         with open(graph_json_file, "w") as f:
             f.write(graph_json_obj)
@@ -394,5 +388,5 @@ class Engine():
             for index in range(len(weight_bin_list)):
                 f.write(weight_bin_list[index])
 
-        print("export success.")
+        engine_logger.info("export success.")
         return True

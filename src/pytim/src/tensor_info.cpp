@@ -120,17 +120,18 @@ namespace TimVX
                     return false;
                 if (channel_dim < 0)
                 {
-                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {}'s channel dim should greater than 0", tensor_name.c_str());
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {}'s channel_dim should be >= 0, but get {}!", 
+                        tensor_name.c_str(), channel_dim);
                     return false;
                 }
                 if (!parseDynamicList<int32_t>(quant_info, tensor_name, "zero_points", zero_points)
                     || !parseDynamicList<float>(quant_info, tensor_name, "scales", scales))
                     return false;
-                if (zero_points.size() != channel_dim || scales.size() != channel_dim)
-                {
-                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {}'s zero_points/scales len is not equal to channel dim", tensor_name.c_str());
-                    return false;
-                }
+                // if (zero_points.size() != shape[channel_dim] || scales.size() != shape[channel_dim])
+                // {
+                //     TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {}'s zero_points/scales len is not equal to channel dim", tensor_name.c_str());
+                //     return false;
+                // }
             }
             else
             {

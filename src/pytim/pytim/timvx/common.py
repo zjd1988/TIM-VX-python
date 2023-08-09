@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import math
+import numpy as np
+from .lib.pytimvx import *
 PadType = ["NONE", "AUTO", "VALID", "SAME"]
 PoolType = ["MAX", "AVG", "L2", "AVG_ANDROID"]
 RoundType = ["CEILING", "FLOOR"]
@@ -6,6 +9,143 @@ OverflowPolicy = ["WRAP", "SATURATE"]
 RoundingPolicy = ["TO_ZERO", "RTNE"]
 ResizeType = ["NEAREST_NEIGHBOR", "BILINEAR", "AREA"]
 DataLayout = [ "ANY", "WHCN", "CWHN", "IcWHOc", "OcIcWH", "IcOcWH", "WHIcOc", "WCN", "WIcOc"]
+TimVxDataType = ["INT8", "UINT8", "INT16", "UINT16", "INT32", "UINT32", "FLOAT16", "FLOAT32", "BOOL8"]
+QuantType = ["NONE", "ASYMMETRIC", "SYMMETRIC_PER_CHANNEL"]
+
+
+def setLogLevel(log_level:str="DEBUG"):
+    LOG_LEVEL_MAP = {"TRACE" : 0,
+                     "DEBUG" : 1,
+                     "INFO"  : 2,
+                     "WARN"  : 3,
+                     "ERROR" : 4}
+    return set_log_level(LOG_LEVEL_MAP[log_level])
+
+
+def quantizationParams(f_min:float, f_max:float, data_type:type):
+    type_info = np.iinfo(data_type)
+    zero_point = 0
+    scale = 0
+    qmin = type_info.min
+    qmax = type_info.max
+    qmin_double = float(qmin)
+    qmax_double = float(qmax)
+    #   // 0 should always be a representable value. Let's assume that the initial
+    #   // min,max range contains 0.
+    if f_min == f_max:
+        # // Special case where the min,max range is a point. Should be {0}.
+        return scale, zero_point
+
+
+    #   // General case.
+    #   //
+    #   // First determine the scale.
+    scale = (f_max - f_min) / (qmax_double - qmin_double)
+
+    #   // Zero-point computation.
+    #   // First the initial floating-point computation. The zero-point can be
+    #   // determined from solving an affine equation for any known pair
+    #   // (real value, corresponding quantized value).
+    #   // We know two such pairs: (rmin, qmin) and (rmax, qmax).
+    #   // The arithmetic error on the zero point computed from either pair
+    #   // will be roughly machine_epsilon * (sum of absolute values of terms)
+    #   // so we want to use the variant that adds the smaller terms.
+    zero_point_from_min = qmin_double - f_min / scale
+    zero_point_from_max = qmax_double - f_max / scale
+
+    zero_point_from_min_error = abs(qmin_double) + abs(f_min / scale)
+
+    zero_point_from_max_error = abs(qmax_double) + abs(f_max / scale)
+
+    zero_point_double = zero_point_from_min if zero_point_from_min_error < zero_point_from_max_error else zero_point_from_max
+
+    #   // Now we need to nudge the zero point to be an integer
+    #   // (our zero points are integer, and this is motivated by the requirement
+    #   // to be able to represent the real value "0" exactly as a quantized value,
+    #   // which is required in multiple places, for example in Im2col with SAME
+    #   //  padding).
+
+    nudged_zero_point = 0
+    if zero_point_double < qmin_double:
+        nudged_zero_point = qmin
+    elif zero_point_double > qmax_double:
+        nudged_zero_point = qmax
+    else:
+        nudged_zero_point = round(zero_point_double)
+
+    #   // The zero point should always be in the range of quantized value,
+    #   // // [qmin, qmax].
+
+    zero_point = nudged_zero_point
+    #   // finally, return the values
+    return scale, zero_point
+
+
+def quantize(data:'list|np.array', scale:float, zero_point:int, dest_type:type)->list:
+    type_info = np.iinfo(dest_type)
+    min_value = type_info.min
+    max_value = type_info.max
+    if list == type(data):
+        np_array = np.array(data)
+    else:
+        np_array = data
+    np_array_q = np.round((np_array / scale) + zero_point)
+    np_array_q[np_array_q > max_value] = max_value
+    np_array_q[np_array_q < min_value] = min_value
+    return np_array_q.astype(dest_type)
+
+
+def dequantize(data:'list|np.array', scale:float, zero_point:int)->np.array:
+    if list == type(data):
+        np_array = np.array(data)
+    else:
+        np_array = data
+
+    return ((np_array - zero_point) * scale).astype(np.float32)
+
+
+class Quantization():
+    def __init__(self, scale:'int|list', zp:'int|list', quant_type:str="NONE", channel_dim:int=-1):
+        self.type = quant_type
+        self.channel_dim = channel_dim
+        self.scales = list(scale)
+        self.zero_points = list(zp)
+
+
+    def type(self)->str:
+        return type
+
+
+    def setType(self, type:str)->None:
+        if type not in QuantType:
+            print("")
+        else:
+            self.type = type
+    
+
+    def channelDim(self)->int:
+        return self.channel_dim
+
+    
+    def setChannelDim(self, channel_dim:int)->None:
+        self.channel_dim = channel_dim
+
+
+    def scales(self)->list:
+        return self.scales
+
+    
+    def setScales(self, scales:list)->None:
+        self.scales = scales
+
+
+    def zeroPoints(self)->list:
+        return self.zero_points
+
+    
+    def setZeroPoints(self, zps:list)->None:
+        self.zero_points = zps
+
 
 def ConstructConv1dOpConfig(op_name:str, stride:int, dilation:int, ksize:int=0, padding:str="AUTO", 
     pad:list=[0, 0], weights:int=0, multiplier:int=0, kernel_layout:str="WHIcOc", 
@@ -205,7 +345,7 @@ def ConstructSoftmaxOpConfig(op_name:str, beta:float, axis:int=0, op_inputs:list
 
 def ConstructResizeOpConfig(op_name:str, type:str, factor:float, align_corners:bool,
         half_pixel_centers:bool, target_height:int, target_width:int, 
-        layout:str="WHCN", op_inputs:list=[], op_outputs:list=[]):
+        layout:str="WHCN", op_inputs:list=[], op_outputs:list=[])->dict:
 
     op_info_dict = {}
     op_info_dict["op_name"] = op_name
@@ -228,7 +368,7 @@ def ConstructResizeOpConfig(op_name:str, type:str, factor:float, align_corners:b
 
 def ConstructPool2dOpConfig(op_name:str, type:str, ksize:list=[], stride:list=[], padding:str="AUTO",
     pad:list=[0, 0, 0, 0], input_size:list=[], output_size:list=[], round_type:str="FLOOR", 
-    layout:str="WHCN", op_inputs:list=[], op_outputs:list=[]):
+    layout:str="WHCN", op_inputs:list=[], op_outputs:list=[])->dict:
 
     assert padding in PadType, "padding:{} is not in {}".format(padding, PadType)
     assert round_type in RoundType, "round_type:{} is not in {}".format(round_type, RoundType)
@@ -267,7 +407,7 @@ def ConstructPool2dOpConfig(op_name:str, type:str, ksize:list=[], stride:list=[]
     return op_info_dict
 
 
-def ConstructConcatOpConfig(op_name:str, axis:int, op_inputs:list=[], op_outputs:list=[]):
+def ConstructConcatOpConfig(op_name:str, axis:int, op_inputs:list=[], op_outputs:list=[])->dict:
     assert axis >= 0, "axis should greater than zero"
     op_info_dict = {}
     op_info_dict["op_name"] = op_name
@@ -283,7 +423,7 @@ def ConstructConcatOpConfig(op_name:str, axis:int, op_inputs:list=[], op_outputs
     return op_info_dict
 
 
-def ConstructDataConvertConfig(op_name:str, op_inputs:list=[], op_outputs:list=[]):
+def ConstructDataConvertConfig(op_name:str, op_inputs:list=[], op_outputs:list=[])->dict:
     op_info_dict = {}
     op_info_dict["op_name"] = op_name
     op_info_dict["op_type"] = "DataConvert"
