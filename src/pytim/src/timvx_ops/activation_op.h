@@ -19,7 +19,7 @@ namespace TimVX
             // prelu parameter
             struct
             {
-                int axis;
+                int32_t axis;
             } prelu;
             // leakyrelu parameter
             struct

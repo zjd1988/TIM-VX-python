@@ -1,0 +1,36 @@
+/***********************************
+******  batch2space_op.h
+******
+******  Created by zhaojd on 2022/04/29.
+***********************************/
+#pragma once
+#include "timvx_ops/op_creator.h"
+using namespace tim::vx;
+using namespace std;
+
+namespace TimVX
+{
+
+    class Batch2SpaceCreator : public OpCreator
+    {
+    public:
+        struct Batch2SpaceOpAttr
+        {
+            std::vector<int32_t> block_size;
+            std::vector<int32_t> crop;
+            DataLayout           layout;
+        };
+
+        virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
+
+    private:
+        bool parseLayout(const json& op_info, Batch2SpaceOpAttr& op_attr);
+        bool parseBlockSize(const json& op_info, Batch2SpaceOpAttr& op_attr);
+        bool parseCrop(const json& op_info, Batch2SpaceOpAttr& op_attr);
+        bool parseOpAttr(const json& op_info, Batch2SpaceOpAttr& op_attr);
+
+    private:
+        std::string m_op_name = "Batch2Space";
+    };
+
+} // namespace TimVX

@@ -203,6 +203,59 @@ def ConstructConv2dOpConfig(op_name:str, stride:list, dilation:list, ksize:list=
     return op_info_dict
 
 
+def ConstructDeConv1dOpConfig(op_name:str, stride:int, output_padding:int, pad_type:str="AUTO", 
+    oc_count:int=0, ksize:int=0, pad:list=[0, 0], group:int=1, kernel_layout:str="WHIcOc", 
+    op_inputs:list=[], op_outputs:list=[])->dict:
+
+    assert pad_type in PadType, "pad_type:{} is not in {}".format(pad_type, PadType)
+    assert kernel_layout in DataLayout, "kernel_layout:{} is not in {}".format(kernel_layout, DataLayout)
+    op_info_dict = {}
+    op_info_dict["op_name"] = op_name
+    op_info_dict["op_type"] = "DeConv1d"
+    op_attr = {}
+    op_attr["ksize"] = ksize
+    op_attr["stride"] = stride
+    op_attr["output_padding"] = output_padding
+    op_attr["pad_type"] = pad_type
+    op_attr["pad"] = pad
+    op_attr["group"] = group
+    op_attr["kernel_layout"] = kernel_layout
+    op_info_dict["op_attr"] = op_attr
+    if len(op_inputs) > 0:
+        op_info_dict["op_inputs"] = op_inputs
+    if len(op_outputs) > 0:
+        op_info_dict["op_outputs"] = op_outputs
+
+    return op_info_dict
+
+
+def ConstructDeConv2dOpConfig(op_name:str, oc_count:int, stride:list, ksize:list, 
+    output_padding:list, pad_type:str="AUTO", pad:list=[0, 0, 0, 0], group:int=1, 
+    kernel_layout:str="WHIcOc", op_inputs:list=[], op_outputs:list=[])->dict:
+
+    assert pad_type in PadType, "pad_type:{} is not in {}".format(pad_type, PadType)
+    assert kernel_layout in DataLayout, "kernel_layout:{} is not in {}".format(kernel_layout, DataLayout)
+    op_info_dict = {}
+    op_info_dict["op_name"] = op_name
+    op_info_dict["op_type"] = "DeConv2d"
+    op_attr = {}
+    op_attr["ksize"] = ksize
+    op_attr["stride"] = stride
+    op_attr["oc_count"] = oc_count
+    op_attr["pad_type"] = pad_type
+    op_attr["pad"] = pad
+    op_attr["output_padding"] = output_padding
+    op_attr["group"] = group
+    op_attr["kernel_layout"] = kernel_layout
+    op_info_dict["op_attr"] = op_attr
+    if len(op_inputs) > 0:
+        op_info_dict["op_inputs"] = op_inputs
+    if len(op_outputs) > 0:
+        op_info_dict["op_outputs"] = op_outputs
+
+    return op_info_dict
+
+
 def ConstructGroupedConv2dOpConfig(op_name:str, stride:list, dilation:list, grouped_number:int, padding:str="AUTO", 
     pad:list=[0, 0, 0, 0], input_layout:str="WHCN", kernel_layout:str="WHIcOc", 
     op_inputs:list=[], op_outputs:list=[])->dict:
@@ -434,3 +487,107 @@ def ConstructDataConvertConfig(op_name:str, op_inputs:list=[], op_outputs:list=[
     if len(op_outputs) > 0:
         op_info_dict["op_outputs"] = op_outputs
     return op_info_dict
+
+
+def ConstructArgOpConfig(op_name:str, arg_type:str, axis:int=0, op_inputs:list=[], op_outputs:list=[])->dict:
+    # 1 min parameter
+    # axis = None
+    # 2 max parameter
+    # axis = None
+    valid_arg_type = ["Min", "Max",]
+    assert arg_type in valid_arg_type, "arg_type:{} is not in {}".format(arg_type, valid_act_type)
+    op_info_dict = {}
+    op_info_dict["op_name"] = op_name
+    op_info_dict["op_type"] = "Arg"
+    op_attr = {}
+    op_attr["arg_type"] = arg_type
+    op_attr["axis"] = axis
+    op_info_dict["op_attr"] = op_attr
+    if len(op_inputs) > 0:
+        op_info_dict["op_inputs"] = op_inputs
+    if len(op_outputs) > 0:
+        op_info_dict["op_outputs"] = op_outputs
+
+    return op_info_dict
+
+
+def ConstructAddNOpConfig(op_name:str, num_inputs:int, op_inputs:list=[], op_outputs:list=[])->dict:
+    assert num_inputs > 0, "num_inputs:{} should > 0 in AddN".format(num_inputs)
+    op_info_dict = {}
+    op_info_dict["op_name"] = op_name
+    op_attr = {}
+    op_attr["num_inputs"] = num_inputs
+    op_info_dict["op_attr"] = op_attr
+    if len(op_inputs) > 0:
+        op_info_dict["op_inputs"] = op_inputs
+    if len(op_outputs) > 0:
+        op_info_dict["op_outputs"] = op_outputs
+
+    return op_info_dict
+
+
+def ConstructBatch2SpaceOpConfig(op_name:str, block_size:list, crop:list=[], layout:str="WHCN",
+    op_inputs:list=[], op_outputs:list=[])->dict:
+    op_info_dict = {}
+    op_info_dict["op_name"] = op_name
+    op_attr = {}
+    op_attr["block_size"] = block_size
+    op_attr["crop"] = crop
+    op_attr["layout"] = layout
+    op_info_dict["op_attr"] = op_attr
+    if len(op_inputs) > 0:
+        op_info_dict["op_inputs"] = op_inputs
+    if len(op_outputs) > 0:
+        op_info_dict["op_outputs"] = op_outputs
+
+    return op_info_dict
+
+
+def ConstructDepth2SpaceOpConfig(op_name:str, block_size:int, layout:str="WHCN", op_inputs:list=[], 
+    op_outputs:list=[])->dict:
+    op_info_dict = {}
+    op_info_dict["op_name"] = op_name
+    op_attr = {}
+    op_attr["block_size"] = block_size
+    op_attr["layout"] = layout
+    op_info_dict["op_attr"] = op_attr
+    if len(op_inputs) > 0:
+        op_info_dict["op_inputs"] = op_inputs
+    if len(op_outputs) > 0:
+        op_info_dict["op_outputs"] = op_outputs
+
+    return op_info_dict
+
+
+def ConstructClipOpConfig(op_name:str, min:float, max:float, op_inputs:list=[], op_outputs:list=[])->dict:
+    op_info_dict = {}
+    op_info_dict["op_name"] = op_name
+    op_attr = {}
+    op_attr["min"] = min
+    op_attr["max"] = max
+    op_info_dict["op_attr"] = op_attr
+    if len(op_inputs) > 0:
+        op_info_dict["op_inputs"] = op_inputs
+    if len(op_outputs) > 0:
+        op_info_dict["op_outputs"] = op_outputs
+
+    return op_info_dict
+
+
+def ConstructNBGOpConfig(op_name:str, binary:int, input_count:int, output_count:int, 
+    op_inputs:list=[], op_outputs:list=[])->dict:
+    op_info_dict = {}
+    op_info_dict["op_name"] = op_name
+    op_attr = {}
+    op_attr["binary"] = binary
+    op_attr["input_count"] = input_count
+    op_attr["output_count"] = output_count
+    op_info_dict["op_attr"] = op_attr
+    if len(op_inputs) > 0:
+        op_info_dict["op_inputs"] = op_inputs
+    if len(op_outputs) > 0:
+        op_info_dict["op_outputs"] = op_outputs
+
+    return op_info_dict
+
+
