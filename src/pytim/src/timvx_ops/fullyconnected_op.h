@@ -23,6 +23,8 @@ namespace TimVX
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
+        bool parseAxisAttr(const json& op_info, FullyConnectedOpAttr& op_attr);
+        bool parseWeightsAttr(const json& op_info, FullyConnectedOpAttr& op_attr);
         bool parseOpAttr(const json& op_info, FullyConnectedOpAttr& op_attr);
 
     private:

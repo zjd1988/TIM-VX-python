@@ -17,12 +17,14 @@ namespace TimVX
         struct ConcatOpAttr
         {
             uint32_t axis;
-            int input_cnt;
+            int32_t  input_cnt;
         };
     
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
+        bool parseAxisAttr(const json& op_info, ConcatOpAttr& op_attr);
+        bool parseInputCntAttr(const json& op_info, ConcatOpAttr& op_attr);
         bool parseOpAttr(const json& op_info, ConcatOpAttr& op_attr);
 
     private:

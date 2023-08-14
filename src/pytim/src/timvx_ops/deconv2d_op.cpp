@@ -9,42 +9,42 @@
 namespace TimVX
 {
 
-    bool DeConv2dCreator::parseOcCount(const json& op_info, DeConv2dOpAttr& op_attr)
+    bool DeConv2dCreator::parseOcCountAttr(const json& op_info, DeConv2dOpAttr& op_attr)
     {
         return parseValue<uint32_t>(op_info, m_op_name, "oc_count", op_attr.oc_count);
     }
 
-    bool DeConv2dCreator::parsePadding(const json& op_info, DeConv2dOpAttr& op_attr)
+    bool DeConv2dCreator::parsePaddingAttr(const json& op_info, DeConv2dOpAttr& op_attr)
     {
         return parsePadType(op_info, m_op_name, "pad_type", op_attr.pad_type);
     }
 
-    bool DeConv2dCreator::parseKsize(const json& op_info, DeConv2dOpAttr& op_attr)
+    bool DeConv2dCreator::parseKsizeAttr(const json& op_info, DeConv2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "ksize", op_attr.ksize);
     }
 
-    bool DeConv2dCreator::parseStride(const json& op_info, DeConv2dOpAttr& op_attr)
+    bool DeConv2dCreator::parseStrideAttr(const json& op_info, DeConv2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "stride", op_attr.stride);
     }
 
-    bool DeConv2dCreator::parseOutputPadding(const json& op_info, DeConv2dOpAttr& op_attr)
+    bool DeConv2dCreator::parseOutputPaddingAttr(const json& op_info, DeConv2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "output_padding", op_attr.output_padding);
     }
 
-    bool DeConv2dCreator::parsePad(const json& op_info, DeConv2dOpAttr& op_attr)
+    bool DeConv2dCreator::parsePadAttr(const json& op_info, DeConv2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 4>(op_info, m_op_name, "pad", op_attr.pad, false);
     }
 
-    bool DeConv2dCreator::parseGroup(const json& op_info, DeConv2dOpAttr& op_attr)
+    bool DeConv2dCreator::parseGroupAttr(const json& op_info, DeConv2dOpAttr& op_attr)
     {
         return parseValue<uint32_t>(op_info, m_op_name, "group", op_attr.group, false);
     }
 
-    bool DeConv2dCreator::parseKernelLayout(const json& op_info, DeConv2dOpAttr& op_attr)
+    bool DeConv2dCreator::parseKernelLayoutAttr(const json& op_info, DeConv2dOpAttr& op_attr)
     {
         return parseDataLayoutType(op_info, m_op_name, "kernel_layout", op_attr.kernel_layout, false);
     }
@@ -58,10 +58,10 @@ namespace TimVX
         op_attr.pad = {0, 0, 0, 0};
         op_attr.input_layout = DataLayout::WHCN;
         op_attr.kernel_layout = DataLayout::WHIcOc;
-        return parseOcCount(op_info, op_attr) && parsePadding(op_info, op_attr) && 
-            parseKsize(op_info, op_attr) && parseStride(op_info, op_attr) && 
-            parseOutputPadding(op_info, op_attr) && parsePad(op_info, op_attr) && 
-            parseGroup(op_info, op_attr) && parseKernelLayout(op_info, op_attr);
+        return parseOcCountAttr(op_info, op_attr) && parsePaddingAttr(op_info, op_attr) && 
+            parseKsizeAttr(op_info, op_attr) && parseStrideAttr(op_info, op_attr) && 
+            parseOutputPaddingAttr(op_info, op_attr) && parsePadAttr(op_info, op_attr) && 
+            parseGroupAttr(op_info, op_attr) && parseKernelLayoutAttr(op_info, op_attr);
     }
 
     Operation* DeConv2dCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)

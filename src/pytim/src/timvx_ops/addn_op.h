@@ -22,7 +22,7 @@ namespace TimVX
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
-        bool parseNumInput(const json& op_info, AddNOpAttr& op_attr);
+        bool parseNumInputAttr(const json& op_info, AddNOpAttr& op_attr);
         bool parseOpAttr(const json& op_info, AddNOpAttr& op_attr);
 
     private:

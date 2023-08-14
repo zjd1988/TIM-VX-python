@@ -41,47 +41,47 @@ namespace TimVX
         }
     }
 
-    bool Pool2dCreator::parseType(const json& op_info, Pool2dOpAttr& op_attr)
+    bool Pool2dCreator::parseTypeAttr(const json& op_info, Pool2dOpAttr& op_attr)
     {
         return parsePoolType(op_info, m_op_name, "type", op_attr.type);
     }
 
-    bool Pool2dCreator::parsePadding(const json& op_info, Pool2dOpAttr& op_attr)
+    bool Pool2dCreator::parsePaddingAttr(const json& op_info, Pool2dOpAttr& op_attr)
     {
         return parsePadType(op_info, m_op_name, "padding", op_attr.padding);
     }
 
-    bool Pool2dCreator::parsePad(const json& op_info, Pool2dOpAttr& op_attr)
+    bool Pool2dCreator::parsePadAttr(const json& op_info, Pool2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 4>(op_info, m_op_name, "pad", op_attr.pad);
     }
 
-    bool Pool2dCreator::parseKsize(const json& op_info, Pool2dOpAttr& op_attr)
+    bool Pool2dCreator::parseKsizeAttr(const json& op_info, Pool2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "ksize", op_attr.ksize);
     }
 
-    bool Pool2dCreator::parseStride(const json& op_info, Pool2dOpAttr& op_attr)
+    bool Pool2dCreator::parseStrideAttr(const json& op_info, Pool2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "stride", op_attr.stride);
     }
 
-    bool Pool2dCreator::parseInputSize(const json& op_info, Pool2dOpAttr& op_attr)
+    bool Pool2dCreator::parseInputSizeAttr(const json& op_info, Pool2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "input_size", op_attr.input_size);
     }
 
-    bool Pool2dCreator::parseOutputSize(const json& op_info, Pool2dOpAttr& op_attr)
+    bool Pool2dCreator::parseOutputSizeAttr(const json& op_info, Pool2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "output_size", op_attr.output_size);
     }
 
-    bool Pool2dCreator::parseRoundType(const json& op_info, Pool2dOpAttr& op_attr)
+    bool Pool2dCreator::parseRoundTypeAttr(const json& op_info, Pool2dOpAttr& op_attr)
     {
         return OpCreator::parseRoundType(op_info, m_op_name, "round_type", op_attr.round_type, false);
     }
 
-    bool Pool2dCreator::parseLayout(const json& op_info, Pool2dOpAttr& op_attr)
+    bool Pool2dCreator::parseLayoutAttr(const json& op_info, Pool2dOpAttr& op_attr)
     {
         return parseDataLayoutType(op_info, m_op_name, "layout", op_attr.layout, false);
     }
@@ -91,23 +91,23 @@ namespace TimVX
         op_attr.round_type = RoundType::FLOOR;
         op_attr.layout = DataLayout::WHCN;
         if (Classic_Pool2d_1 == cfg_type)
-            return parseType(op_info, op_attr) && parsePadding(op_info, op_attr) && 
-                parseKsize(op_info, op_attr) && parseStride(op_info, op_attr) && 
-                parseRoundType(op_info, op_attr) && parseLayout(op_info, op_attr);
+            return parseTypeAttr(op_info, op_attr) && parsePaddingAttr(op_info, op_attr) && 
+                parseKsizeAttr(op_info, op_attr) && parseStrideAttr(op_info, op_attr) && 
+                parseRoundTypeAttr(op_info, op_attr) && parseLayoutAttr(op_info, op_attr);
 
         else if (Classic_Pool2d_2 == cfg_type)
-            return parseType(op_info, op_attr) && parsePad(op_info, op_attr) && 
-                parseKsize(op_info, op_attr) && parseStride(op_info, op_attr) && 
-                parseRoundType(op_info, op_attr) && parseLayout(op_info, op_attr);
+            return parseTypeAttr(op_info, op_attr) && parsePadAttr(op_info, op_attr) && 
+                parseKsizeAttr(op_info, op_attr) && parseStrideAttr(op_info, op_attr) && 
+                parseRoundTypeAttr(op_info, op_attr) && parseLayoutAttr(op_info, op_attr);
 
         else if (Global_Pool2d == cfg_type)
-            return parseType(op_info, op_attr) && parseInputSize(op_info, op_attr) && 
-                parseRoundType(op_info, op_attr) && parseLayout(op_info, op_attr);
+            return parseTypeAttr(op_info, op_attr) && parseInputSizeAttr(op_info, op_attr) && 
+                parseRoundTypeAttr(op_info, op_attr) && parseLayoutAttr(op_info, op_attr);
 
         else if (Adaptive_Pool2d == cfg_type)
-            return parseType(op_info, op_attr) && parseInputSize(op_info, op_attr) && 
-                parseOutputSize(op_info, op_attr) && parseRoundType(op_info, op_attr) && 
-                parseLayout(op_info, op_attr);
+            return parseTypeAttr(op_info, op_attr) && parseInputSizeAttr(op_info, op_attr) && 
+                parseOutputSizeAttr(op_info, op_attr) && parseRoundTypeAttr(op_info, op_attr) && 
+                parseLayoutAttr(op_info, op_attr);
         else
             return false;
     }

@@ -46,15 +46,15 @@ namespace TimVX
 
     private:
         Pool2dCfgType getPool2dType(const json& op_info);
-        bool parsePad(const json& op_info, Pool2dOpAttr& op_attr);
-        bool parsePadding(const json& op_info, Pool2dOpAttr& op_attr);
-        bool parseType(const json& op_info, Pool2dOpAttr& op_attr);
-        bool parseKsize(const json& op_info, Pool2dOpAttr& op_attr);
-        bool parseStride(const json& op_info, Pool2dOpAttr& op_attr);
-        bool parseInputSize(const json& op_info, Pool2dOpAttr& op_attr);
-        bool parseOutputSize(const json& op_info, Pool2dOpAttr& op_attr);
-        bool parseRoundType(const json& op_info, Pool2dOpAttr& op_attr);
-        bool parseLayout(const json& op_info, Pool2dOpAttr& op_attr);
+        bool parsePadAttr(const json& op_info, Pool2dOpAttr& op_attr);
+        bool parsePaddingAttr(const json& op_info, Pool2dOpAttr& op_attr);
+        bool parseTypeAttr(const json& op_info, Pool2dOpAttr& op_attr);
+        bool parseKsizeAttr(const json& op_info, Pool2dOpAttr& op_attr);
+        bool parseStrideAttr(const json& op_info, Pool2dOpAttr& op_attr);
+        bool parseInputSizeAttr(const json& op_info, Pool2dOpAttr& op_attr);
+        bool parseOutputSizeAttr(const json& op_info, Pool2dOpAttr& op_attr);
+        bool parseRoundTypeAttr(const json& op_info, Pool2dOpAttr& op_attr);
+        bool parseLayoutAttr(const json& op_info, Pool2dOpAttr& op_attr);
         bool parseOpAttr(const json& op_info, Pool2dOpAttr& op_attr, Pool2dCfgType pool_type);
 
     private:

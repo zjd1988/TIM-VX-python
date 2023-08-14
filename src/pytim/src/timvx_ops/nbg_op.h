@@ -24,9 +24,9 @@ namespace TimVX
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
-        bool parseBinary(const json& op_info, NBGOpAttr& op_attr);
-        bool parseInputCount(const json& op_info, NBGOpAttr& op_attr);
-        bool parseOutputCount(const json& op_info, NBGOpAttr& op_attr);
+        bool parseBinaryAttr(const json& op_info, NBGOpAttr& op_attr);
+        bool parseInputCountAttr(const json& op_info, NBGOpAttr& op_attr);
+        bool parseOutputCountAttr(const json& op_info, NBGOpAttr& op_attr);
         bool parseOpAttr(const json& op_info, NBGOpAttr& op_attr);
 
     private:

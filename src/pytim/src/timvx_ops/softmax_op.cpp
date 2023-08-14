@@ -9,10 +9,19 @@
 namespace TimVX
 {
 
+    bool SoftmaxCreator::parseBetaAttr(const json& op_info, SoftmaxOpAttr& op_attr)
+    {
+        return parseValue<float>(op_info, m_op_name, "beta", op_attr.beta);
+    }
+
+    bool SoftmaxCreator::parseAxisAttr(const json& op_info, SoftmaxOpAttr& op_attr)
+    {
+        return parseValue<int32_t>(op_info, m_op_name, "axis", op_attr.axis);
+    }
+
     bool SoftmaxCreator::parseOpAttr(const json& op_info, SoftmaxOpAttr& op_attr)
     {
-        return parseValue<float>(op_info, m_op_name, "beta", op_attr.beta) &&
-            parseValue<int32_t>(op_info, m_op_name, "axis", op_attr.axis);
+        return parseBetaAttr(op_info, op_attr) && parseAxisAttr(op_info, op_attr);
     }
 
     Operation* SoftmaxCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)

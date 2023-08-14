@@ -9,19 +9,19 @@
 namespace TimVX
 {
 
-    bool ClipCreator::parseMin(const json& op_info, ClipOpAttr& op_attr)
+    bool ClipCreator::parseMinAttr(const json& op_info, ClipOpAttr& op_attr)
     {
         return parseValue<float>(op_info, m_op_name, "min", op_attr.min);
     }
 
-    bool ClipCreator::parseMax(const json& op_info, ClipOpAttr& op_attr)
+    bool ClipCreator::parseMaxAttr(const json& op_info, ClipOpAttr& op_attr)
     {
         return parseValue<float>(op_info, m_op_name, "max", op_attr.max);
     }
 
     bool ClipCreator::parseOpAttr(const json& op_info, ClipOpAttr& op_attr)
     {
-        return parseMin(op_info, op_attr) && parseMax(op_info, op_attr);
+        return parseMinAttr(op_info, op_attr) && parseMaxAttr(op_info, op_attr);
     }
 
     Operation* ClipCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)

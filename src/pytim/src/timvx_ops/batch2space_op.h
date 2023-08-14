@@ -24,9 +24,9 @@ namespace TimVX
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
-        bool parseLayout(const json& op_info, Batch2SpaceOpAttr& op_attr);
-        bool parseBlockSize(const json& op_info, Batch2SpaceOpAttr& op_attr);
-        bool parseCrop(const json& op_info, Batch2SpaceOpAttr& op_attr);
+        bool parseLayoutAttr(const json& op_info, Batch2SpaceOpAttr& op_attr);
+        bool parseBlockSizeAttr(const json& op_info, Batch2SpaceOpAttr& op_attr);
+        bool parseCropAttr(const json& op_info, Batch2SpaceOpAttr& op_attr);
         bool parseOpAttr(const json& op_info, Batch2SpaceOpAttr& op_attr);
 
     private:

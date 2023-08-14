@@ -9,16 +9,48 @@
 namespace TimVX
 {
 
+    bool ResizeCreator::parseTypeAttr(const json& op_info, ResizeOpAttr& op_attr)
+    {
+        return parseResizeType(op_info, m_op_name, "type", op_attr.type);
+    }
+
+    bool ResizeCreator::parseFactorAttr(const json& op_info, ResizeOpAttr& op_attr)
+    {
+        return parseValue<float>(op_info, m_op_name, "factor", op_attr.factor);
+    }
+
+    bool ResizeCreator::parseAlignCornersAttr(const json& op_info, ResizeOpAttr& op_attr)
+    {
+        return parseValue<bool>(op_info, m_op_name, "align_corners", op_attr.align_corners);
+    }
+
+    bool ResizeCreator::parseHalfPixelCentersAttr(const json& op_info, ResizeOpAttr& op_attr)
+    {
+        return parseValue<bool>(op_info, m_op_name, "half_pixel_centers", op_attr.half_pixel_centers);
+    }
+
+    bool ResizeCreator::parseTargetHeightAttr(const json& op_info, ResizeOpAttr& op_attr)
+    {
+        return parseValue<int32_t>(op_info, m_op_name, "target_height", op_attr.target_height);
+    }
+
+    bool ResizeCreator::parseTargetWidthAttr(const json& op_info, ResizeOpAttr& op_attr)
+    {
+        return parseValue<int32_t>(op_info, m_op_name, "target_width", op_attr.target_width);
+    }
+
+    bool ResizeCreator::parseLayoutAttr(const json& op_info, ResizeOpAttr& op_attr)
+    {
+        return parseDataLayoutType(op_info, m_op_name, "layout", op_attr.layout);
+    }
+
     bool ResizeCreator::parseOpAttr(const json& op_info, ResizeOpAttr& op_attr)
     {
         op_attr.layout = DataLayout::WHCN;
-        return parseResizeType(op_info, m_op_name, "type", op_attr.type) && 
-           parseValue<float>(op_info, m_op_name, "factor", op_attr.factor) && 
-           parseValue<bool>(op_info, m_op_name, "align_corners", op_attr.align_corners) && 
-           parseValue<bool>(op_info, m_op_name, "half_pixel_centers", op_attr.half_pixel_centers) && 
-           parseValue<int32_t>(op_info, m_op_name, "target_height", op_attr.target_height) && 
-           parseValue<int32_t>(op_info, m_op_name, "target_width", op_attr.target_width) && 
-           parseDataLayoutType(op_info, m_op_name, "layout", op_attr.layout);
+        return parseTypeAttr(op_info, op_attr) && parseFactorAttr(op_info, op_attr) && 
+            parseAlignCornersAttr(op_info, op_attr) && parseHalfPixelCentersAttr(op_info, op_attr) && 
+            parseTargetHeightAttr(op_info, op_attr) && parseTargetWidthAttr(op_info, op_attr) && 
+            parseLayoutAttr(op_info, op_attr);
     }
 
     Operation* ResizeCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)

@@ -9,26 +9,33 @@ namespace TimVX
 {
 
     extern void registerActivationOpCreator();
-    extern void registerEltwiseOpCreator();
+    extern void registerAddNOpCreator();
+    extern void registerArgOpCreator();
+    extern void registerBatch2SpaceOpCreator();
+    extern void registerBatchNormCreator();
+    extern void registerClipOpCreator();
+    extern void registerConcatOpCreator();
     extern void registerConv1dOpCreator();
     extern void registerConv2dOpCreator();
+    extern void registerDataConvertOpCreator();
     extern void registerDeConv1dOpCreator();
     extern void registerDeConv2dOpCreator();
-    extern void registerGroupedConv2dOpCreator();
+    extern void registerDepth2SpaceOpCreator();
+    extern void registerDropoutOpCreator();
+    extern void registerEltwiseOpCreator();
     extern void registerFullyConnectedOpCreator();
-    extern void registerSoftmaxOpCreator();
+    extern void registerGatherOpCreator();
+    extern void registerGatherNdOpCreator();
+    extern void registerGroupedConv2dOpCreator();
+    extern void registerInstanceNormalizationOpCreator();
+    extern void registerL2NormalizationOpCreator();
+    extern void registerLayerNormalizationOpCreator();
+    extern void registerNBGOpCreator();
     extern void registerPool2dOpCreator();
     extern void registerReshapeOpCreator();
     extern void registerResizeOpCreator();
+    extern void registerSoftmaxOpCreator();
     extern void registerTransposeOpCreator();
-    extern void registerConcatOpCreator();
-    extern void registerDataConvertOpCreator();
-    extern void registerArgOpCreator();
-    extern void registerNBGOpCreator();
-    extern void registerBatch2SpaceOpCreator();
-    extern void registerAddNOpCreator();
-    extern void registerClipOpCreator();
-    extern void registerDepth2SpaceOpCreator();
 
     static std::once_flag s_flag;
     void registerOps()
@@ -36,26 +43,33 @@ namespace TimVX
         std::call_once(s_flag, [&]() 
         {
             registerActivationOpCreator();
-            registerEltwiseOpCreator();
+            registerAddNOpCreator();
+            registerArgOpCreator();
+            registerBatch2SpaceOpCreator();
+            registerBatchNormCreator();
+            registerClipOpCreator();
+            registerConcatOpCreator();
             registerConv1dOpCreator();
             registerConv2dOpCreator();
+            registerDataConvertOpCreator();
             registerDeConv1dOpCreator();
             registerDeConv2dOpCreator();
-            registerGroupedConv2dOpCreator();
+            registerDepth2SpaceOpCreator();
+            registerDropoutOpCreator();
+            registerEltwiseOpCreator();
             registerFullyConnectedOpCreator();
-            registerSoftmaxOpCreator();
+            registerGatherOpCreator();
+            registerGatherNdOpCreator();
+            registerGroupedConv2dOpCreator();
+            registerInstanceNormalizationOpCreator();
+            registerL2NormalizationOpCreator();
+            registerLayerNormalizationOpCreator();
+            registerNBGOpCreator();
             registerPool2dOpCreator();
             registerReshapeOpCreator();
             registerResizeOpCreator();
+            registerSoftmaxOpCreator();
             registerTransposeOpCreator();
-            registerConcatOpCreator();
-            registerDataConvertOpCreator();
-            registerArgOpCreator();
-            registerNBGOpCreator();
-            registerBatch2SpaceOpCreator();
-            registerAddNOpCreator();
-            registerClipOpCreator();
-            registerDepth2SpaceOpCreator();
         });
     }
 

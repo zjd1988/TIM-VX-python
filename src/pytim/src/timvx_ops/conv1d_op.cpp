@@ -9,42 +9,42 @@
 namespace TimVX
 {
 
-    bool Conv1dCreator::parseWeights(const json& op_info, Conv1dOpAttr& op_attr)
+    bool Conv1dCreator::parseWeightsAttr(const json& op_info, Conv1dOpAttr& op_attr)
     {
         return parseValue<uint32_t>(op_info, m_op_name, "weights", op_attr.weights, false);
     }
 
-    bool Conv1dCreator::parsePadding(const json& op_info, Conv1dOpAttr& op_attr)
+    bool Conv1dCreator::parsePaddingAttr(const json& op_info, Conv1dOpAttr& op_attr)
     {
         return parsePadType(op_info, m_op_name, "padding", op_attr.padding, false);
     }
 
-    bool Conv1dCreator::parseKsize(const json& op_info, Conv1dOpAttr& op_attr)
+    bool Conv1dCreator::parseKsizeAttr(const json& op_info, Conv1dOpAttr& op_attr)
     {
         return parseValue<uint32_t>(op_info, m_op_name, "ksize", op_attr.ksize, false);
     }
 
-    bool Conv1dCreator::parseStride(const json& op_info, Conv1dOpAttr& op_attr)
+    bool Conv1dCreator::parseStrideAttr(const json& op_info, Conv1dOpAttr& op_attr)
     {
         return parseValue<uint32_t>(op_info, m_op_name, "stride", op_attr.stride);
     }
 
-    bool Conv1dCreator::parseDilation(const json& op_info, Conv1dOpAttr& op_attr)
+    bool Conv1dCreator::parseDilationAttr(const json& op_info, Conv1dOpAttr& op_attr)
     {
         return parseValue<uint32_t>(op_info, m_op_name, "dilation", op_attr.dilation);
     }
 
-    bool Conv1dCreator::parsePad(const json& op_info, Conv1dOpAttr& op_attr)
+    bool Conv1dCreator::parsePadAttr(const json& op_info, Conv1dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "pad", op_attr.pad, false);
     }
 
-    bool Conv1dCreator::parseMultiplier(const json& op_info, Conv1dOpAttr& op_attr)
+    bool Conv1dCreator::parseMultiplierAttr(const json& op_info, Conv1dOpAttr& op_attr)
     {
         return parseValue<int32_t>(op_info, m_op_name, "multiplier", op_attr.multiplier, false);
     }
 
-    bool Conv1dCreator::parseKernelLayout(const json& op_info, Conv1dOpAttr& op_attr)
+    bool Conv1dCreator::parseKernelLayoutAttr(const json& op_info, Conv1dOpAttr& op_attr)
     {
         return parseDataLayoutType(op_info, m_op_name, "kernel_layout", op_attr.kernel_layout, false);
     }
@@ -58,10 +58,10 @@ namespace TimVX
         op_attr.pad = {0, 0};
         op_attr.input_layout = DataLayout::WHCN; // always set WHCN
         op_attr.kernel_layout = DataLayout::WHIcOc;
-        return parseWeights(op_info, op_attr) && parsePadding(op_info, op_attr) && 
-            parseKsize(op_info, op_attr) && parseStride(op_info, op_attr) && 
-            parseDilation(op_info, op_attr) && parsePad(op_info, op_attr) && 
-            parseMultiplier(op_info, op_attr) && parseKernelLayout(op_info, op_attr);
+        return parseWeightsAttr(op_info, op_attr) && parsePaddingAttr(op_info, op_attr) && 
+            parseKsizeAttr(op_info, op_attr) && parseStrideAttr(op_info, op_attr) && 
+            parseDilationAttr(op_info, op_attr) && parsePadAttr(op_info, op_attr) && 
+            parseMultiplierAttr(op_info, op_attr) && parseKernelLayoutAttr(op_info, op_attr);
     }
 
     Operation* Conv1dCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)

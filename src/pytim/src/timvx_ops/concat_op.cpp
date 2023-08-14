@@ -9,10 +9,19 @@
 namespace TimVX
 {
 
+    bool ConcatCreator::parseAxisAttr(const json& op_info, ConcatOpAttr& op_attr)
+    {
+        return parseValue<uint32_t>(op_info, m_op_name, "axis", op_attr.axis);
+    }
+
+    bool ConcatCreator::parseInputCntAttr(const json& op_info, ConcatOpAttr& op_attr)
+    {
+        return parseValue<int32_t>(op_info, m_op_name, "input_cnt", op_attr.input_cnt);
+    }
+
     bool ConcatCreator::parseOpAttr(const json& op_info, ConcatOpAttr& op_attr)
     {
-        return parseValue<uint32_t>(op_info, m_op_name, "axis", op_attr.axis) &&
-            parseValue<int>(op_info, m_op_name, "input_cnt", op_attr.input_cnt);
+        return parseAxisAttr(op_info, op_attr) && parseInputCntAttr(op_info, op_attr);
     }
 
     Operation* ConcatCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)

@@ -28,13 +28,13 @@ namespace TimVX
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
-        bool parse_padding(const json& op_info, GroupedConv2dOpAttr& op_attr);
-        bool parse_stride(const json& op_info, GroupedConv2dOpAttr& op_attr);
-        bool parse_dilation(const json& op_info, GroupedConv2dOpAttr& op_attr);
-        bool parse_pad(const json& op_info, GroupedConv2dOpAttr& op_attr);
-        bool parse_grouped_number(const json& op_info, GroupedConv2dOpAttr& op_attr);
-        bool parse_input_layout(const json& op_info, GroupedConv2dOpAttr& op_attr);
-        bool parse_kernel_layout(const json& op_info, GroupedConv2dOpAttr& op_attr);
+        bool parsePaddingAttr(const json& op_info, GroupedConv2dOpAttr& op_attr);
+        bool parseStrideAttr(const json& op_info, GroupedConv2dOpAttr& op_attr);
+        bool parseDilationAttr(const json& op_info, GroupedConv2dOpAttr& op_attr);
+        bool parsePadAttr(const json& op_info, GroupedConv2dOpAttr& op_attr);
+        bool parseGroupedNumberAttr(const json& op_info, GroupedConv2dOpAttr& op_attr);
+        bool parseInputLayoutAttr(const json& op_info, GroupedConv2dOpAttr& op_attr);
+        bool parseKernelLayoutAttr(const json& op_info, GroupedConv2dOpAttr& op_attr);
         bool parseOpAttr(const json& op_info, GroupedConv2dOpAttr& op_attr);
 
     private:

@@ -9,9 +9,14 @@
 namespace TimVX
 {
 
-    bool TransposeCreator::parseOpAttr(const json& op_info, TransposeOpAttr& op_attr)
+    bool TransposeCreator::parsePermAttr(const json& op_info, TransposeOpAttr& op_attr)
     {
         return parseDynamicList<uint32_t>(op_info, m_op_name, "perm", op_attr.perm);
+    }
+
+    bool TransposeCreator::parseOpAttr(const json& op_info, TransposeOpAttr& op_attr)
+    {
+        return parsePermAttr(op_info, op_attr);
     }
 
     Operation* TransposeCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)

@@ -9,11 +9,20 @@
 namespace TimVX
 {
 
+    bool FullyConnectedCreator::parseAxisAttr(const json& op_info, FullyConnectedOpAttr& op_attr)
+    {
+        return parseValue<uint32_t>(op_info, m_op_name, "axis", op_attr.axis);
+    }
+
+    bool FullyConnectedCreator::parseWeightsAttr(const json& op_info, FullyConnectedOpAttr& op_attr)
+    {
+        return parseValue<uint32_t>(op_info, m_op_name, "weights", op_attr.weights, false);
+    }
+
     bool FullyConnectedCreator::parseOpAttr(const json& op_info, FullyConnectedOpAttr& op_attr)
     {
         op_attr.weights = 0;
-        return parseValue<uint32_t>(op_info, m_op_name, "axis", op_attr.axis) &&
-            parseValue<uint32_t>(op_info, m_op_name, "weights", op_attr.weights, false);
+        return parseAxisAttr(op_info, op_attr) && parseWeightsAttr(op_info, op_attr);
     }
 
     Operation* FullyConnectedCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)

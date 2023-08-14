@@ -9,9 +9,14 @@
 namespace TimVX
 {
 
-    bool ReshapeCreator::parseOpAttr(const json& op_info, ReshapeOpAttr& op_attr)
+    bool ReshapeCreator::parseSizeAttr(const json& op_info, ReshapeOpAttr& op_attr)
     {
         return parseDynamicList<uint32_t>(op_info, m_op_name, "size", op_attr.size);
+    }
+
+    bool ReshapeCreator::parseOpAttr(const json& op_info, ReshapeOpAttr& op_attr)
+    {
+        return parseSizeAttr(op_info, op_attr);
     }
 
     Operation* ReshapeCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)

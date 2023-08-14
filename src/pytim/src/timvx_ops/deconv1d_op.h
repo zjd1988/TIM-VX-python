@@ -30,14 +30,14 @@ namespace TimVX
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
-        bool parseOcCount(const json& op_info, DeConv1dOpAttr& op_attr);
-        bool parsePadding(const json& op_info, DeConv1dOpAttr& op_attr);
-        bool parseKsize(const json& op_info, DeConv1dOpAttr& op_attr);
-        bool parseStride(const json& op_info, DeConv1dOpAttr& op_attr);
-        bool parseOutputPadding(const json& op_info, DeConv1dOpAttr& op_attr);
-        bool parsePad(const json& op_info, DeConv1dOpAttr& op_attr);
-        bool parseGroup(const json& op_info, DeConv1dOpAttr& op_attr);
-        bool parseKernelLayout(const json& op_info, DeConv1dOpAttr& op_attr);
+        bool parseOcCountAttr(const json& op_info, DeConv1dOpAttr& op_attr);
+        bool parsePaddingAttr(const json& op_info, DeConv1dOpAttr& op_attr);
+        bool parseKsizeAttr(const json& op_info, DeConv1dOpAttr& op_attr);
+        bool parseStrideAttr(const json& op_info, DeConv1dOpAttr& op_attr);
+        bool parseOutputPaddingAttr(const json& op_info, DeConv1dOpAttr& op_attr);
+        bool parsePadAttr(const json& op_info, DeConv1dOpAttr& op_attr);
+        bool parseGroupAttr(const json& op_info, DeConv1dOpAttr& op_attr);
+        bool parseKernelLayoutAttr(const json& op_info, DeConv1dOpAttr& op_attr);
         bool parseOpAttr(const json& op_info, DeConv1dOpAttr& op_attr);
 
     private:

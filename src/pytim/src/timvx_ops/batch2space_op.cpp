@@ -9,17 +9,17 @@
 namespace TimVX
 {
 
-    bool Batch2SpaceCreator::parseLayout(const json& op_info, Batch2SpaceOpAttr& op_attr)
+    bool Batch2SpaceCreator::parseLayoutAttr(const json& op_info, Batch2SpaceOpAttr& op_attr)
     {
         return parseDataLayoutType(op_info, m_op_name, "layout", op_attr.layout, false);
     }
 
-    bool Batch2SpaceCreator::parseBlockSize(const json& op_info, Batch2SpaceOpAttr& op_attr)
+    bool Batch2SpaceCreator::parseBlockSizeAttr(const json& op_info, Batch2SpaceOpAttr& op_attr)
     {
         return parseDynamicList<int32_t>(op_info, m_op_name, "block_size", op_attr.block_size);
     }
 
-    bool Batch2SpaceCreator::parseCrop(const json& op_info, Batch2SpaceOpAttr& op_attr)
+    bool Batch2SpaceCreator::parseCropAttr(const json& op_info, Batch2SpaceOpAttr& op_attr)
     {
         return parseDynamicList<int32_t>(op_info, m_op_name, "crop", op_attr.crop);
     }
@@ -27,8 +27,8 @@ namespace TimVX
     bool Batch2SpaceCreator::parseOpAttr(const json& op_info, Batch2SpaceOpAttr& op_attr)
     {
         op_attr.layout = DataLayout::WHCN;
-        return parseLayout(op_info, op_attr) && parseBlockSize(op_info, op_attr) && 
-            parseCrop(op_info, op_attr);
+        return parseLayoutAttr(op_info, op_attr) && parseBlockSizeAttr(op_info, op_attr) && 
+            parseCropAttr(op_info, op_attr);
     }
 
     Operation* Batch2SpaceCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)

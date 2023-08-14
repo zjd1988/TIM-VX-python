@@ -9,7 +9,7 @@
 namespace TimVX
 {
 
-    bool AddNCreator::parseNumInput(const json& op_info, AddNOpAttr& op_attr)
+    bool AddNCreator::parseNumInputAttr(const json& op_info, AddNOpAttr& op_attr)
     {
         return parseValue<uint32_t>(op_info, m_op_name, "num_inputs", op_attr.num_inputs);
     }
@@ -17,7 +17,7 @@ namespace TimVX
     bool AddNCreator::parseOpAttr(const json& op_info, AddNOpAttr& op_attr)
     {
         op_attr.num_inputs = 0;
-        return parseNumInput(op_info, op_attr);
+        return parseNumInputAttr(op_info, op_attr);
     }
 
     Operation* AddNCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)

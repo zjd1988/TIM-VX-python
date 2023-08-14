@@ -9,10 +9,15 @@
 namespace TimVX
 {
 
-    bool ArgCreator::parseOpAttr(std::string op_type, const json& op_info, ArgOpAttr& op_attr)
+    bool ArgCreator::parseAxisAttr(std::string op_type, const json& op_info, ArgOpAttr& op_attr)
     {
         std::string full_name = m_op_name + op_type;
         return parseValue<int>(op_info, full_name, "axis", op_attr.axis);
+    }
+
+    bool ArgCreator::parseOpAttr(std::string op_type, const json& op_info, ArgOpAttr& op_attr)
+    {
+        return parseAxisAttr(op_type, op_info, op_attr);
     }
 
     Operation* ArgCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
