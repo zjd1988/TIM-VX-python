@@ -12,4 +12,7 @@ __all__ = ['__version__', 'short_version', 'Rknn2TimVxEngine', 'Tflite2TimVxEngi
     'ConstructDeConv1dOpConfig', 'ConstructDeConv2dOpConfig', 'ConstructArgOpConfig', 
     'ConstructAddNOpConfig', 'ConstructBatch2SpaceOpConfig', 'ConstructDepth2SpaceOpConfig', 
     'ConstructNBGOpConfig', 'ConstructSoftmaxOpConfig', 'ConstructClipOpConfig', 
+    'ConstructBatchNormOpConfig', 'ConstructDropoutOpConfig', 'ConstructGatherOpConfig', 
+    'ConstructGatherNdOpConfig', 'ConstructInstanceNormalizationOpConfig', 'ConstructL2NormalizationOpConfig', 
+    'ConstructLayerNormalizationOpConfig',
 ]

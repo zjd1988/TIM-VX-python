@@ -10,4 +10,7 @@ __all__ = ['setLogLevel', 'quantizationParams', 'quantize', 'dequantize', 'Engin
     'ConstructDeConv1dOpConfig', 'ConstructDeConv2dOpConfig', 'ConstructArgOpConfig', 
     'ConstructAddNOpConfig', 'ConstructBatch2SpaceOpConfig', 'ConstructDepth2SpaceOpConfig', 
     'ConstructNBGOpConfig', 'ConstructSoftmaxOpConfig', 'ConstructClipOpConfig', 
+    'ConstructBatchNormOpConfig', 'ConstructDropoutOpConfig', 'ConstructGatherOpConfig', 
+    'ConstructGatherNdOpConfig', 'ConstructInstanceNormalizationOpConfig', 'ConstructL2NormalizationOpConfig', 
+    'ConstructLayerNormalizationOpConfig'
 ]

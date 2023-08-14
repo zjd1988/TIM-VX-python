@@ -591,3 +591,99 @@ def ConstructNBGOpConfig(op_name:str, binary:int, input_count:int, output_count:
     return op_info_dict
 
 
+def ConstructBatchNormOpConfig(op_name:str, eps:float, op_inputs:list=[], op_outputs:list=[])->dict:
+    op_info_dict = {}
+    op_info_dict["op_name"] = op_name
+    op_attr = {}
+    op_attr["eps"] = eps
+    op_info_dict["op_attr"] = op_attr
+    if len(op_inputs) > 0:
+        op_info_dict["op_inputs"] = op_inputs
+    if len(op_outputs) > 0:
+        op_info_dict["op_outputs"] = op_outputs
+
+    return op_info_dict
+
+
+def ConstructDropoutOpConfig(op_name:str, ratio:float, op_inputs:list=[], op_outputs:list=[])->dict:
+    op_info_dict = {}
+    op_info_dict["op_name"] = op_name
+    op_attr = {}
+    op_attr["ratio"] = ratio
+    op_info_dict["op_attr"] = op_attr
+    if len(op_inputs) > 0:
+        op_info_dict["op_inputs"] = op_inputs
+    if len(op_outputs) > 0:
+        op_info_dict["op_outputs"] = op_outputs
+
+    return op_info_dict
+
+
+def ConstructGatherOpConfig(op_name:str, axis:int, op_inputs:list=[], op_outputs:list=[])->dict:
+    op_info_dict = {}
+    op_info_dict["op_name"] = op_name
+    op_attr = {}
+    op_attr["axis"] = axis
+    op_info_dict["op_attr"] = op_attr
+    if len(op_inputs) > 0:
+        op_info_dict["op_inputs"] = op_inputs
+    if len(op_outputs) > 0:
+        op_info_dict["op_outputs"] = op_outputs
+
+    return op_info_dict
+
+
+def ConstructGatherNdOpConfig(op_name:str, op_inputs:list=[], op_outputs:list=[])->dict:
+    op_info_dict = {}
+    op_info_dict["op_name"] = op_name
+    op_attr = {}
+    op_info_dict["op_attr"] = op_attr
+    if len(op_inputs) > 0:
+        op_info_dict["op_inputs"] = op_inputs
+    if len(op_outputs) > 0:
+        op_info_dict["op_outputs"] = op_outputs
+
+    return op_info_dict
+
+
+def ConstructInstanceNormalizationOpConfig(op_name:str, eps:float=1e-5, op_inputs:list=[], op_outputs:list=[])->dict:
+    op_info_dict = {}
+    op_info_dict["op_name"] = op_name
+    op_attr = {}
+    op_attr["eps"] = eps
+    if len(op_inputs) > 0:
+        op_info_dict["op_inputs"] = op_inputs
+    if len(op_outputs) > 0:
+        op_info_dict["op_outputs"] = op_outputs
+
+    return op_info_dict
+
+
+def ConstructL2NormalizationOpConfig(op_name:str, axis:int, op_inputs:list=[], op_outputs:list=[])->dict:
+    op_info_dict = {}
+    op_info_dict["op_name"] = op_name
+    op_attr = {}
+    op_attr["axis"] = axis
+    op_info_dict["op_attr"] = op_attr
+    if len(op_inputs) > 0:
+        op_info_dict["op_inputs"] = op_inputs
+    if len(op_outputs) > 0:
+        op_info_dict["op_outputs"] = op_outputs
+
+    return op_info_dict
+
+
+def ConstructLayerNormalizationOpConfig(op_name:str, axis:int=0, eps:float=1e-5, op_inputs:list=[], op_outputs:list=[])->dict:
+    op_info_dict = {}
+    op_info_dict["op_name"] = op_name
+    op_attr = {}
+    op_attr["axis"] = axis
+    op_attr["eps"] = eps
+    op_info_dict["op_attr"] = op_attr
+    if len(op_inputs) > 0:
+        op_info_dict["op_inputs"] = op_inputs
+    if len(op_outputs) > 0:
+        op_info_dict["op_outputs"] = op_outputs
+
+    return op_info_dict
+
