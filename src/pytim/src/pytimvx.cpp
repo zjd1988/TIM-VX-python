@@ -9,10 +9,13 @@
 #include <tuple>
 #include <vector>
 #include <memory>
+#include "pybind11/pytypes.h"
+#include "pybind11/stl.h"
+#include "pybind11/numpy.h"
 #include "pybind11/pybind11.h"
+#include "pybind11_json.hpp"
 #include "timvx_engine.h"
 #include "common/timvx_log.h"
-#include "pybind11_json.hpp"
 
 namespace py = pybind11;
 using namespace TimVX;
@@ -52,14 +55,14 @@ std::string dimsToString(std::vector<uint32_t> dims, bool reverse = false)
     return dims_str;
 }
 
-size_t getTensorSize(TimVXEngine* timvx_engine, const std::string tensor_name)
+size_t getTensorByteSize(TimVXEngine* timvx_engine, const std::string tensor_name)
 {
     if (nullptr == timvx_engine)
     {
         TIMVX_LOG(TIMVX_LEVEL_ERROR, "input timvx engine parameter is nullptr!");
         return -1;
     }
-    return timvx_engine->getTensorSize(tensor_name);
+    return timvx_engine->getTensorByteSize(tensor_name);
 }
 
 bool createTensor(TimVXEngine* timvx_engine, const std::string tensor_name, 
@@ -103,7 +106,7 @@ bool copyDataFromTensor(TimVXEngine* timvx_engine, const std::string tensor_name
 
     // compare np byte size with tensor byte size
     size_t total_np_size = data_array.nbytes();
-    size_t total_tensor_size = timvx_engine->getTensorSize(tensor_name);
+    size_t total_tensor_size = timvx_engine->getTensorByteSize(tensor_name);
     if (total_tensor_size != total_np_size)
     {
         TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} size:{} not equal to numpy array size:{}", 
@@ -144,7 +147,7 @@ bool copyDataToTensor(TimVXEngine* timvx_engine, const std::string tensor_name, 
 
     // compare np byte size with tensor byte size
     size_t total_np_size = data_array.nbytes();
-    size_t total_tensor_size = timvx_engine->getTensorSize(tensor_name);
+    size_t total_tensor_size = timvx_engine->getTensorByteSize(tensor_name);
     if (total_tensor_size != total_np_size)
     {
         TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} size:{} not equal to numpy array size:{}", 
@@ -308,7 +311,7 @@ void setLogLevel(int log_level)
 PYBIND11_MODULE(pytimvx, m)
 {
     m.doc() = "timvx python interface, convert rknn/tflite to timvx model and run model with timvx engine";
-    m.def("get_tensor_size",        &getTensorSize,           "get graph's tensor size by tensor name in ");
+    m.def("get_tensor_size",        &getTensorByteSize,           "get graph's tensor size by tensor name in ");
     m.def("create_tensor",          &createTensor,            "create graph's tensor with tensor info");
     m.def("copy_data_from_tensor",  &copyDataFromTensor,      "copy data form graph's tensor");
     m.def("copy_data_to_tensor",    &copyDataToTensor,        "copy data to graph's tensor");

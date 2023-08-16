@@ -32,17 +32,26 @@ add_library(pytimvx SHARED ${PYTIMVX_SRC})
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-stack-protector -std=gnu99 -O2 -flax-vector-conversions -fvisibility=hidden")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-stack-protector -std=c++11 -O2 -fvisibility=hidden -fvisibility-inlines-hidden")
 
-target_include_directories(pytimvx PUBLIC 
+target_include_directories(pytimvx PRIVATE 
     ${CYTHON_INCLUDE_DIRS}
     ${TIM_VX_INCLUDE_PATH}
     ${PYBIND11_INCLUDE_PATH}
     ${SPDLOG_INCLUDE_PATH}
     ${NLOHMANN_JSON_INCLUDE_PATH}
     ${PYBIND11_JSON_INCLUDE_PATH}
-    ${PROJECT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
-target_link_libraries(pytimvx PUBLIC 
+target_link_libraries(pytimvx PRIVATE 
     tim-vx
     ${CYTHON_LIBS}
 )
 
+list(REMOVE_ITEM PYTIMVX_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/pytimvx.cpp)
+add_library(timvx_engine SHARED ${PYTIMVX_SRC})
+target_include_directories(timvx_engine PRIVATE 
+    ${TIM_VX_INCLUDE_PATH}
+    ${SPDLOG_INCLUDE_PATH}
+    ${NLOHMANN_JSON_INCLUDE_PATH}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+target_link_libraries(timvx_engine PRIVATE tim-vx)

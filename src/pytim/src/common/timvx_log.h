@@ -11,8 +11,8 @@
 TIMVXLog::Instance().InitTIMVXLog("scenario_edit", "scenario_edit_log.txt");
 int i = 10;
 double d_number = 10.01;
-TIMVX_LOG(TIMVX_LEVEL_DEBUG, "TIMVX log message");
-TIMVX_LOG(TIMVX_LEVEL_DEBUG, "TIMVX log message #{0}, d_number:{1}", i, d_number);
+TIMVX_LOG(TIMVX_LEVEL_DEBUG, "TimVX log message");
+TIMVX_LOG(TIMVX_LEVEL_DEBUG, "TimVX log message #{0}, d_number:{1}", i, d_number);
 注：使用{}格式化字符串，里面的数字为占位符
 https://github.com/gabime/spdlog
 

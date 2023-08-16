@@ -5,10 +5,6 @@
 ***********************************/
 #pragma once
 #include <map>
-#include "pybind11/pybind11.h"
-#include "pybind11/pytypes.h"
-#include "pybind11/stl.h"
-#include "pybind11/numpy.h"
 #include "tim/vx/context.h"
 #include "tim/vx/graph.h"
 #include "tim/vx/tensor.h"
@@ -16,6 +12,7 @@
 #include "tim/transform/layout_inference.h"
 #include "common/timvx_log.h"
 #include "nlohmann/json.hpp"
+#include "timvx_c_api.h"
 using namespace tim::vx;
 using namespace tim::transform;
 using namespace nlohmann;
@@ -30,7 +27,8 @@ namespace TimVX
         ~TimVXEngine();
 
         // tensor utils
-        size_t getTensorSize(const std::string& tensor_name);
+        size_t getTensorElemSize(const std::string& tensor_name);
+        size_t getTensorByteSize(const std::string& tensor_name);
         std::vector<uint32_t> getTensorDims(const std::string& tensor_name);
         Tensor* getTensor(const std::string& tensor_name);
         bool createTensor(const std::string& tensor_name, const json& tensor_info, 
@@ -46,6 +44,9 @@ namespace TimVX
         bool bindInput(const std::string& op_name, const std::string& input_name);
         bool bindOutput(const std::string& op_name, const std::string& output_name);
 
+        // norm utils
+        bool createNormInfo(const json& norm_json);
+
         // graph uitls
         bool createGraph();
         bool verifyGraph();
@@ -54,8 +55,73 @@ namespace TimVX
         bool compileToBinary(std::vector<uint8_t>& nbg_buf, size_t& bin_size);
         std::string getGraphName();
 
+        // get input + output tensor num
+        int getInputOutputNum(TimvxInputOutputNum& io_num);
+
+        // set inputs / get outputs
+        int setInputs(std::vector<TimvxInput>& input_data);
+        int getOutputs(std::vector<TimvxOutput>& output_data);
+
+        // get input tensor attr
+        int getTensorInfo(const std::string& tensor_name, TimvxTensorAttr& tensor_info);
+        int getInputTensorAttr(int input_index, TimvxTensorAttr& tensor_attr);
+        int getOutputTensorAttr(int output_index, TimvxTensorAttr& tensor_attr);
+
         // util func
         uint32_t getTypeBits(DataType type);
+        int convertToTimVxDataType(DataType type, TimvxTensorType& tensor_type);
+
+    private:
+        // quant/dequant func
+        int quantTensorData(std::string tensor_name, float* src_data, int src_len, uint8_t* quant_data);
+        int dequantTensorData(std::string tensor_name, uint8_t* src_data, int src_len, float* dequant_data);
+
+        // norm funcs
+        int inputDataNorm(TimvxInput input_data, std::string input_name, 
+            std::shared_ptr<char>& norm_data, int& norm_len);
+        // channel rgb2bgr or bgr2rgb
+        int inputDataReorder(char *input_data, const int input_len, char* process_data, 
+            std::vector<int> order);
+        // (data - mean) / std
+        int inputDataMeanStd(char *input_data, const int input_len, float* process_data, 
+            std::vector<float> mean, std::vector<float> std);
+        // nhwc to nchw
+        template <class T>
+        int inputDataTranspose(T *input_data, const int input_len, int channel_num, T* process_data)
+        {
+            if (1 == channel_num)
+            {
+                if (input_data != process_data)
+                    memcpy(process_data, input_data, input_len);
+                return 0;
+            }
+            std::shared_ptr<char> temp_data;
+            T* dst_data = process_data;
+            T* src_data = input_data;
+            if (input_data == process_data)
+            {
+                std::shared_ptr<char> temp_data = std::shared_ptr<char>(new char[input_len], std::default_delete<char []>());
+                dst_data = (T*)temp_data.get();
+            }
+            int row = input_len / channel_num;
+            int col = channel_num;
+            for (int i = 0; i < row; i++)
+            {
+                for (int j = 0; j < col; j++)
+                {
+                    int src_index = i * col + j;
+                    int dst_index = j * row + i;
+                    dst_data[dst_index] = src_data[src_index];
+                }
+            }
+            if (temp_data.get())
+                memcpy(process_data, temp_data.get(), input_len);
+            return 0;
+        }
+
+        // output data convert func
+        int outputDataConvert(TimvxOutput out_data, std::string output_name, 
+            std::shared_ptr<char>& convert_data, int& convert_len);
 
     private:
         // operation func
@@ -75,6 +141,14 @@ namespace TimVX
         // call verify graph get a new graph
         std::pair<std::shared_ptr<Graph>, 
             std::map<std::shared_ptr<Tensor>, std::shared_ptr<Tensor>>>     m_layout_infered;
+
+        //input tensor norm info
+        std::map<std::string, std::vector<float>>                           m_tensor_means;
+        std::map<std::string, std::vector<float>>                           m_tensor_stds;
+        std::map<std::string, std::vector<int>>                             m_tensor_reorders;
+
+        // output tensor data
+        std::map<std::string, std::shared_ptr<char>>                        m_output_tensor_datas;
     };
 
 } //namespace TimVX
