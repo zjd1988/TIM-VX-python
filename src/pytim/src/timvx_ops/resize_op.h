@@ -25,6 +25,10 @@ namespace TimVX
             DataLayout layout;
         };
 
+        ResizeCreator(std::string op_name) : OpCreator(op_name)
+        {
+        }
+
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
@@ -37,8 +41,6 @@ namespace TimVX
         bool parseLayoutAttr(const json& op_info, ResizeOpAttr& op_attr);
         bool parseOpAttr(const json& op_info, ResizeOpAttr& op_attr);
 
-    private:
-        std::string m_op_name = "Resize";
     };
 
 } // namespace TimVX

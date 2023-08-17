@@ -32,6 +32,9 @@ namespace TimVX
 
         float beta   = op_attr.beta;
         int32_t axis = op_attr.axis;
+
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, beta);
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, axis);
         return graph->CreateOperation<ops::Softmax>(beta, axis).get();
     }
 

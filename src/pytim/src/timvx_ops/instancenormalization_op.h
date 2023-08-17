@@ -19,14 +19,16 @@ namespace TimVX
             float eps;
         };
 
+        InstanceNormalizationCreator(std::string op_name) : OpCreator(op_name)
+        {
+        }
+
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
         bool parseEpsAttr(const json& op_info, InstanceNormalizationOpAttr& op_attr);
         bool parseOpAttr(const json& op_info, InstanceNormalizationOpAttr& op_attr);
 
-    private:
-        std::string m_op_name = "InstanceNormalization";
     };
 
 } // namespace TimVX

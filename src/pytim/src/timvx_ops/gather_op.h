@@ -19,14 +19,16 @@ namespace TimVX
             int32_t axis;
         };
 
+        GatherCreator(std::string op_name) : OpCreator(op_name)
+        {
+        }
+
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
         bool parseAxisAttr(const json& op_info, GatherOpAttr& op_attr);
         bool parseOpAttr(const json& op_info, GatherOpAttr& op_attr);
 
-    private:
-        std::string m_op_name = "Gather";
     };
 
 } // namespace TimVX

@@ -40,6 +40,9 @@ namespace TimVX
         std::vector<int32_t> block_size = op_attr.block_size;
         std::vector<int32_t> crop = op_attr.crop;
         DataLayout layout = op_attr.layout;
+        TIMVX_LOG_STL_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, block_size);
+        TIMVX_LOG_STL_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, crop);
+        TIMVX_LOG_MAP_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, layout, gDataLayoutToStrMap[layout]);
         return graph->CreateOperation<ops::Batch2Space>(block_size, crop, layout).get();
     }
 

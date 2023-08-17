@@ -360,6 +360,8 @@ namespace TimVX
                 TIMVX_LOG(TIMVX_LEVEL_ERROR, "op {} creator not find!", op_type);
                 return false;
             }
+            std::string op_info_str = op_info.dump(4);
+            TIMVX_LOG(TIMVX_LEVEL_DEBUG, "try to create op with config:\n{}", op_info_str);
             auto op_node = op_creator->onCreate(m_graph, op_info["op_attr"]);
             if (nullptr != op_node && op_info.contains("rounding_policy"))
             {

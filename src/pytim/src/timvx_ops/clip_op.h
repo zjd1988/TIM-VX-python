@@ -20,6 +20,10 @@ namespace TimVX
             float max;
         };
 
+        ClipCreator(std::string op_name) : OpCreator(op_name)
+        {
+        }
+
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
@@ -27,8 +31,6 @@ namespace TimVX
         bool parseMaxAttr(const json& op_info, ClipOpAttr& op_attr);
         bool parseOpAttr(const json& op_info, ClipOpAttr& op_attr);
 
-    private:
-        std::string m_op_name = "Clip";
     };
 
 } // namespace TimVX

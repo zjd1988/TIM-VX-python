@@ -20,6 +20,10 @@ namespace TimVX
             float   eps;
         };
 
+        LayerNormalizationCreator(std::string op_name) : OpCreator(op_name)
+        {
+        }
+
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
@@ -27,8 +31,6 @@ namespace TimVX
         bool parseEpsAttr(const json& op_info, LayerNormalizationOpAttr& op_attr);
         bool parseOpAttr(const json& op_info, LayerNormalizationOpAttr& op_attr);
 
-    private:
-        std::string m_op_name = "LayerNormalization";
     };
 
 } // namespace TimVX

@@ -26,6 +26,7 @@ namespace TimVX
             return nullptr;
 
         float ratio = op_attr.ratio;
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, ratio);
         return graph->CreateOperation<ops::Dropout>(ratio).get();
     }
 

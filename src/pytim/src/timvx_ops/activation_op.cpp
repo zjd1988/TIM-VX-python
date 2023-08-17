@@ -67,6 +67,8 @@ namespace TimVX
             return nullptr;
         if (!parseOpAttr(activation_type, op_info, op_attr))
             return nullptr;
+
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, activation_type);
         if ("Relu" == activation_type)
         {
             return graph->CreateOperation<ops::Relu>().get();
@@ -106,6 +108,7 @@ namespace TimVX
         else if ("Prelu" == activation_type)
         {
             int axis = op_attr.prelu.axis;
+            TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, axis);
             return graph->CreateOperation<ops::Prelu>(axis).get();
         }
         else if ("Tanh" == activation_type)
@@ -115,12 +118,15 @@ namespace TimVX
         else if ("LeakyRelu" == activation_type)
         {
             float ratio = op_attr.leakyrelu.ratio;
+            TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, ratio);
             return graph->CreateOperation<ops::LeakyRelu>(ratio).get();
         }
         else if ("Linear" == activation_type)
         {
             float a = op_attr.linear.a;
             float b = op_attr.linear.b;
+            TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, a);
+            TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, b);
             return graph->CreateOperation<ops::Linear>(a, b).get();
         }
         else

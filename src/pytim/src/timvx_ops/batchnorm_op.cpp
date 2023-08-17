@@ -26,6 +26,7 @@ namespace TimVX
             return nullptr;
 
         float eps = op_attr.eps;
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, eps);
         return graph->CreateOperation<ops::BatchNorm>(eps).get();
     }
 

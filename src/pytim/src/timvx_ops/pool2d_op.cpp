@@ -139,6 +139,17 @@ namespace TimVX
         std::array<uint32_t, 4> pad         = op_attr.pad;
         std::array<uint32_t, 2> input_size  = op_attr.input_size;
         std::array<uint32_t, 2> output_size = op_attr.output_size;
+
+        TIMVX_LOG_MAP_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, cfg_type, pool_cfg_type_map[cfg_type]);
+        TIMVX_LOG_MAP_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, type, gPoolTypeToStrMap[type]);
+        TIMVX_LOG_MAP_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, padding, gPadTypeToStrMap[padding]);
+        TIMVX_LOG_STL_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, ksize);
+        TIMVX_LOG_STL_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, stride);
+        TIMVX_LOG_MAP_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, round_type, gRoundTypeToStrMap[round_type]);
+        TIMVX_LOG_MAP_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, layout, gDataLayoutToStrMap[layout]);
+        TIMVX_LOG_STL_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, pad);
+        TIMVX_LOG_STL_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, input_size);
+        TIMVX_LOG_STL_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, output_size);
         switch (cfg_type)
         {
             case Classic_Pool2d_1:

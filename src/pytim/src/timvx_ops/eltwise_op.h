@@ -14,10 +14,16 @@ namespace TimVX
     class EltwiseCreator : public OpCreator
     {
     public:
+        struct EltwiseOpAttr
+        {
+        };
+
+        EltwiseCreator(std::string op_name) : OpCreator(op_name)
+        {
+        }
+
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
-    private:
-        std::string m_op_name = "Eltwise";
     };
 
 } // namespace TimVX

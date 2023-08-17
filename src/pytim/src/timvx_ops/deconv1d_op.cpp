@@ -80,15 +80,16 @@ namespace TimVX
         uint32_t                group          = op_attr.group;
         DataLayout              input_layout   = op_attr.input_layout;
         DataLayout              kernel_layout  = op_attr.kernel_layout;
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "oc_count       : {}");
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "pad_type       : {}", (int)pad_type);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "ksize          : {}", ksize);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "stride         : {}", stride);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "output_padding : {}", output_padding);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "pad            : {} {}", pad[0], pad[1]);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "group          : {}", group);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "input_layout   : {}", (int)input_layout);
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "kernel_layout  : {}", (int)kernel_layout);
+
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, oc_count);
+        TIMVX_LOG_MAP_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, pad_type, gPadTypeToStrMap[pad_type]);
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, ksize);
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, stride);
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, output_padding);
+        TIMVX_LOG_STL_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, pad);
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, group);
+        TIMVX_LOG_MAP_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, input_layout, gDataLayoutToStrMap[input_layout]);
+        TIMVX_LOG_MAP_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, kernel_layout, gDataLayoutToStrMap[kernel_layout]);
         return graph->CreateOperation<ops::DeConv1d>(pad_type, stride, 
             output_padding, pad, group, input_layout, kernel_layout).get();
     }

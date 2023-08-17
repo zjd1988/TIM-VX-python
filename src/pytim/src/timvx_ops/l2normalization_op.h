@@ -19,14 +19,16 @@ namespace TimVX
             int32_t axis;
         };
 
+        L2NormalizationCreator(std::string op_name) : OpCreator(op_name)
+        {
+        }
+
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
         bool parseAxisAttr(const json& op_info, L2NormalizationOpAttr& op_attr);
         bool parseOpAttr(const json& op_info, L2NormalizationOpAttr& op_attr);
 
-    private:
-        std::string m_op_name = "L2Normalization";
     };
 
 } // namespace TimVX

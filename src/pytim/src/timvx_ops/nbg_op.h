@@ -21,6 +21,10 @@ namespace TimVX
             size_t output_count;
         };
 
+        NBGCreator(std::string op_name) : OpCreator(op_name)
+        {
+        }
+
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
@@ -29,8 +33,6 @@ namespace TimVX
         bool parseOutputCountAttr(const json& op_info, NBGOpAttr& op_attr);
         bool parseOpAttr(const json& op_info, NBGOpAttr& op_attr);
 
-    private:
-        std::string m_op_name = "NBG";
     };
 
 } // namespace TimVX

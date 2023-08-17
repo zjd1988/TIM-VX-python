@@ -20,8 +20,48 @@ using namespace std;
 namespace TimVX
 {
 
-    class OpCreator 
+#define TIMVX_LOG_BASE_DATATYPE_ATTR(LEVEL, ATTR_NAME) \
+    TIMVX_LOG(LEVEL, "{:>20}: {:<20}", #ATTR_NAME, ATTR_NAME)
+
+#define TIMVX_LOG_STL_DATATYPE_ATTR(LEVEL, ATTR_NAME) \
+    TIMVX_LOG(LEVEL, "{:>20}: {:<20}", #ATTR_NAME, spdlog::fmt_lib::join(ATTR_NAME, ","))
+
+#define TIMVX_LOG_MAP_DATATYPE_ATTR(LEVEL, ATTR_NAME, ATTR_VALUE) \
+    TIMVX_LOG(LEVEL, "{:>20}: {:<20}", #ATTR_NAME, ATTR_VALUE)
+
+    // string <---> PoolType map
+    extern std::map<std::string, PoolType> gStrToPoolTypeMap;
+    extern std::map<PoolType, std::string> gPoolTypeToStrMap;
+
+    // string <---> PadType map
+    extern std::map<std::string, PadType> gStrToPadTypeMap;
+    extern std::map<PadType, std::string> gPadTypeToStrMap;
+
+    // string <---> RoundType map
+    extern std::map<std::string, RoundType> gStrToRoundTypeMap;
+    extern std::map<RoundType, std::string> gRoundTypeToStrMap;
+
+    // string <---> OverflowPolicy map
+    extern std::map<std::string, OverflowPolicy> gStrToOverflowPolicyMap;
+    extern std::map<OverflowPolicy, std::string> gOverflowPolicyToStrMap;
+
+    // string <---> RoundingPolicy map
+    extern std::map<std::string, RoundingPolicy> gStrToRoundingPolicyMap;
+    extern std::map<RoundingPolicy, std::string> gRoundingPolicyToStrMap;
+
+    // string <---> ResizeType map
+    extern std::map<std::string, ResizeType> gStrToResizeTypeMap;
+    extern std::map<ResizeType, std::string> gResizeTypeToStrMap;
+
+    // string <---> DataLayout map
+    extern std::map<std::string, DataLayout> gStrToDataLayoutMap;
+    extern std::map<DataLayout, std::string> gDataLayoutToStrMap;
+
+    class OpCreator
     {
+    public:
+        OpCreator(std::string op_name) : m_op_name(op_name) {}
+
     public:
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) = 0;
 
@@ -169,6 +209,9 @@ namespace TimVX
             }
             return true;
         }
+
+    protected:
+        std::string              m_op_name;
     };
 
 
@@ -192,7 +235,7 @@ namespace TimVX
 
     #define REGISTER_OP_CREATOR(name, op_type)                       \
         void register##op_type##OpCreator() {                        \
-            static name _temp;                                       \
+            static name _temp(#op_type);                             \
             TimVXOp::getInstance()->addCreator(#op_type, &_temp);    \
         }
 

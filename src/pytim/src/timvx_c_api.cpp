@@ -115,7 +115,12 @@ int timvxInputsSet(TimvxContext context, uint32_t n_inputs, TimvxInput inputs[])
         TIMVX_LOG(TIMVX_LEVEL_ERROR, "input context is nullptr");
         return -1;
     }
-    return 0;
+    std::vector<TimvxInput> input_datas;
+    for (int i = 0; i < n_inputs; i++)
+    {
+        input_datas.push_back(inputs[i]);
+    }
+    return engine_ptr->setInputs(input_datas);
 }
 
 int timvxRun(TimvxContext context)
@@ -136,6 +141,20 @@ int timvxOutputsGet(TimvxContext context, uint32_t n_outputs, TimvxOutput output
     {
         TIMVX_LOG(TIMVX_LEVEL_ERROR, "input context is nullptr");
         return -1;
+    }
+    std::vector<TimvxOutput> output_datas;
+    for (int i = 0; i < n_outputs; i++)
+    {
+        output_datas.push_back(outputs[i]);
+    }
+    if (0 != engine_ptr->getOutputs(output_datas))
+    {
+        TIMVX_LOG(TIMVX_LEVEL_ERROR, "get engine output datas fail");
+        return -1;
+    }
+    for (int i = 0; i < output_datas.size(); i++)
+    {
+        outputs[i] = output_datas[i];
     }
     return 0;
 }

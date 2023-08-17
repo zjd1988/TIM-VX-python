@@ -23,8 +23,8 @@ namespace TimVX
 
         // tensor utils
         int getInputOutputNum(TimvxInputOutputNum& io_num);
-        int setInputs(std::vector<TimvxInput>& input_data);
-        int getOutputs(std::vector<TimvxOutput>& output_data);
+        int setInputs(std::vector<TimvxInput>& input_datas);
+        int getOutputs(std::vector<TimvxOutput>& output_datas);
         int getInputTensorAttr(int input_index, TimvxTensorAttr& tensor_attr);
         int getOutputTensorAttr(int output_index, TimvxTensorAttr& tensor_attr);
 

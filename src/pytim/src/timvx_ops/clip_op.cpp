@@ -32,6 +32,8 @@ namespace TimVX
 
         float min = op_attr.min;
         float max = op_attr.max;
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, min);
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, max);
         return graph->CreateOperation<ops::Clip>(min, max).get();
     }
 

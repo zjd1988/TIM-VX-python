@@ -26,6 +26,8 @@ namespace TimVX
             return nullptr;
 
         std::vector<uint32_t> size = op_attr.size;
+
+        TIMVX_LOG_STL_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, size);
         return graph->CreateOperation<ops::Reshape>(size).get();
     }
 

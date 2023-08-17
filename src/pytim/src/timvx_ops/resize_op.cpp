@@ -66,6 +66,14 @@ namespace TimVX
         int target_height       = op_attr.target_height;
         int target_width        = op_attr.target_width;
         DataLayout layout       = op_attr.layout;
+
+        TIMVX_LOG_MAP_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, type, gResizeTypeToStrMap[type]);
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, factor);
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, align_corners);
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, half_pixel_centers);
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, target_height);
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, target_width);
+        TIMVX_LOG_MAP_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, layout, gDataLayoutToStrMap[layout]);
         return graph->CreateOperation<ops::Resize>(type, factor, align_corners,
             half_pixel_centers, target_height, target_width, layout).get();
     }

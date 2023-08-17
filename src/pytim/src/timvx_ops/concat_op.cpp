@@ -32,6 +32,8 @@ namespace TimVX
 
         uint32_t axis = op_attr.axis;
         int input_cnt = op_attr.input_cnt;
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, axis);
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, input_cnt);
         return graph->CreateOperation<ops::Concat>(axis, input_cnt).get();
     }
 

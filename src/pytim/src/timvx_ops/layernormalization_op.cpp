@@ -34,6 +34,8 @@ namespace TimVX
 
         int32_t axis = op_attr.axis;
         float eps = op_attr.eps;
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, axis);
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, eps);
         return graph->CreateOperation<ops::LayerNormalization>(axis, eps).get();
     }
 

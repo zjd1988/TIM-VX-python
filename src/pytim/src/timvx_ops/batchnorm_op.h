@@ -19,14 +19,16 @@ namespace TimVX
             float eps;
         };
 
+        BatchNormCreator(std::string op_name) : OpCreator(op_name)
+        {
+        }
+
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
         bool parseEpsAttr(const json& op_info, BatchNormOpAttr& op_attr);
         bool parseOpAttr(const json& op_info, BatchNormOpAttr& op_attr);
 
-    private:
-        std::string m_op_name = "BatchNorm";
     };
 
 } // namespace TimVX

@@ -33,6 +33,9 @@ namespace TimVX
 
         uint32_t axis    = op_attr.axis;
         uint32_t weights = op_attr.weights;
+
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, axis);
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, weights);
         return graph->CreateOperation<ops::FullyConnected>(axis, weights).get();
     }
 

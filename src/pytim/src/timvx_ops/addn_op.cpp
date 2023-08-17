@@ -27,6 +27,7 @@ namespace TimVX
             return nullptr;
 
         uint32_t num_inputs = op_attr.num_inputs;
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, num_inputs);
         return graph->CreateOperation<ops::AddN>(num_inputs).get();
     }
 

@@ -42,6 +42,10 @@ namespace TimVX
             Adaptive_Pool2d,
         };
 
+        Pool2dCreator(std::string op_name) : OpCreator(op_name)
+        {
+        }
+
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
@@ -57,8 +61,6 @@ namespace TimVX
         bool parseLayoutAttr(const json& op_info, Pool2dOpAttr& op_attr);
         bool parseOpAttr(const json& op_info, Pool2dOpAttr& op_attr, Pool2dCfgType pool_type);
 
-    private:
-        std::string m_op_name = "Pool2d";
     };
 
 } // namespace TimVX

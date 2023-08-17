@@ -216,24 +216,24 @@ namespace TimVX
         return m_engine->getInputTensorAttr(output_index, tensor_attr);
     }
 
-    int EngineInterface::setInputs(std::vector<TimvxInput>& input_data)
+    int EngineInterface::setInputs(std::vector<TimvxInput>& input_datas)
     {
         if (nullptr == m_engine.get())
         {
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "timvx infer engine is null, please init first");
             return -1;
         }
-        return m_engine->setInputs(input_data);
+        return m_engine->setInputs(input_datas);
     }
 
-    int EngineInterface::getOutputs(std::vector<TimvxOutput>& output_data)
+    int EngineInterface::getOutputs(std::vector<TimvxOutput>& output_datas)
     {
         if (nullptr == m_engine.get())
         {
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "timvx infer engine is null, please init first");
             return -1;
         }
-        return m_engine->getOutputs(output_data);
+        return m_engine->getOutputs(output_datas);
     }
 
     int EngineInterface::runEngine()

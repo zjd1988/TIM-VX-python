@@ -17,14 +17,16 @@ namespace TimVX
         struct DataConvertOpAttr
         {
         };
-    
+
+        DataConvertCreator(std::string op_name) : OpCreator(op_name)
+        {
+        }
+
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
         bool parseOpAttr(const json& op_info, DataConvertOpAttr& op_attr);
 
-    private:
-        std::string m_op_name = "DataConvert";
     };
 
 } // namespace TimVX

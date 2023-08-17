@@ -33,6 +33,9 @@ namespace TimVX
 
         int32_t block_size = op_attr.block_size;
         DataLayout layout = op_attr.layout;
+
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, block_size);
+        TIMVX_LOG_MAP_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, layout, gDataLayoutToStrMap[layout]);
         return graph->CreateOperation<ops::DepthToSpace>(block_size, layout).get();
     }
 

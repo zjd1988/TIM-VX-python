@@ -19,7 +19,11 @@ namespace TimVX
             uint32_t axis;
             int32_t  input_cnt;
         };
-    
+
+        ConcatCreator(std::string op_name) : OpCreator(op_name)
+        {
+        }
+
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
@@ -27,8 +31,6 @@ namespace TimVX
         bool parseInputCntAttr(const json& op_info, ConcatOpAttr& op_attr);
         bool parseOpAttr(const json& op_info, ConcatOpAttr& op_attr);
 
-    private:
-        std::string m_op_name = "Concat";
     };
 
 } // namespace TimVX

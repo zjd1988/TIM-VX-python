@@ -26,6 +26,8 @@ namespace TimVX
             return nullptr;
 
         std::vector<uint32_t> perm = op_attr.perm;
+
+        TIMVX_LOG_STL_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, perm);
         return graph->CreateOperation<ops::Transpose>(perm).get();
     }
 

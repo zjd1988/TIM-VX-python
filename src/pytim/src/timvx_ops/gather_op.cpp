@@ -26,6 +26,7 @@ namespace TimVX
             return nullptr;
 
         int32_t axis = op_attr.axis;
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, axis);
         return graph->CreateOperation<ops::Gather>(axis).get();
     }
 

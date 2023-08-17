@@ -28,14 +28,16 @@ namespace TimVX
             return nullptr;
         if (!parseOpAttr(arg_type, op_info, op_attr))
             return nullptr;
+
+        int axis = op_attr.axis;
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, arg_type);
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, axis);
         if ("Max" == arg_type)
         {
-            int axis = op_attr.axis;
             return graph->CreateOperation<ops::ArgMax>(axis).get();
         }
         else if ("Min" == arg_type)
         {
-            int axis = op_attr.axis;
             return graph->CreateOperation<ops::ArgMin>(axis).get();
         }
         else
