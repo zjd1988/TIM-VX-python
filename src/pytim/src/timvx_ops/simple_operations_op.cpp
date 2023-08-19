@@ -1,0 +1,168 @@
+/***********************************
+******  simple_operations_op.cpp
+******
+******  Created by zhaojd on 2022/04/29.
+***********************************/
+#include "tim/vx/ops/simple_operations.h"
+#include "timvx_ops/simple_operations_op.h"
+
+namespace TimVX
+{
+
+    bool SimpleOperationsCreator::parseDataConvertAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    {
+        return true;
+    }
+
+    bool SimpleOperationsCreator::parseNegAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    {
+        return true;
+    }
+
+    bool SimpleOperationsCreator::parseAbsAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    {
+        return true;
+    }
+
+    bool SimpleOperationsCreator::parseSinAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    {
+        return true;
+    }
+
+    bool SimpleOperationsCreator::parseExpAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    {
+        return true;
+    }
+
+    bool SimpleOperationsCreator::parseLogAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    {
+        return true;
+    }
+
+    bool SimpleOperationsCreator::parseSqrtAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    {
+        return true;
+    }
+
+    bool SimpleOperationsCreator::parseRsqrtAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    {
+        return true;
+    }
+
+    bool SimpleOperationsCreator::parseSquareAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    {
+        return true;
+    }
+
+    bool SimpleOperationsCreator::parseLogicalNotAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    {
+        return true;
+    }
+
+    bool SimpleOperationsCreator::parseFloorAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    {
+        return true;
+    }
+
+    bool SimpleOperationsCreator::parseCastAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    {
+        return true;
+    }
+
+    bool SimpleOperationsCreator::parseOpAttr(std::string simple_op_type, const json& op_info, SimpleOperationsOpAttr& op_attr)
+    {
+        if ("DataConvert" == simple_op_type)
+            return parseDataConvertAttr(op_info, op_attr);
+        else if ("Neg" == simple_op_type)
+            return parseNegAttr(op_info, op_attr);
+        else if ("Abs" == simple_op_type)
+            return parseAbsAttr(op_info, op_attr);
+        else if ("Sin" == simple_op_type)
+            return parseSinAttr(op_info, op_attr);
+        else if ("Exp" == simple_op_type)
+            return parseExpAttr(op_info, op_attr);
+        else if ("Log" == simple_op_type)
+            return parseLogAttr(op_info, op_attr);
+        else if ("Sqrt" == simple_op_type)
+            return parseSqrtAttr(op_info, op_attr);
+        else if ("Rsqrt" == simple_op_type)
+            return parseRsqrtAttr(op_info, op_attr);
+        else if ("Square" == simple_op_type)
+            return parseSquareAttr(op_info, op_attr);
+        else if ("LogicalNot" == simple_op_type)
+            return parseLogicalNotAttr(op_info, op_attr);
+        else if ("Floor" == simple_op_type)
+            return parseFloorAttr(op_info, op_attr);
+        else if ("Cast" == simple_op_type)
+            return parseCastAttr(op_info, op_attr);
+        else
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "unsupported simple op type: {}", simple_op_type);
+        return false;
+    }
+
+    Operation* SimpleOperationsCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    {
+        SimpleOperationsOpAttr op_attr;
+        std::string simple_op_type;
+        if (!parseValue<std::string>(op_info, m_op_name, "simple_op_type", simple_op_type))
+            return nullptr;
+        if (!parseOpAttr(simple_op_type, op_info, op_attr))
+            return nullptr;
+
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, simple_op_type);
+        if ("DataConvert" == simple_op_type)
+        {
+            return graph->CreateOperation<ops::DataConvert>().get();
+        }
+        else if ("Neg" == simple_op_type)
+        {
+            return graph->CreateOperation<ops::Neg>().get();
+        }
+        else if ("Abs" == simple_op_type)
+        {
+            return graph->CreateOperation<ops::Abs>().get();
+        }
+        else if ("Sin" == simple_op_type)
+        {
+            return graph->CreateOperation<ops::Sin>().get();
+        }
+        else if ("Exp" == simple_op_type)
+        {
+            return graph->CreateOperation<ops::Exp>().get();
+        }
+        else if ("Log" == simple_op_type)
+        {
+            return graph->CreateOperation<ops::Log>().get();
+        }
+        else if ("Sqrt" == simple_op_type)
+        {
+            return graph->CreateOperation<ops::Sqrt>().get();
+        }
+        else if ("Rsqrt" == simple_op_type)
+        {
+            return graph->CreateOperation<ops::Rsqrt>().get();
+        }
+        else if ("Square" == simple_op_type)
+        {
+            return graph->CreateOperation<ops::Square>().get();
+        }
+        else if ("LogicalNot" == simple_op_type)
+        {
+            return graph->CreateOperation<ops::LogicalNot>().get();
+        }
+        else if ("Floor" == simple_op_type)
+        {
+            return graph->CreateOperation<ops::Floor>().get();
+        }
+        else if ("Cast" == simple_op_type)
+        {
+            return graph->CreateOperation<ops::Cast>().get();
+        }
+        else
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "unsupported simple op type: {}", simple_op_type);
+        return nullptr;
+    }
+
+    REGISTER_OP_CREATOR(SimpleOperationsCreator, SimpleOperations);
+
+} // namespace TimVX
