@@ -16,7 +16,7 @@ namespace TimVX
     public:
         struct SoftmaxOpAttr
         {
-            float beta;
+            float   beta;
             int32_t axis;
         };
 

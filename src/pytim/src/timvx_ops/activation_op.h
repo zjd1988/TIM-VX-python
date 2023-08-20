@@ -25,7 +25,7 @@ namespace TimVX
             struct
             {
                 float ratio = 1.0f;
-            } leakyrelu;        
+            } leakyrelu;
             // linear parameter
             struct
             {

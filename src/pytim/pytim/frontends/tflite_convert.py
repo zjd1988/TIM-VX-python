@@ -507,7 +507,7 @@ class Tflite2TimVxEngine():
         self.construct_node_tensors(tflite_model_info, node_index, engine, log_flag=log_flag, insert_flag=insert_flag)
 
         op_inputs, op_outputs = self.get_node_inputs_outputs_name(node_info, tensors_info)
-        op_info = ConstructDataConvertConfig(op_name=op_name, op_inputs=op_inputs, op_outputs=op_outputs)
+        op_info = ConstructSimpleOperationsOpConfig(op_name=op_name, op_inputs=op_inputs, op_outputs=op_outputs)
         if log_flag:
             print("construct {} op with info:\n{}".format(op_name, op_info))
         assert engine.create_operation(op_info), "construct operation {} fail!".format(op_name)

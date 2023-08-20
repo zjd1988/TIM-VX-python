@@ -16,7 +16,16 @@ namespace TimVX
     public:
         struct ArgOpAttr
         {
-            int32_t axis;
+            // max parameter
+            struct
+            {
+                int32_t axis;
+            } max;
+            // min parameter
+            struct
+            {
+                int32_t axis;
+            } min;
         };
 
         ArgCreator(std::string op_name) : OpCreator(op_name)
@@ -26,7 +35,8 @@ namespace TimVX
         virtual Operation* onCreate(std::shared_ptr<Graph>& graph, const json& op_info) override;
 
     private:
-        bool parseAxisAttr(std::string op_type, const json& op_info, ArgOpAttr& op_attr);
+        bool parseMaxAttr(const json& op_info, ArgOpAttr& op_attr);
+        bool parseMinAttr(const json& op_info, ArgOpAttr& op_attr);
         bool parseOpAttr(std::string op_type, const json& op_info, ArgOpAttr& op_attr);
 
     };

@@ -17,11 +17,11 @@ namespace TimVX
         struct ResizeOpAttr
         {
             ResizeType type;
-            float factor;
-            bool align_corners;
-            bool half_pixel_centers;
-            int target_height;
-            int target_width;
+            float      factor;
+            bool       align_corners;
+            bool       half_pixel_centers;
+            int        target_height;
+            int        target_width;
             DataLayout layout;
         };
 

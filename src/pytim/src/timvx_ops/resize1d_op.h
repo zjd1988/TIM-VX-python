@@ -17,10 +17,11 @@ namespace TimVX
         struct Resize1dOpAttr
         {
             ResizeType type;
-            float factor;
-            bool align_corners;
-            bool half_pixel_centers;
-            int target_size;
+            float      factor;
+            bool       align_corners;
+            bool       half_pixel_centers;
+            int        target_size;
+            DataLayout layout;
         };
 
         Resize1dCreator(std::string op_name) : OpCreator(op_name)

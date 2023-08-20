@@ -16,7 +16,6 @@ namespace TimVX
 
     bool AddNCreator::parseOpAttr(const json& op_info, AddNOpAttr& op_attr)
     {
-        op_attr.num_inputs = 0;
         return parseNumInputAttr(op_info, op_attr);
     }
 

@@ -16,8 +16,8 @@ namespace TimVX
     public:
         struct StackOpAttr
         {
-            uint32_t  axis;
-            int32_t   input_cnt;
+            uint32_t axis;
+            int32_t  input_cnt;
         };
 
         StackCreator(std::string op_name) : OpCreator(op_name)

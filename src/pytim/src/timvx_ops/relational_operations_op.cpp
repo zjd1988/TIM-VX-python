@@ -61,39 +61,39 @@ namespace TimVX
     Operation* RelationalOperationsCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         RelationalOperationsOpAttr op_attr;
-        std::string relational_op_type;
-        if (!parseValue<std::string>(op_info, m_op_name, "relational_op_type", relational_op_type))
+        std::string relational_type;
+        if (!parseValue<std::string>(op_info, m_op_name, "relational_type", relational_type))
             return nullptr;
-        if (!parseOpAttr(relational_op_type, op_info, op_attr))
+        if (!parseOpAttr(relational_type, op_info, op_attr))
             return nullptr;
 
-        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, relational_op_type);
-        if ("Greater" == relational_op_type)
+        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, relational_type);
+        if ("Greater" == relational_type)
         {
             return graph->CreateOperation<ops::Greater>().get();
         }
-        else if ("GreaterOrEqual" == relational_op_type)
+        else if ("GreaterOrEqual" == relational_type)
         {
             return graph->CreateOperation<ops::GreaterOrEqual>().get();
         }
-        else if ("Less" == relational_op_type)
+        else if ("Less" == relational_type)
         {
             return graph->CreateOperation<ops::Less>().get();
         }
-        else if ("LessOrEqual" == relational_op_type)
+        else if ("LessOrEqual" == relational_type)
         {
             return graph->CreateOperation<ops::LessOrEqual>().get();
         }
-        else if ("NotEqual" == relational_op_type)
+        else if ("NotEqual" == relational_type)
         {
             return graph->CreateOperation<ops::NotEqual>().get();
         }
-        else if ("Equal" == relational_op_type)
+        else if ("Equal" == relational_type)
         {
             return graph->CreateOperation<ops::Equal>().get();
         }
         else
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "unsupported relational op type: {}", relational_op_type);
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "unsupported relational op type: {}", relational_type);
         return nullptr;
     }
 

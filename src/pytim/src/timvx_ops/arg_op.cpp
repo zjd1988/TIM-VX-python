@@ -9,15 +9,27 @@
 namespace TimVX
 {
 
-    bool ArgCreator::parseAxisAttr(std::string op_type, const json& op_info, ArgOpAttr& op_attr)
+    bool ArgCreator::parseMaxAttr(const json& op_info, ArgOpAttr& op_attr)
     {
-        std::string full_name = m_op_name + op_type;
-        return parseValue<int>(op_info, full_name, "axis", op_attr.axis);
+        std::string full_name = m_op_name + "Max";
+        return parseValue<int>(op_info, full_name, "axis", op_attr.max.axis);
+    }
+
+    bool ArgCreator::parseMinAttr(const json& op_info, ArgOpAttr& op_attr)
+    {
+        std::string full_name = m_op_name + "Min";
+        return parseValue<int>(op_info, full_name, "axis", op_attr.min.axis);
     }
 
     bool ArgCreator::parseOpAttr(std::string op_type, const json& op_info, ArgOpAttr& op_attr)
     {
-        return parseAxisAttr(op_type, op_info, op_attr);
+        if (op_type == "Max")
+            return parseMaxAttr(op_info, op_attr);
+        else if (op_type == "Min")
+            return parseMinAttr(op_info, op_attr);
+        else
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "unsupported arg op type: {}", op_type);
+        return false;
     }
 
     Operation* ArgCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
@@ -29,15 +41,17 @@ namespace TimVX
         if (!parseOpAttr(arg_type, op_info, op_attr))
             return nullptr;
 
-        int axis = op_attr.axis;
         TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, arg_type);
-        TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, axis);
         if ("Max" == arg_type)
         {
+            int axis = op_attr.max.axis;
+            TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, axis);
             return graph->CreateOperation<ops::ArgMax>(axis).get();
         }
         else if ("Min" == arg_type)
         {
+            int axis = op_attr.min.axis;
+            TIMVX_LOG_BASE_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, axis);
             return graph->CreateOperation<ops::ArgMin>(axis).get();
         }
         else

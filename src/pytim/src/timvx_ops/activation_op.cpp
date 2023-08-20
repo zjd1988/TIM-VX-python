@@ -56,7 +56,8 @@ namespace TimVX
         else if ("HardSigmoid" == op_type)
             return parseHardsigmoidAttr(op_info, op_attr);
         else
-            return true;
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "unsupported activation op type: {}", op_type);
+        return false;
     }
 
     Operation* ActivationCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
