@@ -97,8 +97,8 @@ def  test_DeConv1d_layout_whcn_shape_3_1_1():
     bias_scale = 1.0
     bias_zp = 0
     bias_quant_info = {}
-    bias_quant_info["scales"] = bias_scale
-    bias_quant_info["zero_points"] = bias_zp
+    bias_quant_info["scale"] = bias_scale
+    bias_quant_info["zero_point"] = bias_zp
     bias_quant_info["quant_type"] = "ASYMMETRIC"
     bias_data = np.array([-5, ]).reshape(bias_tensor_shape).astype(np.int32)
     assert timvx_engine.create_tensor(bias_name, "INT32", "CONSTANT", bias_tensor_shape, \
@@ -109,15 +109,15 @@ def  test_DeConv1d_layout_whcn_shape_3_1_1():
     output_scale = 1.0
     output_zp = 2
     output_quant_info = {}
-    output_quant_info["scales"] = output_scale
-    output_quant_info["zero_points"] = output_zp
+    output_quant_info["scale"] = output_scale
+    output_quant_info["zero_point"] = output_zp
     output_quant_info["quant_type"] = "ASYMMETRIC"
     assert timvx_engine.create_tensor(output_name, "UINT8", "OUTPUT", output_tensor_shape, \
         quant_info=output_quant_info), "construct tensor {} fail!".format(output_name)
 
     # construct operations
     op_name = "deconv1d"
-    op_inputs = ["input", "weight"]
+    op_inputs = ["input", "weight", "bias"]
     op_outputs = ["output", ]
     op_info = ConstructDeConv1dOpConfig(op_name=op_name, oc_count=1, pad_type="SAME", ksize=3, 
         stride=1, output_padding=1, pad=[0, 0], group=1, op_inputs=op_inputs, op_outputs=op_outputs)
