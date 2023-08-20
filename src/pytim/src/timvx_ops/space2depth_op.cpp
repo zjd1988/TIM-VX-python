@@ -9,24 +9,24 @@
 namespace TimVX
 {
 
-    bool Space2DepthCreator::parseBlockSizeAttr(const json& op_info, Space2DepthOpAttr& op_attr)
+    bool Space2DepthOpCreator::parseBlockSizeAttr(const json& op_info, Space2DepthOpAttr& op_attr)
     {
         return parseDynamicList<int32_t>(op_info, m_op_name, "block_size", op_attr.block_size);
     }
 
-    bool Space2DepthCreator::parseLayoutAttr(const json& op_info, Space2DepthOpAttr& op_attr)
+    bool Space2DepthOpCreator::parseLayoutAttr(const json& op_info, Space2DepthOpAttr& op_attr)
     {
         return parseDataLayoutType(op_info, m_op_name, "layout", op_attr.layout, false);
     }
 
-    bool Space2DepthCreator::parseOpAttr(const json& op_info, Space2DepthOpAttr& op_attr)
+    bool Space2DepthOpCreator::parseOpAttr(const json& op_info, Space2DepthOpAttr& op_attr)
     {
         op_attr.layout = DataLayout::WHCN; // always set WHCN
         return parseBlockSizeAttr(op_info, op_attr) && parseLayoutAttr(op_info, op_attr) && 
             parseLayoutAttr(op_info, op_attr);
     }
 
-    Operation* Space2DepthCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* Space2DepthOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         Space2DepthOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -40,6 +40,6 @@ namespace TimVX
         return graph->CreateOperation<ops::SpaceToDepth>(block_size, layout).get();
     }
 
-    REGISTER_OP_CREATOR(Space2DepthCreator, Space2Depth);
+    REGISTER_OP_CREATOR(Space2DepthOpCreator, Space2Depth);
 
 } // namespace TimVX

@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class StackCreator : public OpCreator
+    class StackOpCreator : public OpCreator
     {
     public:
         struct StackOpAttr
@@ -20,7 +20,7 @@ namespace TimVX
             int32_t  input_cnt;
         };
 
-        StackCreator(std::string op_name) : OpCreator(op_name)
+        StackOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

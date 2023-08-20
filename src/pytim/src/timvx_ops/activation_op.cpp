@@ -9,39 +9,39 @@
 namespace TimVX
 {
 
-    bool ActivationCreator::parsePreluAttr(const json& op_info, ActivationOpAttr& op_attr)
+    bool ActivationOpCreator::parsePreluAttr(const json& op_info, ActivationOpAttr& op_attr)
     {
         std::string full_op_name = m_op_name + "_prelu";
         return parseValue<int>(op_info, full_op_name, "axis", op_attr.prelu.axis);
     }
 
-    bool ActivationCreator::parseLeakyreluAttr(const json& op_info, ActivationOpAttr& op_attr)
+    bool ActivationOpCreator::parseLeakyreluAttr(const json& op_info, ActivationOpAttr& op_attr)
     {
         std::string full_op_name = m_op_name + "_leakyrelu";
         return parseValue<float>(op_info, full_op_name, "ratio", op_attr.leakyrelu.ratio);
     }
 
-    bool ActivationCreator::parseLinearAttr(const json& op_info, ActivationOpAttr& op_attr)
+    bool ActivationOpCreator::parseLinearAttr(const json& op_info, ActivationOpAttr& op_attr)
     {
         std::string full_op_name = m_op_name + "_linear";
         return parseValue<float>(op_info, full_op_name, "a", op_attr.linear.a) && 
             parseValue<float>(op_info, full_op_name, "b", op_attr.linear.b, false);
     }
 
-    bool ActivationCreator::parseGeluAttr(const json& op_info, ActivationOpAttr& op_attr)
+    bool ActivationOpCreator::parseGeluAttr(const json& op_info, ActivationOpAttr& op_attr)
     {
         std::string full_op_name = m_op_name + "_gelu";
         return parseValue<bool>(op_info, full_op_name, "approximate", op_attr.gelu.approximate, false);
     }
 
-    bool ActivationCreator::parseHardsigmoidAttr(const json& op_info, ActivationOpAttr& op_attr)
+    bool ActivationOpCreator::parseHardsigmoidAttr(const json& op_info, ActivationOpAttr& op_attr)
     {
         std::string full_op_name = m_op_name + "_hardsigmoid";
         return parseValue<float>(op_info, full_op_name, "alpha", op_attr.hardsigmoid.alpha) &&
             parseValue<float>(op_info, full_op_name, "beta", op_attr.hardsigmoid.beta);
     }
 
-    bool ActivationCreator::parseOpAttr(std::string op_type, const json& op_info, ActivationOpAttr& op_attr)
+    bool ActivationOpCreator::parseOpAttr(std::string op_type, const json& op_info, ActivationOpAttr& op_attr)
     {
         op_attr.gelu.approximate = true;
         op_attr.linear.b = 0.0f;
@@ -60,7 +60,7 @@ namespace TimVX
         return false;
     }
 
-    Operation* ActivationCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* ActivationOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         ActivationOpAttr op_attr;
         std::string activation_type;
@@ -135,6 +135,6 @@ namespace TimVX
         return nullptr;
     }
 
-    REGISTER_OP_CREATOR(ActivationCreator, Activation);
+    REGISTER_OP_CREATOR(ActivationOpCreator, Activation);
 
 } // namespace TimVX

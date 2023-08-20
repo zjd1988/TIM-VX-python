@@ -9,7 +9,7 @@
 namespace TimVX
 {
 
-    bool NBGCreator::parseBinaryAttr(const json& op_info, NBGOpAttr& op_attr)
+    bool NBGOpCreator::parseBinaryAttr(const json& op_info, NBGOpAttr& op_attr)
     {
         // use uint64_t to store void* binary
         uint64_t binary_ptr;
@@ -20,17 +20,17 @@ namespace TimVX
         return true;
     }
 
-    bool NBGCreator::parseInputCountAttr(const json& op_info, NBGOpAttr& op_attr)
+    bool NBGOpCreator::parseInputCountAttr(const json& op_info, NBGOpAttr& op_attr)
     {
         return parseValue<size_t>(op_info, m_op_name, "input_count", op_attr.input_count);
     }
 
-    bool NBGCreator::parseOutputCountAttr(const json& op_info, NBGOpAttr& op_attr)
+    bool NBGOpCreator::parseOutputCountAttr(const json& op_info, NBGOpAttr& op_attr)
     {
         return parseValue<size_t>(op_info, m_op_name, "output_count", op_attr.output_count);
     }
 
-    bool NBGCreator::parseOpAttr(const json& op_info, NBGOpAttr& op_attr)
+    bool NBGOpCreator::parseOpAttr(const json& op_info, NBGOpAttr& op_attr)
     {
         op_attr.binary = nullptr;
         op_attr.input_count = 0;
@@ -39,7 +39,7 @@ namespace TimVX
             parseOutputCountAttr(op_info, op_attr);
     }
 
-    Operation* NBGCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* NBGOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         NBGOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -55,6 +55,6 @@ namespace TimVX
         return graph->CreateOperation<ops::NBG>(binary, input_count, output_count).get();
     }
 
-    REGISTER_OP_CREATOR(NBGCreator, NBG);
+    REGISTER_OP_CREATOR(NBGOpCreator, NBG);
 
 } // namespace TimVX

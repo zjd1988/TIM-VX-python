@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class Conv1dCreator : public OpCreator
+    class Conv1dOpCreator : public OpCreator
     {
     public:
         struct Conv1dOpAttr
@@ -27,7 +27,7 @@ namespace TimVX
             DataLayout              kernel_layout;
         };
 
-        Conv1dCreator(std::string op_name) : OpCreator(op_name)
+        Conv1dOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class SqueezeCreator : public OpCreator
+    class SqueezeOpCreator : public OpCreator
     {
     public:
         struct SqueezeOpAttr
@@ -19,7 +19,7 @@ namespace TimVX
             std::vector<uint32_t> axis;
         };
 
-        SqueezeCreator(std::string op_name) : OpCreator(op_name)
+        SqueezeOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

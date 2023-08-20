@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class InstanceNormalizationCreator : public OpCreator
+    class InstanceNormalizationOpCreator : public OpCreator
     {
     public:
         struct InstanceNormalizationOpAttr
@@ -19,7 +19,7 @@ namespace TimVX
             float eps;
         };
 
-        InstanceNormalizationCreator(std::string op_name) : OpCreator(op_name)
+        InstanceNormalizationOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

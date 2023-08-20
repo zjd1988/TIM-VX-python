@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class AddNCreator : public OpCreator
+    class AddNOpCreator : public OpCreator
     {
     public:
         struct AddNOpAttr
@@ -19,7 +19,7 @@ namespace TimVX
             uint32_t num_inputs;
         };
 
-        AddNCreator(std::string op_name) : OpCreator(op_name)
+        AddNOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

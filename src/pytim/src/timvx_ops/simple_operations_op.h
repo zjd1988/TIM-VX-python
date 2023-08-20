@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class SimpleOperationsCreator : public OpCreator
+    class SimpleOperationsOpCreator : public OpCreator
     {
     public:
         struct SimpleOperationsOpAttr
@@ -66,7 +66,7 @@ namespace TimVX
             } cast;
         };
 
-        SimpleOperationsCreator(std::string op_name) : OpCreator(op_name)
+        SimpleOperationsOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

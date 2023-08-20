@@ -11,14 +11,14 @@ using namespace std;
 namespace TimVX
 {
 
-    class GatherNdCreator : public OpCreator
+    class GatherNdOpCreator : public OpCreator
     {
     public:
         struct GatherNdOpAttr
         {
         };
 
-        GatherNdCreator(std::string op_name) : OpCreator(op_name)
+        GatherNdOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

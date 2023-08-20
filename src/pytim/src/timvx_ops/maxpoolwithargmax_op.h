@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class MaxpoolWithArgmaxCreator : public OpCreator
+    class MaxpoolWithArgmaxOpCreator : public OpCreator
     {
     public:
         struct MaxpoolWithArgmaxOpAttr
@@ -23,7 +23,7 @@ namespace TimVX
             DataLayout              layout;
         };
 
-        MaxpoolWithArgmaxCreator(std::string op_name) : OpCreator(op_name)
+        MaxpoolWithArgmaxOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

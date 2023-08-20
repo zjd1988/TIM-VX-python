@@ -9,12 +9,12 @@
 namespace TimVX
 {
 
-    bool LogicalCreator::parseOpAttr(std::string op_type, const json& op_info, LogicalOpAttr& op_attr)
+    bool LogicalOpCreator::parseOpAttr(std::string op_type, const json& op_info, LogicalOpAttr& op_attr)
     {
         return true;
     }
 
-    Operation* LogicalCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* LogicalOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         LogicalOpAttr op_attr;
         std::string logical_type;
@@ -37,6 +37,6 @@ namespace TimVX
         return nullptr;
     }
 
-    REGISTER_OP_CREATOR(LogicalCreator, Logical);
+    REGISTER_OP_CREATOR(LogicalOpCreator, Logical);
 
 } // namespace TimVX

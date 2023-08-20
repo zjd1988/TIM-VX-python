@@ -9,37 +9,37 @@
 namespace TimVX
 {
 
-    bool RelationalOperationsCreator::parseGreaterAttr(const json& op_info, RelationalOperationsOpAttr& op_attr)
+    bool RelationalOperationsOpCreator::parseGreaterAttr(const json& op_info, RelationalOperationsOpAttr& op_attr)
     {
         return true;
     }
 
-    bool RelationalOperationsCreator::parseGreaterOrEqualAttr(const json& op_info, RelationalOperationsOpAttr& op_attr)
+    bool RelationalOperationsOpCreator::parseGreaterOrEqualAttr(const json& op_info, RelationalOperationsOpAttr& op_attr)
     {
         return true;
     }
 
-    bool RelationalOperationsCreator::parseLessAttr(const json& op_info, RelationalOperationsOpAttr& op_attr)
+    bool RelationalOperationsOpCreator::parseLessAttr(const json& op_info, RelationalOperationsOpAttr& op_attr)
     {
         return true;
     }
 
-    bool RelationalOperationsCreator::parseLessOrEqualAttr(const json& op_info, RelationalOperationsOpAttr& op_attr)
+    bool RelationalOperationsOpCreator::parseLessOrEqualAttr(const json& op_info, RelationalOperationsOpAttr& op_attr)
     {
         return true;
     }
 
-    bool RelationalOperationsCreator::parseNotEqualAttr(const json& op_info, RelationalOperationsOpAttr& op_attr)
+    bool RelationalOperationsOpCreator::parseNotEqualAttr(const json& op_info, RelationalOperationsOpAttr& op_attr)
     {
         return true;
     }
 
-    bool RelationalOperationsCreator::parseEqualAttr(const json& op_info, RelationalOperationsOpAttr& op_attr)
+    bool RelationalOperationsOpCreator::parseEqualAttr(const json& op_info, RelationalOperationsOpAttr& op_attr)
     {
         return true;
     }
 
-    bool RelationalOperationsCreator::parseOpAttr(std::string relational_op_type, const json& op_info, RelationalOperationsOpAttr& op_attr)
+    bool RelationalOperationsOpCreator::parseOpAttr(std::string relational_op_type, const json& op_info, RelationalOperationsOpAttr& op_attr)
     {
         if ("Greater" == relational_op_type)
             return parseGreaterAttr(op_info, op_attr);
@@ -58,7 +58,7 @@ namespace TimVX
         return false;
     }
 
-    Operation* RelationalOperationsCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* RelationalOperationsOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         RelationalOperationsOpAttr op_attr;
         std::string relational_type;
@@ -97,6 +97,6 @@ namespace TimVX
         return nullptr;
     }
 
-    REGISTER_OP_CREATOR(RelationalOperationsCreator, RelationalOperations);
+    REGISTER_OP_CREATOR(RelationalOperationsOpCreator, RelationalOperations);
 
 } // namespace TimVX

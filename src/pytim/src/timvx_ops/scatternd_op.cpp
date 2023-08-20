@@ -9,17 +9,17 @@
 namespace TimVX
 {
 
-    bool ScatterNDCreator::parseShapeAttr(const json& op_info, ScatterNDOpAttr& op_attr)
+    bool ScatterNDOpCreator::parseShapeAttr(const json& op_info, ScatterNDOpAttr& op_attr)
     {
         return parseDynamicList<uint32_t>(op_info, m_op_name, "shape", op_attr.shape);
     }
 
-    bool ScatterNDCreator::parseOpAttr(const json& op_info, ScatterNDOpAttr& op_attr)
+    bool ScatterNDOpCreator::parseOpAttr(const json& op_info, ScatterNDOpAttr& op_attr)
     {
         return parseShapeAttr(op_info, op_attr);
     }
 
-    Operation* ScatterNDCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* ScatterNDOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         ScatterNDOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -31,6 +31,6 @@ namespace TimVX
         return graph->CreateOperation<ops::ScatterND>(shape).get();
     }
 
-    REGISTER_OP_CREATOR(ScatterNDCreator, ScatterND);
+    REGISTER_OP_CREATOR(ScatterNDOpCreator, ScatterND);
 
 } // namespace TimVX

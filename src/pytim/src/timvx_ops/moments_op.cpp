@@ -9,22 +9,22 @@
 namespace TimVX
 {
 
-    bool MomentsCreator::parseAxesAttr(const json& op_info, MomentsOpAttr& op_attr)
+    bool MomentsOpCreator::parseAxesAttr(const json& op_info, MomentsOpAttr& op_attr)
     {
         return parseDynamicList<int32_t>(op_info, m_op_name, "axes", op_attr.axes);
     }
 
-    bool MomentsCreator::parseKeepDimsAttr(const json& op_info, MomentsOpAttr& op_attr)
+    bool MomentsOpCreator::parseKeepDimsAttr(const json& op_info, MomentsOpAttr& op_attr)
     {
         return parseValue<bool>(op_info, m_op_name, "keep_dims", op_attr.keep_dims, false);
     }
 
-    bool MomentsCreator::parseOpAttr(const json& op_info, MomentsOpAttr& op_attr)
+    bool MomentsOpCreator::parseOpAttr(const json& op_info, MomentsOpAttr& op_attr)
     {
         return parseAxesAttr(op_info, op_attr) && parseKeepDimsAttr(op_info, op_attr);
     }
 
-    Operation* MomentsCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* MomentsOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         MomentsOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -38,6 +38,6 @@ namespace TimVX
         return graph->CreateOperation<ops::Moments>(axes, keep_dims).get();
     }
 
-    REGISTER_OP_CREATOR(MomentsCreator, Moments);
+    REGISTER_OP_CREATOR(MomentsOpCreator, Moments);
 
 } // namespace TimVX

@@ -16,7 +16,7 @@ __all__ = ['__version__', 'short_version', 'Rknn2TimVxEngine', 'Tflite2TimVxEngi
     'ConstructMatmulOpConfig', 'ConstructMaxpoolWithArgmaxOpConfig', 'ConstructMaxUnpool2dOpConfig', 
     'ConstructMomentsOpConfig', 'ConstructNBGOpConfig', 'ConstructPadOpConfig', 
     'ConstructPool2dOpConfig', 'ConstructReduceOpConfig', 'ConstructRelationalOperationsOpConfig', 
-    'ConstructRerogOpConfig', 'ConstructReshapeOpConfig', 'ConstructResizeOpConfig', 
+    'ConstructReorgOpConfig', 'ConstructReshapeOpConfig', 'ConstructResizeOpConfig', 
     'ConstructResize1dOpConfig', 'ConstructReverseOpConfig', 'ConstructScatterNDOpConfig', 
     'ConstructSelectOpConfig', 'ConstructSimpleOperationsOpConfig', 'ConstructSliceOpConfig', 
     'ConstructSoftmaxOpConfig', 'ConstructSpace2BatchOpConfig', 'ConstructSpace2DepthOpConfig', 

@@ -11,14 +11,14 @@ using namespace std;
 namespace TimVX
 {
 
-    class SelectCreator : public OpCreator
+    class SelectOpCreator : public OpCreator
     {
     public:
         struct SelectOpAttr
         {
         };
 
-        SelectCreator(std::string op_name) : OpCreator(op_name)
+        SelectOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

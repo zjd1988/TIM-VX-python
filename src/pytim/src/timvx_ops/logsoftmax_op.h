@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class LogSoftmaxCreator : public OpCreator
+    class LogSoftmaxOpCreator : public OpCreator
     {
     public:
         struct LogSoftmaxOpAttr
@@ -20,7 +20,7 @@ namespace TimVX
             float   beta;
         };
 
-        LogSoftmaxCreator(std::string op_name) : OpCreator(op_name)
+        LogSoftmaxOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

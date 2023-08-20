@@ -9,27 +9,27 @@
 namespace TimVX
 {
 
-    bool MatmulCreator::parseTransposeAAttr(const json& op_info, MatmulOpAttr& op_attr)
+    bool MatmulOpCreator::parseTransposeAAttr(const json& op_info, MatmulOpAttr& op_attr)
     {
         return parseValue<bool>(op_info, m_op_name, "transpose_a", op_attr.transpose_a, false);
     }
 
-    bool MatmulCreator::parseTransposeBAttr(const json& op_info, MatmulOpAttr& op_attr)
+    bool MatmulOpCreator::parseTransposeBAttr(const json& op_info, MatmulOpAttr& op_attr)
     {
         return parseValue<bool>(op_info, m_op_name, "transpose_b", op_attr.transpose_b, false);
     }
 
-    bool MatmulCreator::parseAdjointAAttr(const json& op_info, MatmulOpAttr& op_attr)
+    bool MatmulOpCreator::parseAdjointAAttr(const json& op_info, MatmulOpAttr& op_attr)
     {
         return parseValue<bool>(op_info, m_op_name, "adjoint_a", op_attr.adjoint_a, false);
     }
 
-    bool MatmulCreator::parseAdjointBAttr(const json& op_info, MatmulOpAttr& op_attr)
+    bool MatmulOpCreator::parseAdjointBAttr(const json& op_info, MatmulOpAttr& op_attr)
     {
         return parseValue<bool>(op_info, m_op_name, "adjoint_b", op_attr.adjoint_b, false);
     }
 
-    bool MatmulCreator::parseOpAttr(const json& op_info, MatmulOpAttr& op_attr)
+    bool MatmulOpCreator::parseOpAttr(const json& op_info, MatmulOpAttr& op_attr)
     {
         op_attr.transpose_a = false;
         op_attr.transpose_b = false;
@@ -39,7 +39,7 @@ namespace TimVX
             parseAdjointAAttr(op_info, op_attr) && parseAdjointBAttr(op_info, op_attr);
     }
 
-    Operation* MatmulCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* MatmulOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         MatmulOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -57,6 +57,6 @@ namespace TimVX
         return graph->CreateOperation<ops::Matmul>(transpose_a, transpose_b, adjoint_a, adjoint_b).get();
     }
 
-    REGISTER_OP_CREATOR(MatmulCreator, Matmul);
+    REGISTER_OP_CREATOR(MatmulOpCreator, Matmul);
 
 } // namespace TimVX

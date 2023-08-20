@@ -9,29 +9,29 @@
 namespace TimVX
 {
 
-    bool MaxUnpool2dCreator::parseKsizeAttr(const json& op_info, MaxUnpool2dOpAttr& op_attr)
+    bool MaxUnpool2dOpCreator::parseKsizeAttr(const json& op_info, MaxUnpool2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "ksize", op_attr.ksize);
     }
 
-    bool MaxUnpool2dCreator::parseStrideAttr(const json& op_info, MaxUnpool2dOpAttr& op_attr)
+    bool MaxUnpool2dOpCreator::parseStrideAttr(const json& op_info, MaxUnpool2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "stride", op_attr.stride);
     }
 
-    bool MaxUnpool2dCreator::parseLayoutAttr(const json& op_info, MaxUnpool2dOpAttr& op_attr)
+    bool MaxUnpool2dOpCreator::parseLayoutAttr(const json& op_info, MaxUnpool2dOpAttr& op_attr)
     {
         return parseDataLayoutType(op_info, m_op_name, "layout", op_attr.layout, false);
     }
 
-    bool MaxUnpool2dCreator::parseOpAttr(const json& op_info, MaxUnpool2dOpAttr& op_attr)
+    bool MaxUnpool2dOpCreator::parseOpAttr(const json& op_info, MaxUnpool2dOpAttr& op_attr)
     {
         op_attr.layout = DataLayout::WHCN; // always set WHCN
         return parseKsizeAttr(op_info, op_attr) && parseStrideAttr(op_info, op_attr) && 
             parseLayoutAttr(op_info, op_attr);
     }
 
-    Operation* MaxUnpool2dCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* MaxUnpool2dOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         MaxUnpool2dOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -47,6 +47,6 @@ namespace TimVX
         return graph->CreateOperation<ops::MaxUnpool2d>(ksize, stride, layout).get();
     }
 
-    REGISTER_OP_CREATOR(MaxUnpool2dCreator, MaxUnpool2d);
+    REGISTER_OP_CREATOR(MaxUnpool2dOpCreator, MaxUnpool2d);
 
 } // namespace TimVX

@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class SpatialTransformerCreator : public OpCreator
+    class SpatialTransformerOpCreator : public OpCreator
     {
     public:
         struct SpatialTransformerOpAttr
@@ -32,7 +32,7 @@ namespace TimVX
             float    theta_2_3;
         };
 
-        SpatialTransformerCreator(std::string op_name) : OpCreator(op_name)
+        SpatialTransformerOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

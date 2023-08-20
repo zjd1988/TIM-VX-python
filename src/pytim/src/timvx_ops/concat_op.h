@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class ConcatCreator : public OpCreator
+    class ConcatOpCreator : public OpCreator
     {
     public:
         struct ConcatOpAttr
@@ -20,7 +20,7 @@ namespace TimVX
             int32_t  input_cnt;
         };
 
-        ConcatCreator(std::string op_name) : OpCreator(op_name)
+        ConcatOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

@@ -9,28 +9,28 @@
 namespace TimVX
 {
 
-    bool PadCreator::parseFrontSizeAttr(const json& op_info, PadOpAttr& op_attr)
+    bool PadOpCreator::parseFrontSizeAttr(const json& op_info, PadOpAttr& op_attr)
     {
         return parseDynamicList<uint32_t>(op_info, m_op_name, "front_size", op_attr.front_size);
     }
 
-    bool PadCreator::parseBackSizeAttr(const json& op_info, PadOpAttr& op_attr)
+    bool PadOpCreator::parseBackSizeAttr(const json& op_info, PadOpAttr& op_attr)
     {
         return parseDynamicList<uint32_t>(op_info, m_op_name, "back_size", op_attr.back_size);
     }
 
-    bool PadCreator::parseConstValAttr(const json& op_info, PadOpAttr& op_attr)
+    bool PadOpCreator::parseConstValAttr(const json& op_info, PadOpAttr& op_attr)
     {
         return parseValue<int32_t>(op_info, m_op_name, "const_val", op_attr.const_val);
     }
 
-    bool PadCreator::parseOpAttr(const json& op_info, PadOpAttr& op_attr)
+    bool PadOpCreator::parseOpAttr(const json& op_info, PadOpAttr& op_attr)
     {
         return parseFrontSizeAttr(op_info, op_attr) && parseBackSizeAttr(op_info, op_attr) && 
             parseConstValAttr(op_info, op_attr);
     }
 
-    Operation* PadCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* PadOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         PadOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -45,6 +45,6 @@ namespace TimVX
         return graph->CreateOperation<ops::Pad>(front_size, back_size, const_val).get();
     }
 
-    REGISTER_OP_CREATOR(PadCreator, Pad);
+    REGISTER_OP_CREATOR(PadOpCreator, Pad);
 
 } // namespace TimVX

@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class TransposeCreator : public OpCreator
+    class TransposeOpCreator : public OpCreator
     {
     public:
         struct TransposeOpAttr
@@ -19,7 +19,7 @@ namespace TimVX
             std::vector<uint32_t> perm;
         };
 
-        TransposeCreator(std::string op_name) : OpCreator(op_name)
+        TransposeOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

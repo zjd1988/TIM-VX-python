@@ -9,17 +9,17 @@
 namespace TimVX
 {
 
-    bool L2NormalizationCreator::parseAxisAttr(const json& op_info, L2NormalizationOpAttr& op_attr)
+    bool L2NormalizationOpCreator::parseAxisAttr(const json& op_info, L2NormalizationOpAttr& op_attr)
     {
         return parseValue<int32_t>(op_info, m_op_name, "axis", op_attr.axis);
     }
 
-    bool L2NormalizationCreator::parseOpAttr(const json& op_info, L2NormalizationOpAttr& op_attr)
+    bool L2NormalizationOpCreator::parseOpAttr(const json& op_info, L2NormalizationOpAttr& op_attr)
     {
         return parseAxisAttr(op_info, op_attr);
     }
 
-    Operation* L2NormalizationCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* L2NormalizationOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         L2NormalizationOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -30,6 +30,6 @@ namespace TimVX
         return graph->CreateOperation<ops::L2Normalization>(axis).get();
     }
 
-    REGISTER_OP_CREATOR(L2NormalizationCreator, L2Normalization);
+    REGISTER_OP_CREATOR(L2NormalizationOpCreator, L2Normalization);
 
 } // namespace TimVX

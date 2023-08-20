@@ -9,67 +9,67 @@
 namespace TimVX
 {
 
-    bool SimpleOperationsCreator::parseDataConvertAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    bool SimpleOperationsOpCreator::parseDataConvertAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
     {
         return true;
     }
 
-    bool SimpleOperationsCreator::parseNegAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    bool SimpleOperationsOpCreator::parseNegAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
     {
         return true;
     }
 
-    bool SimpleOperationsCreator::parseAbsAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    bool SimpleOperationsOpCreator::parseAbsAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
     {
         return true;
     }
 
-    bool SimpleOperationsCreator::parseSinAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    bool SimpleOperationsOpCreator::parseSinAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
     {
         return true;
     }
 
-    bool SimpleOperationsCreator::parseExpAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    bool SimpleOperationsOpCreator::parseExpAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
     {
         return true;
     }
 
-    bool SimpleOperationsCreator::parseLogAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    bool SimpleOperationsOpCreator::parseLogAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
     {
         return true;
     }
 
-    bool SimpleOperationsCreator::parseSqrtAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    bool SimpleOperationsOpCreator::parseSqrtAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
     {
         return true;
     }
 
-    bool SimpleOperationsCreator::parseRsqrtAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    bool SimpleOperationsOpCreator::parseRsqrtAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
     {
         return true;
     }
 
-    bool SimpleOperationsCreator::parseSquareAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    bool SimpleOperationsOpCreator::parseSquareAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
     {
         return true;
     }
 
-    bool SimpleOperationsCreator::parseLogicalNotAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    bool SimpleOperationsOpCreator::parseLogicalNotAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
     {
         return true;
     }
 
-    bool SimpleOperationsCreator::parseFloorAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    bool SimpleOperationsOpCreator::parseFloorAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
     {
         return true;
     }
 
-    bool SimpleOperationsCreator::parseCastAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
+    bool SimpleOperationsOpCreator::parseCastAttr(const json& op_info, SimpleOperationsOpAttr& op_attr)
     {
         return true;
     }
 
-    bool SimpleOperationsCreator::parseOpAttr(std::string simple_op_type, const json& op_info, SimpleOperationsOpAttr& op_attr)
+    bool SimpleOperationsOpCreator::parseOpAttr(std::string simple_op_type, const json& op_info, SimpleOperationsOpAttr& op_attr)
     {
         if ("DataConvert" == simple_op_type)
             return parseDataConvertAttr(op_info, op_attr);
@@ -100,7 +100,7 @@ namespace TimVX
         return false;
     }
 
-    Operation* SimpleOperationsCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* SimpleOperationsOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         SimpleOperationsOpAttr op_attr;
         std::string simple_op_type;
@@ -163,6 +163,6 @@ namespace TimVX
         return nullptr;
     }
 
-    REGISTER_OP_CREATOR(SimpleOperationsCreator, SimpleOperations);
+    REGISTER_OP_CREATOR(SimpleOperationsOpCreator, SimpleOperations);
 
 } // namespace TimVX

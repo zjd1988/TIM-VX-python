@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class UnstackCreator : public OpCreator
+    class UnstackOpCreator : public OpCreator
     {
     public:
         struct UnstackOpAttr
@@ -20,7 +20,7 @@ namespace TimVX
             uint32_t output_num;
         };
 
-        UnstackCreator(std::string op_name) : OpCreator(op_name)
+        UnstackOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

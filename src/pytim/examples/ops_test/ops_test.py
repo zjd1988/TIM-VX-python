@@ -8,6 +8,7 @@ from examples.ops_test.activations_test import test_activations_op
 from examples.ops_test.elementwise_test import test_elementwise_op
 from examples.ops_test.conv1d_test import test_conv1d_op
 from examples.ops_test.conv2d_test import test_conv2d_op
+from examples.ops_test.deconv1d_test import test_deconv1d_op
 
 if __name__ == "__main__":
     test_result = {}

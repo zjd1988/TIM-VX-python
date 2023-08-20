@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class DropoutCreator : public OpCreator
+    class DropoutOpCreator : public OpCreator
     {
     public:
         struct DropoutOpAttr
@@ -19,7 +19,7 @@ namespace TimVX
             float ratio;
         };
 
-        DropoutCreator(std::string op_name) : OpCreator(op_name)
+        DropoutOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

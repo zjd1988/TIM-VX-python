@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class ReduceCreator : public OpCreator
+    class ReduceOpCreator : public OpCreator
     {
     public:
         struct ReduceOpAttr
@@ -20,7 +20,7 @@ namespace TimVX
             bool                 keep_dims;
         };
 
-        ReduceCreator(std::string op_name) : OpCreator(op_name)
+        ReduceOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

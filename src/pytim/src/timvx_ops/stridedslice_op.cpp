@@ -9,44 +9,44 @@
 namespace TimVX
 {
 
-    bool StridedSliceCreator::parseBeginDimsAttr(const json& op_info, StridedSliceOpAttr& op_attr)
+    bool StridedSliceOpCreator::parseBeginDimsAttr(const json& op_info, StridedSliceOpAttr& op_attr)
     {
         return parseDynamicList<int32_t>(op_info, m_op_name, "begin_dims", op_attr.begin_dims);
     }
 
-    bool StridedSliceCreator::parseEndDimsAttr(const json& op_info, StridedSliceOpAttr& op_attr)
+    bool StridedSliceOpCreator::parseEndDimsAttr(const json& op_info, StridedSliceOpAttr& op_attr)
     {
         return parseDynamicList<int32_t>(op_info, m_op_name, "end_dims", op_attr.end_dims);
     }
 
-    bool StridedSliceCreator::parseStrideDimsAttr(const json& op_info, StridedSliceOpAttr& op_attr)
+    bool StridedSliceOpCreator::parseStrideDimsAttr(const json& op_info, StridedSliceOpAttr& op_attr)
     {
         return parseDynamicList<int32_t>(op_info, m_op_name, "stride_dims", op_attr.stride_dims);
     }
 
-    bool StridedSliceCreator::parseBeginMaskAttr(const json& op_info, StridedSliceOpAttr& op_attr)
+    bool StridedSliceOpCreator::parseBeginMaskAttr(const json& op_info, StridedSliceOpAttr& op_attr)
     {
         return parseValue<int32_t>(op_info, m_op_name, "begin_mask", op_attr.begin_mask);
     }
 
-    bool StridedSliceCreator::parseEndMaskAttr(const json& op_info, StridedSliceOpAttr& op_attr)
+    bool StridedSliceOpCreator::parseEndMaskAttr(const json& op_info, StridedSliceOpAttr& op_attr)
     {
         return parseValue<int32_t>(op_info, m_op_name, "end_mask", op_attr.end_mask);
     }
 
-    bool StridedSliceCreator::parseShrinkAxisMaskAttr(const json& op_info, StridedSliceOpAttr& op_attr)
+    bool StridedSliceOpCreator::parseShrinkAxisMaskAttr(const json& op_info, StridedSliceOpAttr& op_attr)
     {
         return parseValue<int32_t>(op_info, m_op_name, "shrink_axis_mask", op_attr.shrink_axis_mask);
     }
 
-    bool StridedSliceCreator::parseOpAttr(const json& op_info, StridedSliceOpAttr& op_attr)
+    bool StridedSliceOpCreator::parseOpAttr(const json& op_info, StridedSliceOpAttr& op_attr)
     {
         return parseBeginDimsAttr(op_info, op_attr) && parseEndDimsAttr(op_info, op_attr) && 
             parseStrideDimsAttr(op_info, op_attr) && parseBeginMaskAttr(op_info, op_attr) && 
             parseEndMaskAttr(op_info, op_attr) && parseShrinkAxisMaskAttr(op_info, op_attr);
     }
 
-    Operation* StridedSliceCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* StridedSliceOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         StridedSliceOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -69,6 +69,6 @@ namespace TimVX
             begin_mask, end_mask, shrink_axis_mask).get();
     }
 
-    REGISTER_OP_CREATOR(StridedSliceCreator, StridedSlice);
+    REGISTER_OP_CREATOR(StridedSliceOpCreator, StridedSlice);
 
 } // namespace TimVX

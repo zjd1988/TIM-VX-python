@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class NBGCreator : public OpCreator
+    class NBGOpCreator : public OpCreator
     {
     public:
         struct NBGOpAttr
@@ -21,7 +21,7 @@ namespace TimVX
             size_t output_count;
         };
 
-        NBGCreator(std::string op_name) : OpCreator(op_name)
+        NBGOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

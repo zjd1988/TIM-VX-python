@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class ArgCreator : public OpCreator
+    class ArgOpCreator : public OpCreator
     {
     public:
         struct ArgOpAttr
@@ -28,7 +28,7 @@ namespace TimVX
             } min;
         };
 
-        ArgCreator(std::string op_name) : OpCreator(op_name)
+        ArgOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

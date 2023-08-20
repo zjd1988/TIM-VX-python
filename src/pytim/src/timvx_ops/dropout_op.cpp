@@ -9,17 +9,17 @@
 namespace TimVX
 {
 
-    bool DropoutCreator::parseRatioAttr(const json& op_info, DropoutOpAttr& op_attr)
+    bool DropoutOpCreator::parseRatioAttr(const json& op_info, DropoutOpAttr& op_attr)
     {
         return parseValue<float>(op_info, m_op_name, "ratio", op_attr.ratio);
     }
 
-    bool DropoutCreator::parseOpAttr(const json& op_info, DropoutOpAttr& op_attr)
+    bool DropoutOpCreator::parseOpAttr(const json& op_info, DropoutOpAttr& op_attr)
     {
         return parseRatioAttr(op_info, op_attr);
     }
 
-    Operation* DropoutCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* DropoutOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         DropoutOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -30,6 +30,6 @@ namespace TimVX
         return graph->CreateOperation<ops::Dropout>(ratio).get();
     }
 
-    REGISTER_OP_CREATOR(DropoutCreator, Dropout);
+    REGISTER_OP_CREATOR(DropoutOpCreator, Dropout);
 
 } // namespace TimVX

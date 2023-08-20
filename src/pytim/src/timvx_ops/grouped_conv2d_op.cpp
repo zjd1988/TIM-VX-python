@@ -9,42 +9,42 @@
 namespace TimVX
 {
 
-    bool GroupedConv2dCreator::parsePaddingAttr(const json& op_info, GroupedConv2dOpAttr& op_attr)
+    bool GroupedConv2dOpCreator::parsePaddingAttr(const json& op_info, GroupedConv2dOpAttr& op_attr)
     {
         return parsePadType(op_info, m_op_name, "padding", op_attr.padding, false);
     }
 
-    bool GroupedConv2dCreator::parseStrideAttr(const json& op_info, GroupedConv2dOpAttr& op_attr)
+    bool GroupedConv2dOpCreator::parseStrideAttr(const json& op_info, GroupedConv2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "stride", op_attr.stride);
     }
 
-    bool GroupedConv2dCreator::parseDilationAttr(const json& op_info, GroupedConv2dOpAttr& op_attr)
+    bool GroupedConv2dOpCreator::parseDilationAttr(const json& op_info, GroupedConv2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "dilation", op_attr.dilation);
     }
 
-    bool GroupedConv2dCreator::parsePadAttr(const json& op_info, GroupedConv2dOpAttr& op_attr)
+    bool GroupedConv2dOpCreator::parsePadAttr(const json& op_info, GroupedConv2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 4>(op_info, m_op_name, "pad", op_attr.pad, false);
     }
 
-    bool GroupedConv2dCreator::parseGroupedNumberAttr(const json& op_info, GroupedConv2dOpAttr& op_attr)
+    bool GroupedConv2dOpCreator::parseGroupedNumberAttr(const json& op_info, GroupedConv2dOpAttr& op_attr)
     {
         return parseValue<int32_t>(op_info, m_op_name, "grouped_number", op_attr.grouped_number);
     }
 
-    bool GroupedConv2dCreator::parseInputLayoutAttr(const json& op_info, GroupedConv2dOpAttr& op_attr)
+    bool GroupedConv2dOpCreator::parseInputLayoutAttr(const json& op_info, GroupedConv2dOpAttr& op_attr)
     {
         return parseDataLayoutType(op_info, m_op_name, "input_layout", op_attr.input_layout, false);
     }
     
-    bool GroupedConv2dCreator::parseKernelLayoutAttr(const json& op_info, GroupedConv2dOpAttr& op_attr)
+    bool GroupedConv2dOpCreator::parseKernelLayoutAttr(const json& op_info, GroupedConv2dOpAttr& op_attr)
     {
         return parseDataLayoutType(op_info, m_op_name, "kernel_layout", op_attr.input_layout, false);
     }
 
-    bool GroupedConv2dCreator::parseOpAttr(const json& op_info, GroupedConv2dOpAttr& op_attr)
+    bool GroupedConv2dOpCreator::parseOpAttr(const json& op_info, GroupedConv2dOpAttr& op_attr)
     {
         op_attr.padding = PadType::AUTO;
         op_attr.pad = {0, 0, 0, 0};
@@ -56,7 +56,7 @@ namespace TimVX
             && parseKernelLayoutAttr(op_info, op_attr);
     }
 
-    Operation* GroupedConv2dCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* GroupedConv2dOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         GroupedConv2dOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -85,6 +85,6 @@ namespace TimVX
                 input_layout, kernel_layout).get();
     }
 
-    REGISTER_OP_CREATOR(GroupedConv2dCreator, GroupedConv2d);
+    REGISTER_OP_CREATOR(GroupedConv2dOpCreator, GroupedConv2d);
 
 } // namespace TimVX

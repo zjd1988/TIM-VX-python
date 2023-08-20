@@ -9,32 +9,32 @@
 namespace TimVX
 {
 
-    bool MaxpoolWithArgmaxCreator::parsePaddingAttr(const json& op_info, MaxpoolWithArgmaxOpAttr& op_attr)
+    bool MaxpoolWithArgmaxOpCreator::parsePaddingAttr(const json& op_info, MaxpoolWithArgmaxOpAttr& op_attr)
     {
         return parsePadType(op_info, m_op_name, "padding", op_attr.padding);
     }
 
-    bool MaxpoolWithArgmaxCreator::parseKsizeAttr(const json& op_info, MaxpoolWithArgmaxOpAttr& op_attr)
+    bool MaxpoolWithArgmaxOpCreator::parseKsizeAttr(const json& op_info, MaxpoolWithArgmaxOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "ksize", op_attr.ksize);
     }
 
-    bool MaxpoolWithArgmaxCreator::parseStrideAttr(const json& op_info, MaxpoolWithArgmaxOpAttr& op_attr)
+    bool MaxpoolWithArgmaxOpCreator::parseStrideAttr(const json& op_info, MaxpoolWithArgmaxOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "stride", op_attr.stride);
     }
 
-    bool MaxpoolWithArgmaxCreator::parseRoundTypeAttr(const json& op_info, MaxpoolWithArgmaxOpAttr& op_attr)
+    bool MaxpoolWithArgmaxOpCreator::parseRoundTypeAttr(const json& op_info, MaxpoolWithArgmaxOpAttr& op_attr)
     {
         return parseRoundType(op_info, m_op_name, "round_type", op_attr.round_type, false);
     }
 
-    bool MaxpoolWithArgmaxCreator::parseLayoutAttr(const json& op_info, MaxpoolWithArgmaxOpAttr& op_attr)
+    bool MaxpoolWithArgmaxOpCreator::parseLayoutAttr(const json& op_info, MaxpoolWithArgmaxOpAttr& op_attr)
     {
         return parseDataLayoutType(op_info, m_op_name, "layout", op_attr.layout, false);
     }
 
-    bool MaxpoolWithArgmaxCreator::parseOpAttr(const json& op_info, MaxpoolWithArgmaxOpAttr& op_attr)
+    bool MaxpoolWithArgmaxOpCreator::parseOpAttr(const json& op_info, MaxpoolWithArgmaxOpAttr& op_attr)
     {
         op_attr.round_type = RoundType::FLOOR;
         op_attr.layout = DataLayout::WHCN; // always set WHCN
@@ -43,7 +43,7 @@ namespace TimVX
             parseLayoutAttr(op_info, op_attr);
     }
 
-    Operation* MaxpoolWithArgmaxCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* MaxpoolWithArgmaxOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         MaxpoolWithArgmaxOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -64,6 +64,6 @@ namespace TimVX
             round_type, layout).get();
     }
 
-    REGISTER_OP_CREATOR(MaxpoolWithArgmaxCreator, MaxpoolWithArgmax);
+    REGISTER_OP_CREATOR(MaxpoolWithArgmaxOpCreator, MaxpoolWithArgmax);
 
 } // namespace TimVX

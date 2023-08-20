@@ -9,19 +9,19 @@
 namespace TimVX
 {
 
-    bool ArgCreator::parseMaxAttr(const json& op_info, ArgOpAttr& op_attr)
+    bool ArgOpCreator::parseMaxAttr(const json& op_info, ArgOpAttr& op_attr)
     {
         std::string full_name = m_op_name + "Max";
         return parseValue<int>(op_info, full_name, "axis", op_attr.max.axis);
     }
 
-    bool ArgCreator::parseMinAttr(const json& op_info, ArgOpAttr& op_attr)
+    bool ArgOpCreator::parseMinAttr(const json& op_info, ArgOpAttr& op_attr)
     {
         std::string full_name = m_op_name + "Min";
         return parseValue<int>(op_info, full_name, "axis", op_attr.min.axis);
     }
 
-    bool ArgCreator::parseOpAttr(std::string op_type, const json& op_info, ArgOpAttr& op_attr)
+    bool ArgOpCreator::parseOpAttr(std::string op_type, const json& op_info, ArgOpAttr& op_attr)
     {
         if (op_type == "Max")
             return parseMaxAttr(op_info, op_attr);
@@ -32,7 +32,7 @@ namespace TimVX
         return false;
     }
 
-    Operation* ArgCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* ArgOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         ArgOpAttr op_attr;
         std::string arg_type;
@@ -59,6 +59,6 @@ namespace TimVX
         return nullptr;
     }
 
-    REGISTER_OP_CREATOR(ArgCreator, Arg);
+    REGISTER_OP_CREATOR(ArgOpCreator, Arg);
 
 } // namespace TimVX

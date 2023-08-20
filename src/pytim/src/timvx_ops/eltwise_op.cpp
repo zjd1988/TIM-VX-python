@@ -9,7 +9,7 @@
 namespace TimVX
 {
 
-    Operation* EltwiseCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* EltwiseOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         std::string eltwise_type;
         if (!parseValue<std::string>(op_info, m_op_name, "eltwise_type", eltwise_type))
@@ -54,6 +54,6 @@ namespace TimVX
         return nullptr;
     }
 
-    REGISTER_OP_CREATOR(EltwiseCreator, Eltwise);
+    REGISTER_OP_CREATOR(EltwiseOpCreator, Eltwise);
 
 } // namespace TimVX

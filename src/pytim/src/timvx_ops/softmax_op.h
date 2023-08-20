@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class SoftmaxCreator : public OpCreator
+    class SoftmaxOpCreator : public OpCreator
     {
     public:
         struct SoftmaxOpAttr
@@ -20,7 +20,7 @@ namespace TimVX
             int32_t axis;
         };
 
-        SoftmaxCreator(std::string op_name) : OpCreator(op_name)
+        SoftmaxOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

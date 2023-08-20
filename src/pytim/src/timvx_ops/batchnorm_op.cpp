@@ -9,17 +9,17 @@
 namespace TimVX
 {
 
-    bool BatchNormCreator::parseEpsAttr(const json& op_info, BatchNormOpAttr& op_attr)
+    bool BatchNormOpCreator::parseEpsAttr(const json& op_info, BatchNormOpAttr& op_attr)
     {
         return parseValue<float>(op_info, m_op_name, "eps", op_attr.eps);
     }
 
-    bool BatchNormCreator::parseOpAttr(const json& op_info, BatchNormOpAttr& op_attr)
+    bool BatchNormOpCreator::parseOpAttr(const json& op_info, BatchNormOpAttr& op_attr)
     {
         return parseEpsAttr(op_info, op_attr);
     }
 
-    Operation* BatchNormCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* BatchNormOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         BatchNormOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -30,6 +30,6 @@ namespace TimVX
         return graph->CreateOperation<ops::BatchNorm>(eps).get();
     }
 
-    REGISTER_OP_CREATOR(BatchNormCreator, BatchNorm);
+    REGISTER_OP_CREATOR(BatchNormOpCreator, BatchNorm);
 
 } // namespace TimVX

@@ -9,17 +9,17 @@
 namespace TimVX
 {
 
-    bool ReshapeCreator::parseSizeAttr(const json& op_info, ReshapeOpAttr& op_attr)
+    bool ReshapeOpCreator::parseSizeAttr(const json& op_info, ReshapeOpAttr& op_attr)
     {
         return parseDynamicList<uint32_t>(op_info, m_op_name, "size", op_attr.size);
     }
 
-    bool ReshapeCreator::parseOpAttr(const json& op_info, ReshapeOpAttr& op_attr)
+    bool ReshapeOpCreator::parseOpAttr(const json& op_info, ReshapeOpAttr& op_attr)
     {
         return parseSizeAttr(op_info, op_attr);
     }
 
-    Operation* ReshapeCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* ReshapeOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         ReshapeOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -31,6 +31,6 @@ namespace TimVX
         return graph->CreateOperation<ops::Reshape>(size).get();
     }
 
-    REGISTER_OP_CREATOR(ReshapeCreator, Reshape);
+    REGISTER_OP_CREATOR(ReshapeOpCreator, Reshape);
 
 } // namespace TimVX

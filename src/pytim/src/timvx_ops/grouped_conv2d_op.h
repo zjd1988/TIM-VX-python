@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
     
-    class GroupedConv2dCreator : public OpCreator
+    class GroupedConv2dOpCreator : public OpCreator
     {
     public:
         struct GroupedConv2dOpAttr
@@ -25,7 +25,7 @@ namespace TimVX
             DataLayout              kernel_layout;
         };
 
-        GroupedConv2dCreator(std::string op_name) : OpCreator(op_name)
+        GroupedConv2dOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

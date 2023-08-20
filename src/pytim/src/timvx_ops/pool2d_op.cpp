@@ -9,7 +9,7 @@
 namespace TimVX
 {
 
-    Pool2dCreator::Pool2dCfgType Pool2dCreator::getPool2dType(const json& op_info)
+    Pool2dOpCreator::Pool2dCfgType Pool2dOpCreator::getPool2dType(const json& op_info)
     {
         if (op_info.contains("padding") && op_info.contains("pad"))
         {
@@ -41,52 +41,52 @@ namespace TimVX
         }
     }
 
-    bool Pool2dCreator::parseTypeAttr(const json& op_info, Pool2dOpAttr& op_attr)
+    bool Pool2dOpCreator::parseTypeAttr(const json& op_info, Pool2dOpAttr& op_attr)
     {
         return parsePoolType(op_info, m_op_name, "type", op_attr.type);
     }
 
-    bool Pool2dCreator::parsePaddingAttr(const json& op_info, Pool2dOpAttr& op_attr)
+    bool Pool2dOpCreator::parsePaddingAttr(const json& op_info, Pool2dOpAttr& op_attr)
     {
         return parsePadType(op_info, m_op_name, "padding", op_attr.padding);
     }
 
-    bool Pool2dCreator::parsePadAttr(const json& op_info, Pool2dOpAttr& op_attr)
+    bool Pool2dOpCreator::parsePadAttr(const json& op_info, Pool2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 4>(op_info, m_op_name, "pad", op_attr.pad);
     }
 
-    bool Pool2dCreator::parseKsizeAttr(const json& op_info, Pool2dOpAttr& op_attr)
+    bool Pool2dOpCreator::parseKsizeAttr(const json& op_info, Pool2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "ksize", op_attr.ksize);
     }
 
-    bool Pool2dCreator::parseStrideAttr(const json& op_info, Pool2dOpAttr& op_attr)
+    bool Pool2dOpCreator::parseStrideAttr(const json& op_info, Pool2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "stride", op_attr.stride);
     }
 
-    bool Pool2dCreator::parseInputSizeAttr(const json& op_info, Pool2dOpAttr& op_attr)
+    bool Pool2dOpCreator::parseInputSizeAttr(const json& op_info, Pool2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "input_size", op_attr.input_size);
     }
 
-    bool Pool2dCreator::parseOutputSizeAttr(const json& op_info, Pool2dOpAttr& op_attr)
+    bool Pool2dOpCreator::parseOutputSizeAttr(const json& op_info, Pool2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "output_size", op_attr.output_size);
     }
 
-    bool Pool2dCreator::parseRoundTypeAttr(const json& op_info, Pool2dOpAttr& op_attr)
+    bool Pool2dOpCreator::parseRoundTypeAttr(const json& op_info, Pool2dOpAttr& op_attr)
     {
         return OpCreator::parseRoundType(op_info, m_op_name, "round_type", op_attr.round_type, false);
     }
 
-    bool Pool2dCreator::parseLayoutAttr(const json& op_info, Pool2dOpAttr& op_attr)
+    bool Pool2dOpCreator::parseLayoutAttr(const json& op_info, Pool2dOpAttr& op_attr)
     {
         return parseDataLayoutType(op_info, m_op_name, "layout", op_attr.layout, false);
     }
 
-    bool Pool2dCreator::parseOpAttr(const json& op_info, Pool2dOpAttr& op_attr, Pool2dCfgType cfg_type)
+    bool Pool2dOpCreator::parseOpAttr(const json& op_info, Pool2dOpAttr& op_attr, Pool2dCfgType cfg_type)
     {
         op_attr.round_type = RoundType::FLOOR;
         op_attr.layout = DataLayout::WHCN;
@@ -112,7 +112,7 @@ namespace TimVX
             return false;
     }
 
-    Operation* Pool2dCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* Pool2dOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         std::map<Pool2dCfgType, std::string> pool_cfg_type_map;
         pool_cfg_type_map[Classic_Pool2d_1] = "Classic_Pool2d_1";
@@ -164,6 +164,6 @@ namespace TimVX
         }
     }
 
-    REGISTER_OP_CREATOR(Pool2dCreator, Pool2d);
+    REGISTER_OP_CREATOR(Pool2dOpCreator, Pool2d);
 
 } // namespace TimVX

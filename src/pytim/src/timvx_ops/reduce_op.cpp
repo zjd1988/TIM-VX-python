@@ -9,22 +9,22 @@
 namespace TimVX
 {
 
-    bool ReduceCreator::parseAxisAttr(const json& op_info, ReduceOpAttr& op_attr)
+    bool ReduceOpCreator::parseAxisAttr(const json& op_info, ReduceOpAttr& op_attr)
     {
         return parseDynamicList<int32_t>(op_info, m_op_name, "axis", op_attr.axis);
     }
 
-    bool ReduceCreator::parseKeepDimsAttr(const json& op_info, ReduceOpAttr& op_attr)
+    bool ReduceOpCreator::parseKeepDimsAttr(const json& op_info, ReduceOpAttr& op_attr)
     {
         return parseValue<bool>(op_info, m_op_name, "keep_dims", op_attr.keep_dims);
     }
 
-    bool ReduceCreator::parseOpAttr(const json& op_info, ReduceOpAttr& op_attr)
+    bool ReduceOpCreator::parseOpAttr(const json& op_info, ReduceOpAttr& op_attr)
     {
         return parseAxisAttr(op_info, op_attr) && parseKeepDimsAttr(op_info, op_attr);
     }
 
-    Operation* ReduceCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* ReduceOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         std::string reduce_type;
         if (!parseValue<std::string>(op_info, m_op_name, "reduce_type", reduce_type))
@@ -72,6 +72,6 @@ namespace TimVX
         return nullptr;
     }
 
-    REGISTER_OP_CREATOR(ReduceCreator, Reduce);
+    REGISTER_OP_CREATOR(ReduceOpCreator, Reduce);
 
 } // namespace TimVX

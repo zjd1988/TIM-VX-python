@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class MaxUnpool2dCreator : public OpCreator
+    class MaxUnpool2dOpCreator : public OpCreator
     {
     public:
         struct MaxUnpool2dOpAttr
@@ -21,7 +21,7 @@ namespace TimVX
             DataLayout              layout;
         };
 
-        MaxUnpool2dCreator(std::string op_name) : OpCreator(op_name)
+        MaxUnpool2dOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class Space2BatchCreator : public OpCreator
+    class Space2BatchOpCreator : public OpCreator
     {
     public:
         struct Space2BatchOpAttr
@@ -21,7 +21,7 @@ namespace TimVX
             DataLayout           layout;
         };
 
-        Space2BatchCreator(std::string op_name) : OpCreator(op_name)
+        Space2BatchOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

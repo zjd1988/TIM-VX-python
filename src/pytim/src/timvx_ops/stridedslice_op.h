@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class StridedSliceCreator : public OpCreator
+    class StridedSliceOpCreator : public OpCreator
     {
     public:
         struct StridedSliceOpAttr
@@ -24,7 +24,7 @@ namespace TimVX
             int32_t              shrink_axis_mask;
         };
 
-        StridedSliceCreator(std::string op_name) : OpCreator(op_name)
+        StridedSliceOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

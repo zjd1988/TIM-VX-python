@@ -9,77 +9,77 @@
 namespace TimVX
 {
 
-    bool SpatialTransformerCreator::parseOutputHAttr(const json& op_info, SpatialTransformerOpAttr& op_attr)
+    bool SpatialTransformerOpCreator::parseOutputHAttr(const json& op_info, SpatialTransformerOpAttr& op_attr)
     {
         return parseValue<uint32_t>(op_info, m_op_name, "output_h", op_attr.output_h);
     }
 
-    bool SpatialTransformerCreator::parseOutputWAttr(const json& op_info, SpatialTransformerOpAttr& op_attr)
+    bool SpatialTransformerOpCreator::parseOutputWAttr(const json& op_info, SpatialTransformerOpAttr& op_attr)
     {
         return parseValue<uint32_t>(op_info, m_op_name, "output_w", op_attr.output_w);
     }
 
-    bool SpatialTransformerCreator::parseHasTheta11Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
+    bool SpatialTransformerOpCreator::parseHasTheta11Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
     {
         return parseValue<bool>(op_info, m_op_name, "has_theta_1_1", op_attr.has_theta_1_1);
     }
 
-    bool SpatialTransformerCreator::parseHasTheta12Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
+    bool SpatialTransformerOpCreator::parseHasTheta12Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
     {
         return parseValue<bool>(op_info, m_op_name, "has_theta_1_2", op_attr.has_theta_1_2);
     }
 
-    bool SpatialTransformerCreator::parseHasTheta13Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
+    bool SpatialTransformerOpCreator::parseHasTheta13Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
     {
         return parseValue<bool>(op_info, m_op_name, "has_theta_1_3", op_attr.has_theta_1_3);
     }
 
-    bool SpatialTransformerCreator::parseHasTheta21Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
+    bool SpatialTransformerOpCreator::parseHasTheta21Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
     {
         return parseValue<bool>(op_info, m_op_name, "has_theta_2_1", op_attr.has_theta_2_1);
     }
 
-    bool SpatialTransformerCreator::parseHasTheta22Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
+    bool SpatialTransformerOpCreator::parseHasTheta22Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
     {
         return parseValue<bool>(op_info, m_op_name, "has_theta_2_2", op_attr.has_theta_2_2);
     }
 
-    bool SpatialTransformerCreator::parseHasTheta23Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
+    bool SpatialTransformerOpCreator::parseHasTheta23Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
     {
         return parseValue<bool>(op_info, m_op_name, "has_theta_2_3", op_attr.has_theta_2_3);
     }
 
-    bool SpatialTransformerCreator::parseTheta11Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
+    bool SpatialTransformerOpCreator::parseTheta11Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
     {
         return parseValue<float>(op_info, m_op_name, "theta_1_1", op_attr.theta_1_1);
     }
 
-    bool SpatialTransformerCreator::parseTheta12Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
+    bool SpatialTransformerOpCreator::parseTheta12Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
     {
         return parseValue<float>(op_info, m_op_name, "theta_1_2", op_attr.theta_1_2);
     }
 
-    bool SpatialTransformerCreator::parseTheta13Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
+    bool SpatialTransformerOpCreator::parseTheta13Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
     {
         return parseValue<float>(op_info, m_op_name, "theta_1_3", op_attr.theta_1_3);
     }
 
-    bool SpatialTransformerCreator::parseTheta21Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
+    bool SpatialTransformerOpCreator::parseTheta21Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
     {
         return parseValue<float>(op_info, m_op_name, "theta_2_1", op_attr.theta_2_1);
     }
 
-    bool SpatialTransformerCreator::parseTheta22Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
+    bool SpatialTransformerOpCreator::parseTheta22Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
     {
         return parseValue<float>(op_info, m_op_name, "theta_2_2", op_attr.theta_2_2);
     }
 
-    bool SpatialTransformerCreator::parseTheta23Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
+    bool SpatialTransformerOpCreator::parseTheta23Attr(const json& op_info, SpatialTransformerOpAttr& op_attr)
     {
         return parseValue<float>(op_info, m_op_name, "theta_2_3", op_attr.theta_2_3);
     }
 
-    bool SpatialTransformerCreator::parseOpAttr(const json& op_info, SpatialTransformerOpAttr& op_attr)
+    bool SpatialTransformerOpCreator::parseOpAttr(const json& op_info, SpatialTransformerOpAttr& op_attr)
     {
         return parseOutputHAttr(op_info, op_attr) && parseOutputWAttr(op_info, op_attr) && 
             parseHasTheta11Attr(op_info, op_attr) && parseHasTheta12Attr(op_info, op_attr) && 
@@ -90,7 +90,7 @@ namespace TimVX
             parseTheta22Attr(op_info, op_attr) && parseTheta23Attr(op_info, op_attr);
     }
 
-    Operation* SpatialTransformerCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* SpatialTransformerOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         SpatialTransformerOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -132,6 +132,6 @@ namespace TimVX
             theta_2_1, theta_2_2, theta_2_3).get();
     }
 
-    REGISTER_OP_CREATOR(SpatialTransformerCreator, SpatialTransformer);
+    REGISTER_OP_CREATOR(SpatialTransformerOpCreator, SpatialTransformer);
 
 } // namespace TimVX

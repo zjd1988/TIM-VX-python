@@ -9,52 +9,52 @@
 namespace TimVX
 {
 
-    bool Conv2dCreator::parseWeightsAttr(const json& op_info, Conv2dOpAttr& op_attr)
+    bool Conv2dOpCreator::parseWeightsAttr(const json& op_info, Conv2dOpAttr& op_attr)
     {
         return parseValue<uint32_t>(op_info, m_op_name, "weights", op_attr.weights, false);
     }
 
-    bool Conv2dCreator::parsePaddingAttr(const json& op_info, Conv2dOpAttr& op_attr)
+    bool Conv2dOpCreator::parsePaddingAttr(const json& op_info, Conv2dOpAttr& op_attr)
     {
         return parsePadType(op_info, m_op_name, "padding", op_attr.padding, false);
     }
 
-    bool Conv2dCreator::parseKsizeAttr(const json& op_info, Conv2dOpAttr& op_attr)
+    bool Conv2dOpCreator::parseKsizeAttr(const json& op_info, Conv2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "ksize", op_attr.ksize, false);
     }
 
-    bool Conv2dCreator::parseStrideAttr(const json& op_info, Conv2dOpAttr& op_attr)
+    bool Conv2dOpCreator::parseStrideAttr(const json& op_info, Conv2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "stride", op_attr.stride);
     }
 
-    bool Conv2dCreator::parseDilationAttr(const json& op_info, Conv2dOpAttr& op_attr)
+    bool Conv2dOpCreator::parseDilationAttr(const json& op_info, Conv2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 2>(op_info, m_op_name, "dilation", op_attr.dilation);
     }
 
-    bool Conv2dCreator::parsePadAttr(const json& op_info, Conv2dOpAttr& op_attr)
+    bool Conv2dOpCreator::parsePadAttr(const json& op_info, Conv2dOpAttr& op_attr)
     {
         return parseFixList<uint32_t, 4>(op_info, m_op_name, "pad", op_attr.pad, false);
     }
 
-    bool Conv2dCreator::parseMultiplierAttr(const json& op_info, Conv2dOpAttr& op_attr)
+    bool Conv2dOpCreator::parseMultiplierAttr(const json& op_info, Conv2dOpAttr& op_attr)
     {
         return parseValue<int32_t>(op_info, m_op_name, "multiplier", op_attr.multiplier, false);
     }
 
-    bool Conv2dCreator::parseInputLayoutAttr(const json& op_info, Conv2dOpAttr& op_attr)
+    bool Conv2dOpCreator::parseInputLayoutAttr(const json& op_info, Conv2dOpAttr& op_attr)
     {
         return parseDataLayoutType(op_info, m_op_name, "input_layout", op_attr.input_layout, false);
     }
     
-    bool Conv2dCreator::parseKernelLayoutAttr(const json& op_info, Conv2dOpAttr& op_attr)
+    bool Conv2dOpCreator::parseKernelLayoutAttr(const json& op_info, Conv2dOpAttr& op_attr)
     {
         return parseDataLayoutType(op_info, m_op_name, "kernel_layout", op_attr.kernel_layout, false);
     }
 
-    bool Conv2dCreator::parseOpAttr(const json& op_info, Conv2dOpAttr& op_attr)
+    bool Conv2dOpCreator::parseOpAttr(const json& op_info, Conv2dOpAttr& op_attr)
     {
         op_attr.weights = 0;
         op_attr.padding = PadType::AUTO;
@@ -70,7 +70,7 @@ namespace TimVX
             parseKernelLayoutAttr(op_info, op_attr);
     }
 
-    Operation* Conv2dCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* Conv2dOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         Conv2dOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -99,6 +99,6 @@ namespace TimVX
             dilation, pad, multiplier, input_layout, kernel_layout).get();
     }
 
-    REGISTER_OP_CREATOR(Conv2dCreator, Conv2d);
+    REGISTER_OP_CREATOR(Conv2dOpCreator, Conv2d);
 
 } // namespace TimVX

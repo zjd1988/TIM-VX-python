@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class ClipCreator : public OpCreator
+    class ClipOpCreator : public OpCreator
     {
     public:
         struct ClipOpAttr
@@ -20,7 +20,7 @@ namespace TimVX
             float max;
         };
 
-        ClipCreator(std::string op_name) : OpCreator(op_name)
+        ClipOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

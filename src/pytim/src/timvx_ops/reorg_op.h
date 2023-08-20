@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class ReorgCreator : public OpCreator
+    class ReorgOpCreator : public OpCreator
     {
     public:
         struct ReorgOpAttr
@@ -19,7 +19,7 @@ namespace TimVX
             uint32_t stride;
         };
 
-        ReorgCreator(std::string op_name) : OpCreator(op_name)
+        ReorgOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

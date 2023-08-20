@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class BatchNormCreator : public OpCreator
+    class BatchNormOpCreator : public OpCreator
     {
     public:
         struct BatchNormOpAttr
@@ -19,7 +19,7 @@ namespace TimVX
             float eps;
         };
 
-        BatchNormCreator(std::string op_name) : OpCreator(op_name)
+        BatchNormOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

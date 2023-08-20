@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class GatherCreator : public OpCreator
+    class GatherOpCreator : public OpCreator
     {
     public:
         struct GatherOpAttr
@@ -19,7 +19,7 @@ namespace TimVX
             int32_t axis;
         };
 
-        GatherCreator(std::string op_name) : OpCreator(op_name)
+        GatherOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

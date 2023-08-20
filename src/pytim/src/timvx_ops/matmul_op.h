@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class MatmulCreator : public OpCreator
+    class MatmulOpCreator : public OpCreator
     {
     public:
         struct MatmulOpAttr
@@ -22,7 +22,7 @@ namespace TimVX
             bool adjoint_b;
         };
 
-        MatmulCreator(std::string op_name) : OpCreator(op_name)
+        MatmulOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

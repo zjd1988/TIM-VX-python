@@ -9,17 +9,17 @@
 namespace TimVX
 {
 
-    bool ReverseCreator::parseAxisAttr(const json& op_info, ReverseOpAttr& op_attr)
+    bool ReverseOpCreator::parseAxisAttr(const json& op_info, ReverseOpAttr& op_attr)
     {
         return parseDynamicList<int32_t>(op_info, m_op_name, "axis", op_attr.axis);
     }
 
-    bool ReverseCreator::parseOpAttr(const json& op_info, ReverseOpAttr& op_attr)
+    bool ReverseOpCreator::parseOpAttr(const json& op_info, ReverseOpAttr& op_attr)
     {
         return parseAxisAttr(op_info, op_attr);
     }
 
-    Operation* ReverseCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* ReverseOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         ReverseOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -31,6 +31,6 @@ namespace TimVX
         return graph->CreateOperation<ops::Reverse>(axis).get();
     }
 
-    REGISTER_OP_CREATOR(ReverseCreator, Reverse);
+    REGISTER_OP_CREATOR(ReverseOpCreator, Reverse);
 
 } // namespace TimVX

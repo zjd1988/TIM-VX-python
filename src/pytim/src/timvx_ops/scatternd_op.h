@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class ScatterNDCreator : public OpCreator
+    class ScatterNDOpCreator : public OpCreator
     {
     public:
         struct ScatterNDOpAttr
@@ -19,7 +19,7 @@ namespace TimVX
             std::vector<uint32_t> shape;
         };
 
-        ScatterNDCreator(std::string op_name) : OpCreator(op_name)
+        ScatterNDOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

@@ -14,7 +14,7 @@ __all__ = ['setLogLevel', 'quantizationParams', 'quantize', 'dequantize', 'Engin
     'ConstructMatmulOpConfig', 'ConstructMaxpoolWithArgmaxOpConfig', 'ConstructMaxUnpool2dOpConfig', 
     'ConstructMomentsOpConfig', 'ConstructNBGOpConfig', 'ConstructPadOpConfig', 
     'ConstructPool2dOpConfig', 'ConstructReduceOpConfig', 'ConstructRelationalOperationsOpConfig', 
-    'ConstructRerogOpConfig', 'ConstructReshapeOpConfig', 'ConstructResizeOpConfig', 
+    'ConstructReorgOpConfig', 'ConstructReshapeOpConfig', 'ConstructResizeOpConfig', 
     'ConstructResize1dOpConfig', 'ConstructReverseOpConfig', 'ConstructScatterNDOpConfig', 
     'ConstructSelectOpConfig', 'ConstructSimpleOperationsOpConfig', 'ConstructSliceOpConfig', 
     'ConstructSoftmaxOpConfig', 'ConstructSpace2BatchOpConfig', 'ConstructSpace2DepthOpConfig', 

@@ -9,17 +9,17 @@
 namespace TimVX
 {
 
-    bool ReorgCreator::parseStrideAttr(const json& op_info, ReorgOpAttr& op_attr)
+    bool ReorgOpCreator::parseStrideAttr(const json& op_info, ReorgOpAttr& op_attr)
     {
         return parseValue<uint32_t>(op_info, m_op_name, "stride", op_attr.stride);
     }
 
-    bool ReorgCreator::parseOpAttr(const json& op_info, ReorgOpAttr& op_attr)
+    bool ReorgOpCreator::parseOpAttr(const json& op_info, ReorgOpAttr& op_attr)
     {
         return parseStrideAttr(op_info, op_attr);
     }
 
-    Operation* ReorgCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* ReorgOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         ReorgOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -30,6 +30,6 @@ namespace TimVX
         return graph->CreateOperation<ops::Reorg>(stride).get();
     }
 
-    REGISTER_OP_CREATOR(ReorgCreator, Reorg);
+    REGISTER_OP_CREATOR(ReorgOpCreator, Reorg);
 
 } // namespace TimVX

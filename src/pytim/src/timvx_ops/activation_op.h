@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class ActivationCreator : public OpCreator
+    class ActivationOpCreator : public OpCreator
     {
     public:
         struct ActivationOpAttr
@@ -45,7 +45,7 @@ namespace TimVX
             } hardsigmoid;
         };
 
-        ActivationCreator(std::string op_name) : OpCreator(op_name)
+        ActivationOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

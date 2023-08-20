@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class Pool2dCreator : public OpCreator
+    class Pool2dOpCreator : public OpCreator
     {
     public:
         struct Pool2dOpAttr
@@ -42,7 +42,7 @@ namespace TimVX
             Adaptive_Pool2d,
         };
 
-        Pool2dCreator(std::string op_name) : OpCreator(op_name)
+        Pool2dOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

@@ -8,12 +8,12 @@
 
 namespace TimVX
 {
-    bool GatherNdCreator::parseOpAttr(const json& op_info, GatherNdOpAttr& op_attr)
+    bool GatherNdOpCreator::parseOpAttr(const json& op_info, GatherNdOpAttr& op_attr)
     {
         return true;
     }
 
-    Operation* GatherNdCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* GatherNdOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         GatherNdOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -22,6 +22,6 @@ namespace TimVX
         return graph->CreateOperation<ops::GatherNd>().get();
     }
 
-    REGISTER_OP_CREATOR(GatherNdCreator, GatherNd);
+    REGISTER_OP_CREATOR(GatherNdOpCreator, GatherNd);
 
 } // namespace TimVX

@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class ResizeCreator : public OpCreator
+    class ResizeOpCreator : public OpCreator
     {
     public:
         struct ResizeOpAttr
@@ -25,7 +25,7 @@ namespace TimVX
             DataLayout layout;
         };
 
-        ResizeCreator(std::string op_name) : OpCreator(op_name)
+        ResizeOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

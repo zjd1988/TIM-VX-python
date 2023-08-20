@@ -9,28 +9,28 @@
 namespace TimVX
 {
 
-    bool SliceCreator::parseDimsAttr(const json& op_info, SliceOpAttr& op_attr)
+    bool SliceOpCreator::parseDimsAttr(const json& op_info, SliceOpAttr& op_attr)
     {
         return parseValue<uint32_t>(op_info, m_op_name, "dims", op_attr.dims);
     }
 
-    bool SliceCreator::parseStartAttr(const json& op_info, SliceOpAttr& op_attr)
+    bool SliceOpCreator::parseStartAttr(const json& op_info, SliceOpAttr& op_attr)
     {
         return parseDynamicList<int32_t>(op_info, m_op_name, "start", op_attr.start);
     }
 
-    bool SliceCreator::parseLengthAttr(const json& op_info, SliceOpAttr& op_attr)
+    bool SliceOpCreator::parseLengthAttr(const json& op_info, SliceOpAttr& op_attr)
     {
         return parseDynamicList<int32_t>(op_info, m_op_name, "length", op_attr.length);
     }
 
-    bool SliceCreator::parseOpAttr(const json& op_info, SliceOpAttr& op_attr)
+    bool SliceOpCreator::parseOpAttr(const json& op_info, SliceOpAttr& op_attr)
     {
         return parseDimsAttr(op_info, op_attr) && parseStartAttr(op_info, op_attr) && 
             parseLengthAttr(op_info, op_attr);
     }
 
-    Operation* SliceCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* SliceOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         SliceOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -46,6 +46,6 @@ namespace TimVX
         return graph->CreateOperation<ops::Slice>(dims, start, length).get();
     }
 
-    REGISTER_OP_CREATOR(SliceCreator, Slice);
+    REGISTER_OP_CREATOR(SliceOpCreator, Slice);
 
 } // namespace TimVX

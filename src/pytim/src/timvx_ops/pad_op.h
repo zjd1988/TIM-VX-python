@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class PadCreator : public OpCreator
+    class PadOpCreator : public OpCreator
     {
     public:
         struct PadOpAttr
@@ -21,7 +21,7 @@ namespace TimVX
             int32_t               const_val;
         };
 
-        PadCreator(std::string op_name) : OpCreator(op_name)
+        PadOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

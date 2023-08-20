@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class SplitCreator : public OpCreator
+    class SplitOpCreator : public OpCreator
     {
     public:
         struct SplitOpAttr
@@ -20,7 +20,7 @@ namespace TimVX
             std::vector<uint32_t> slices;
         };
 
-        SplitCreator(std::string op_name) : OpCreator(op_name)
+        SplitOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

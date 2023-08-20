@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class MomentsCreator : public OpCreator
+    class MomentsOpCreator : public OpCreator
     {
     public:
         struct MomentsOpAttr
@@ -20,7 +20,7 @@ namespace TimVX
             bool                 keep_dims;
         };
 
-        MomentsCreator(std::string op_name) : OpCreator(op_name)
+        MomentsOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

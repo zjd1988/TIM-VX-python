@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class RelationalOperationsCreator : public OpCreator
+    class RelationalOperationsOpCreator : public OpCreator
     {
     public:
         struct RelationalOperationsOpAttr
@@ -42,7 +42,7 @@ namespace TimVX
             } equal;
         };
 
-        RelationalOperationsCreator(std::string op_name) : OpCreator(op_name)
+        RelationalOperationsOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

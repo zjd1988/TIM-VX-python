@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class LocalResponseNormalizationCreator : public OpCreator
+    class LocalResponseNormalizationOpCreator : public OpCreator
     {
     public:
         struct LocalResponseNormalizationOpAttr
@@ -23,7 +23,7 @@ namespace TimVX
             int32_t  axis;
         };
 
-        LocalResponseNormalizationCreator(std::string op_name) : OpCreator(op_name)
+        LocalResponseNormalizationOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

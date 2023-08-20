@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class Depth2SpaceCreator : public OpCreator
+    class Depth2SpaceOpCreator : public OpCreator
     {
     public:
         struct Depth2SpaceOpAttr
@@ -20,7 +20,7 @@ namespace TimVX
             DataLayout layout;
         };
 
-        Depth2SpaceCreator(std::string op_name) : OpCreator(op_name)
+        Depth2SpaceOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

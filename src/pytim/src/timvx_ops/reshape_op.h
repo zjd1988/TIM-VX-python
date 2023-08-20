@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class ReshapeCreator : public OpCreator
+    class ReshapeOpCreator : public OpCreator
     {
     public:
         struct ReshapeOpAttr
@@ -19,7 +19,7 @@ namespace TimVX
             std::vector<uint32_t> size;
         };
 
-        ReshapeCreator(std::string op_name) : OpCreator(op_name)
+        ReshapeOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

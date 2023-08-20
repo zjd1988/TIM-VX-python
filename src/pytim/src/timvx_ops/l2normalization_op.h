@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class L2NormalizationCreator : public OpCreator
+    class L2NormalizationOpCreator : public OpCreator
     {
     public:
         struct L2NormalizationOpAttr
@@ -19,7 +19,7 @@ namespace TimVX
             int32_t axis;
         };
 
-        L2NormalizationCreator(std::string op_name) : OpCreator(op_name)
+        L2NormalizationOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

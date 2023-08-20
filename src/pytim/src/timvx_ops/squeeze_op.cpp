@@ -9,17 +9,17 @@
 namespace TimVX
 {
 
-    bool SqueezeCreator::parseAxisAttr(const json& op_info, SqueezeOpAttr& op_attr)
+    bool SqueezeOpCreator::parseAxisAttr(const json& op_info, SqueezeOpAttr& op_attr)
     {
         return parseDynamicList<uint32_t>(op_info, m_op_name, "axis", op_attr.axis);
     }
 
-    bool SqueezeCreator::parseOpAttr(const json& op_info, SqueezeOpAttr& op_attr)
+    bool SqueezeOpCreator::parseOpAttr(const json& op_info, SqueezeOpAttr& op_attr)
     {
         return parseAxisAttr(op_info, op_attr);
     }
 
-    Operation* SqueezeCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* SqueezeOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         SqueezeOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -31,6 +31,6 @@ namespace TimVX
         return graph->CreateOperation<ops::Squeeze>(axis).get();
     }
 
-    REGISTER_OP_CREATOR(SqueezeCreator, Squeeze);
+    REGISTER_OP_CREATOR(SqueezeOpCreator, Squeeze);
 
 } // namespace TimVX

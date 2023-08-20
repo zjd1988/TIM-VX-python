@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class LogicalCreator : public OpCreator
+    class LogicalOpCreator : public OpCreator
     {
     public:
         struct LogicalOpAttr
@@ -26,7 +26,7 @@ namespace TimVX
             } or_attr;
         };
 
-        LogicalCreator(std::string op_name) : OpCreator(op_name)
+        LogicalOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class ReverseCreator : public OpCreator
+    class ReverseOpCreator : public OpCreator
     {
     public:
         struct ReverseOpAttr
@@ -19,7 +19,7 @@ namespace TimVX
             std::vector<int32_t> axis;
         };
 
-        ReverseCreator(std::string op_name) : OpCreator(op_name)
+        ReverseOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

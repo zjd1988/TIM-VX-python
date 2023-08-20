@@ -9,23 +9,23 @@
 namespace TimVX
 {
 
-    bool LogSoftmaxCreator::parseAxisAttr(const json& op_info, LogSoftmaxOpAttr& op_attr)
+    bool LogSoftmaxOpCreator::parseAxisAttr(const json& op_info, LogSoftmaxOpAttr& op_attr)
     {
         return parseValue<int32_t>(op_info, m_op_name, "axis", op_attr.axis);
     }
 
-    bool LogSoftmaxCreator::parseBetaAttr(const json& op_info, LogSoftmaxOpAttr& op_attr)
+    bool LogSoftmaxOpCreator::parseBetaAttr(const json& op_info, LogSoftmaxOpAttr& op_attr)
     {
         return parseValue<float>(op_info, m_op_name, "beta", op_attr.beta, false);
     }
 
-    bool LogSoftmaxCreator::parseOpAttr(const json& op_info, LogSoftmaxOpAttr& op_attr)
+    bool LogSoftmaxOpCreator::parseOpAttr(const json& op_info, LogSoftmaxOpAttr& op_attr)
     {
         op_attr.beta = 1.f;
         return parseAxisAttr(op_info, op_attr) && parseBetaAttr(op_info, op_attr);
     }
 
-    Operation* LogSoftmaxCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* LogSoftmaxOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         LogSoftmaxOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -39,6 +39,6 @@ namespace TimVX
         return graph->CreateOperation<ops::LogSoftmax>(axis, beta).get();
     }
 
-    REGISTER_OP_CREATOR(LogSoftmaxCreator, LogSoftmax);
+    REGISTER_OP_CREATOR(LogSoftmaxOpCreator, LogSoftmax);
 
 } // namespace TimVX

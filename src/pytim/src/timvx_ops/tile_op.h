@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class TileCreator : public OpCreator
+    class TileOpCreator : public OpCreator
     {
     public:
         struct TileOpAttr
@@ -19,7 +19,7 @@ namespace TimVX
             std::vector<int32_t> multiples;
         };
 
-        TileCreator(std::string op_name) : OpCreator(op_name)
+        TileOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

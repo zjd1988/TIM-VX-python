@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class LayerNormalizationCreator : public OpCreator
+    class LayerNormalizationOpCreator : public OpCreator
     {
     public:
         struct LayerNormalizationOpAttr
@@ -20,7 +20,7 @@ namespace TimVX
             float   eps;
         };
 
-        LayerNormalizationCreator(std::string op_name) : OpCreator(op_name)
+        LayerNormalizationOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

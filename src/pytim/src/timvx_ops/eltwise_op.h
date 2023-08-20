@@ -11,14 +11,14 @@ using namespace std;
 namespace TimVX
 {
 
-    class EltwiseCreator : public OpCreator
+    class EltwiseOpCreator : public OpCreator
     {
     public:
         struct EltwiseOpAttr
         {
         };
 
-        EltwiseCreator(std::string op_name) : OpCreator(op_name)
+        EltwiseOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

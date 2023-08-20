@@ -9,32 +9,32 @@
 namespace TimVX
 {
 
-    bool Resize1dCreator::parseTypeAttr(const json& op_info, Resize1dOpAttr& op_attr)
+    bool Resize1dOpCreator::parseTypeAttr(const json& op_info, Resize1dOpAttr& op_attr)
     {
         return parseResizeType(op_info, m_op_name, "type", op_attr.type);
     }
 
-    bool Resize1dCreator::parseFactorAttr(const json& op_info, Resize1dOpAttr& op_attr)
+    bool Resize1dOpCreator::parseFactorAttr(const json& op_info, Resize1dOpAttr& op_attr)
     {
         return parseValue<float>(op_info, m_op_name, "factor", op_attr.factor);
     }
 
-    bool Resize1dCreator::parseAlignCornersAttr(const json& op_info, Resize1dOpAttr& op_attr)
+    bool Resize1dOpCreator::parseAlignCornersAttr(const json& op_info, Resize1dOpAttr& op_attr)
     {
         return parseValue<bool>(op_info, m_op_name, "align_corners", op_attr.align_corners);
     }
 
-    bool Resize1dCreator::parseHalfPixelCentersAttr(const json& op_info, Resize1dOpAttr& op_attr)
+    bool Resize1dOpCreator::parseHalfPixelCentersAttr(const json& op_info, Resize1dOpAttr& op_attr)
     {
         return parseValue<bool>(op_info, m_op_name, "half_pixel_centers", op_attr.half_pixel_centers);
     }
 
-    bool Resize1dCreator::parseTargetSizeAttr(const json& op_info, Resize1dOpAttr& op_attr)
+    bool Resize1dOpCreator::parseTargetSizeAttr(const json& op_info, Resize1dOpAttr& op_attr)
     {
         return parseValue<int32_t>(op_info, m_op_name, "target_size", op_attr.target_size);
     }
 
-    bool Resize1dCreator::parseOpAttr(const json& op_info, Resize1dOpAttr& op_attr)
+    bool Resize1dOpCreator::parseOpAttr(const json& op_info, Resize1dOpAttr& op_attr)
     {
         op_attr.layout = DataLayout::WHCN;
         return parseTypeAttr(op_info, op_attr) && parseFactorAttr(op_info, op_attr) && 
@@ -42,7 +42,7 @@ namespace TimVX
             parseTargetSizeAttr(op_info, op_attr);
     }
 
-    Operation* Resize1dCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
+    Operation* Resize1dOpCreator::onCreate(std::shared_ptr<Graph>& graph, const json& op_info)
     {
         Resize1dOpAttr op_attr;
         if (!parseOpAttr(op_info, op_attr))
@@ -64,6 +64,6 @@ namespace TimVX
             half_pixel_centers, target_size, layout).get();
     }
 
-    REGISTER_OP_CREATOR(Resize1dCreator, Resize1d);
+    REGISTER_OP_CREATOR(Resize1dOpCreator, Resize1d);
 
 } // namespace TimVX

@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class FullyConnectedCreator : public OpCreator
+    class FullyConnectedOpCreator : public OpCreator
     {
     public:
         struct FullyConnectedOpAttr
@@ -20,7 +20,7 @@ namespace TimVX
             uint32_t weights;
         };
 
-        FullyConnectedCreator(std::string op_name) : OpCreator(op_name)
+        FullyConnectedOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 

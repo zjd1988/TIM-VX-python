@@ -11,7 +11,7 @@ using namespace std;
 namespace TimVX
 {
 
-    class SliceCreator : public OpCreator
+    class SliceOpCreator : public OpCreator
     {
     public:
         struct SliceOpAttr
@@ -21,7 +21,7 @@ namespace TimVX
             std::vector<int32_t> length;
         };
 
-        SliceCreator(std::string op_name) : OpCreator(op_name)
+        SliceOpCreator(std::string op_name) : OpCreator(op_name)
         {
         }
 
