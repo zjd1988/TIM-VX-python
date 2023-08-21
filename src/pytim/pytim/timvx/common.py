@@ -534,6 +534,7 @@ def ConstructInstanceNormalizationOpConfig(op_name:str, eps:float=1e-5,
     op_info_dict["op_type"] = "InstanceNormalization"
     op_attr = {}
     op_attr["eps"] = eps
+    op_info_dict["op_attr"] = op_attr
     if len(op_inputs) > 0:
         op_info_dict["op_inputs"] = op_inputs
     if len(op_outputs) > 0:
