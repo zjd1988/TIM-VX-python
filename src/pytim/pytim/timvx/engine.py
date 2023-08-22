@@ -14,6 +14,8 @@ class Engine():
         self.mean_value = {}
         self.std_value = {}
         self.reorder = {}
+        self.input_names = []    # store input names order
+        self.output_names = []   # store output names order
         self.inputs_info = {}
         self.outputs_info = {}
         self.nodes_info = []
@@ -40,6 +42,7 @@ class Engine():
         input_name = tensor_info["name"]
         assert input_name not in self.inputs_info, "tensor {} already exists!".format(input_name)
         self.inputs_info[input_name] = tensor_info
+        self.input_names.append(input_name)
         if "alias" in tensor_info.keys():
             alias_name = tensor_info["alias"]
             self.inputs_alias[alias_name] = input_name
@@ -50,6 +53,7 @@ class Engine():
         output_name = tensor_info["name"]
         assert output_name not in self.outputs_info, "tensor {} already exists!".format(output_name)
         self.outputs_info[output_name] = tensor_info
+        self.output_names.append(output_name)
         if "alias" in tensor_info.keys():
             alias_name = tensor_info["alias"]
             self.outputs_alias[alias_name] = output_name
@@ -271,7 +275,7 @@ class Engine():
             if self.outputs_alias != {}:
                 output_name_list = list(self.outputs_alias.keys())
             else:
-                output_name_list = list(self.outputs_info.keys())
+                output_name_list = copy.deepcopy(self.output_names)
         for output_index in range(len(output_name_list)):
             output_name = output_name_list[output_index]
             real_output_name = output_name

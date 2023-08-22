@@ -20,15 +20,15 @@ def test_MaxpoolWithArgmax_shape_3_3_1_fp32_kernel_2_stride_2():
     assert timvx_engine.create_tensor(input_name, "FLOAT32", "INPUT", input_tensor_shape), \
         "construct tensor {} fail!".format(input_name)
 
-    output_indices_name = "indices"
-    output_indices_shape = [2, 2, 1]
-    assert timvx_engine.create_tensor(output_indices_name, "UINT8", "OUTPUT", output_indices_shape), \
-        "construct tensor {} fail!".format(output_indices_name)
-
     output_values_name = "values"
     output_values_shape = [2, 2, 1]
     assert timvx_engine.create_tensor(output_values_name, "FLOAT32", "OUTPUT", output_values_shape), \
         "construct tensor {} fail!".format(output_values_name)
+
+    output_indices_name = "indices"
+    output_indices_shape = [2, 2, 1]
+    assert timvx_engine.create_tensor(output_indices_name, "UINT8", "OUTPUT", output_indices_shape), \
+        "construct tensor {} fail!".format(output_indices_name)
 
     # construct operations
     op_name = "maxpoolwithargmax"
@@ -55,15 +55,17 @@ def test_MaxpoolWithArgmax_shape_3_3_1_fp32_kernel_2_stride_2():
 
     # compare gloden data with output data
     output_np_shape = [1, 2, 2]
-    golden_indices_list = [3, 2, 1, 0,]
-    golden_indices_data = np.array(golden_indices_list).reshape(output_np_shape).astype(np.uint8)
-    assert np.allclose(golden_indices_data, output_data[0], atol=1.e-6), \
-        "check gloden indices data with output data not equal!\n gloden:{}\n output:{}".format(golden_indices_data, output_data[0])
-
     golden_values_list = [5, 6, 8, 9,]
     golden_values_data = np.array(golden_values_list).reshape(output_np_shape).astype(np.float32)
-    assert np.allclose(golden_values_data, output_data[1], atol=1.e-6), \
-        "check gloden values data with output data not equal!\n gloden:{}\n output:{}".format(golden_values_data, output_data[1])
+    assert np.allclose(golden_values_data, output_data[0], atol=1.e-6), \
+        "check gloden values data with output data not equal!\n gloden:{}\n output:{}".format(golden_values_data, output_data[0])
+
+    golden_indices_list = [3, 2, 1, 0,]
+    golden_indices_data = np.array(golden_indices_list).reshape(output_np_shape).astype(np.uint8)
+    assert np.allclose(golden_indices_data, output_data[1], atol=1.e-6), \
+        "check gloden indices data with output data not equal!\n gloden:{}\n output:{}".format(golden_indices_data, output_data[1])
+
+
 
 def test_MaxpoolWithArgmax_shape_4_4_1_uint8_kernel_2_stride_2():
     # create graph
@@ -82,11 +84,6 @@ def test_MaxpoolWithArgmax_shape_4_4_1_uint8_kernel_2_stride_2():
     assert timvx_engine.create_tensor(input_name, "UINT8", "INPUT", input_tensor_shape, quant_info=input_quant_info), \
         "construct tensor {} fail!".format(input_name)
 
-    output_indices_name = "indices"
-    output_indices_shape = [2, 2, 1]
-    assert timvx_engine.create_tensor(output_indices_name, "UINT8", "OUTPUT", output_indices_shape), \
-        "construct tensor {} fail!".format(output_indices_name)
-
     output_values_name = "values"
     output_values_shape = [2, 2, 1]
     values_scale = 1
@@ -97,6 +94,11 @@ def test_MaxpoolWithArgmax_shape_4_4_1_uint8_kernel_2_stride_2():
     values_quant_info["quant_type"] = "ASYMMETRIC"
     assert timvx_engine.create_tensor(output_values_name, "UINT8", "OUTPUT", output_values_shape, quant_info=values_quant_info), \
         "construct tensor {} fail!".format(output_values_name)
+
+    output_indices_name = "indices"
+    output_indices_shape = [2, 2, 1]
+    assert timvx_engine.create_tensor(output_indices_name, "UINT8", "OUTPUT", output_indices_shape), \
+        "construct tensor {} fail!".format(output_indices_name)
 
     # construct operations
     op_name = "maxpoolwithargmax"
@@ -123,15 +125,15 @@ def test_MaxpoolWithArgmax_shape_4_4_1_uint8_kernel_2_stride_2():
 
     # compare gloden data with output data
     output_np_shape = [1, 2, 2]
-    golden_indices_list = [3, 2, 3, 2,]
-    golden_indices_data = np.array(golden_indices_list).reshape(output_np_shape).astype(np.uint8)
-    assert np.allclose(golden_indices_data, output_data[0], atol=1.e-6), \
-        "check gloden indices data with output data not equal!\n gloden:{}\n output:{}".format(golden_indices_data, output_data[0])
-
     golden_values_list = [5, 6, 11, 12,]
     golden_values_data = np.array(golden_values_list).reshape(output_np_shape).astype(np.uint8)
-    assert np.allclose(golden_values_data, output_data[1], atol=1.e-6), \
-        "check gloden values data with output data not equal!\n gloden:{}\n output:{}".format(golden_values_data, output_data[1])
+    assert np.allclose(golden_values_data, output_data[0], atol=1.e-6), \
+        "check gloden values data with output data not equal!\n gloden:{}\n output:{}".format(golden_values_data, output_data[0])
+
+    golden_indices_list = [3, 2, 3, 2,]
+    golden_indices_data = np.array(golden_indices_list).reshape(output_np_shape).astype(np.uint8)
+    assert np.allclose(golden_indices_data, output_data[1], atol=1.e-6), \
+        "check gloden indices data with output data not equal!\n gloden:{}\n output:{}".format(golden_indices_data, output_data[1])
 
 test_func_map = {}
 test_func_map["MaxpoolWithArgmax_shape_3_3_1_fp32_kernel_2_stride_2"] = test_MaxpoolWithArgmax_shape_3_3_1_fp32_kernel_2_stride_2

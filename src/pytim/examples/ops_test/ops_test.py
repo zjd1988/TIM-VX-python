@@ -19,7 +19,7 @@ from examples.ops_test.maxpoolwithargmax_test import test_maxpoolwithargmax_op
 
 if __name__ == "__main__":
     test_result = {}
-    test_result = test_activations_op()
+    test_result.update(test_activations_op())
     test_result.update(test_elementwise_op())
     test_result.update(test_conv1d_op())
     test_result.update(test_conv2d_op())

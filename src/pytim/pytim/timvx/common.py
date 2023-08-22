@@ -703,7 +703,7 @@ def ConstructMaxUnpool2dOpConfig(op_name:str, ksize:list, stride:list, layout:st
     return op_info_dict
 
 
-def ConstructMomentsOpConfig(op_name:str, axes:list, keep_dims:bool, 
+def ConstructMomentsOpConfig(op_name:str, axes:list, keep_dims:bool=False, 
     op_inputs:list=[], op_outputs:list=[])->dict:
 
     op_info_dict = {}
