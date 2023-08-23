@@ -39,22 +39,22 @@ namespace TimVX
         return true;
     }
 
-    bool RelationalOperationsOpCreator::parseOpAttr(std::string relational_op_type, const json& op_info, RelationalOperationsOpAttr& op_attr)
+    bool RelationalOperationsOpCreator::parseOpAttr(std::string relational_type, const json& op_info, RelationalOperationsOpAttr& op_attr)
     {
-        if ("Greater" == relational_op_type)
+        if ("Greater" == relational_type)
             return parseGreaterAttr(op_info, op_attr);
-        else if ("GreaterOrEqual" == relational_op_type)
+        else if ("GreaterOrEqual" == relational_type)
             return parseGreaterOrEqualAttr(op_info, op_attr);
-        else if ("Less" == relational_op_type)
+        else if ("Less" == relational_type)
             return parseLessAttr(op_info, op_attr);
-        else if ("LessOrEqual" == relational_op_type)
+        else if ("LessOrEqual" == relational_type)
             return parseLessOrEqualAttr(op_info, op_attr);
-        else if ("NotEqual" == relational_op_type)
+        else if ("NotEqual" == relational_type)
             return parseNotEqualAttr(op_info, op_attr);
-        else if ("Equal" == relational_op_type)
+        else if ("Equal" == relational_type)
             return parseEqualAttr(op_info, op_attr);
         else
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "unsupported relational operations op type: {}", relational_op_type);
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "unsupported relational operations op type: {}", relational_type);
         return false;
     }
 

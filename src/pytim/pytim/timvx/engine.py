@@ -111,7 +111,7 @@ class Engine():
         elif datatype == "FLOAT32":
             return np.float32
         elif datatype == "BOOL8":
-            return np.bool
+            return bool
         else:
             assert False, "unspoorted datatype {}, when convert tim tensor type to np type".format(datatype)
 

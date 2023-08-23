@@ -21,13 +21,13 @@ namespace TimVX
 {
 
 #define TIMVX_LOG_BASE_DATATYPE_ATTR(LEVEL, ATTR_NAME) \
-    TIMVX_LOG(LEVEL, "{:>20}: {:<20}", #ATTR_NAME, ATTR_NAME)
+    TIMVX_LOG(LEVEL, "{:>20}: {}", #ATTR_NAME, ATTR_NAME)
 
 #define TIMVX_LOG_STL_DATATYPE_ATTR(LEVEL, ATTR_NAME) \
-    TIMVX_LOG(LEVEL, "{:>20}: {:<20}", #ATTR_NAME, spdlog::fmt_lib::join(ATTR_NAME, ","))
+    TIMVX_LOG(LEVEL, "{:>20}: {}", #ATTR_NAME, spdlog::fmt_lib::join(ATTR_NAME, ","))
 
 #define TIMVX_LOG_MAP_DATATYPE_ATTR(LEVEL, ATTR_NAME, ATTR_VALUE) \
-    TIMVX_LOG(LEVEL, "{:>20}: {:<20}", #ATTR_NAME, ATTR_VALUE)
+    TIMVX_LOG(LEVEL, "{:>20}: {}", #ATTR_NAME, ATTR_VALUE)
 
     // string <---> PoolType map
     extern std::map<std::string, PoolType> gStrToPoolTypeMap;

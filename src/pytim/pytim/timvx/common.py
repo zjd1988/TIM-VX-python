@@ -100,7 +100,7 @@ def dequantize(data:'list|np.array', scale:float, zero_point:int)->np.array:
         np_array = np.array(data)
     else:
         np_array = data
-
+    np_array = np_array.astype(np.float32)
     return ((np_array - zero_point) * scale).astype(np.float32)
 
 
@@ -835,7 +835,7 @@ def ConstructReorgOpConfig(op_name:str, stride:int, op_inputs:list=[], op_output
     return op_info_dict
 
 
-def ConstructRelationalOperationsOpConfig(op_name:str, op_inputs:list=[], op_outputs:list=[])->dict:
+def ConstructRelationalOperationsOpConfig(op_name:str, relational_type:str, op_inputs:list=[], op_outputs:list=[])->dict:
 
     # Greater/GreaterOrEqual/Less/LessOrEqual/NotEqual/Equal 
     valid_relational_type = ["Greater", "GreaterOrEqual", "Less", "LessOrEqual", "NotEqual", "Equal", ]
@@ -960,7 +960,7 @@ def ConstructSelectOpConfig(op_name:str, op_inputs:list=[], op_outputs:list=[])-
     return op_info_dict
 
 
-def ConstructSimpleOperationsOpConfig(op_name:str, op_inputs:list=[], op_outputs:list=[])->dict:
+def ConstructSimpleOperationsOpConfig(op_name:str, simple_type:str, op_inputs:list=[], op_outputs:list=[])->dict:
 
     # DataConvert/Neg/Abs/Sin/Exp/Log/Sqrt/Rsqrt/Square/LogicalNot/Floor/Cast 
     valid_simple_type = ["DataConvert", "Neg", "Abs", "Sin", "Exp", 
@@ -1159,7 +1159,7 @@ def ConstructStridedSliceOpConfig(op_name:str, begin_dims:list, end_dims:list, s
     return op_info_dict
 
 
-def ConstructTileOpConfig(op_name:str, multiples:int, op_inputs:list=[], op_outputs:list=[])->dict:
+def ConstructTileOpConfig(op_name:str, multiples:list, op_inputs:list=[], op_outputs:list=[])->dict:
 
     op_info_dict = {}
     op_info_dict["op_name"] = op_name

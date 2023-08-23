@@ -85,7 +85,7 @@ namespace TimVX
         bool parseLogicalNotAttr(const json& op_info, SimpleOperationsOpAttr& op_attr);
         bool parseFloorAttr(const json& op_info, SimpleOperationsOpAttr& op_attr);
         bool parseCastAttr(const json& op_info, SimpleOperationsOpAttr& op_attr);
-        bool parseOpAttr(std::string simple_op_type, const json& op_info, SimpleOperationsOpAttr& op_attr);
+        bool parseOpAttr(std::string simple_type, const json& op_info, SimpleOperationsOpAttr& op_attr);
 
     };
 

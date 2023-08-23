@@ -55,7 +55,7 @@ namespace TimVX
         bool parseLessOrEqualAttr(const json& op_info, RelationalOperationsOpAttr& op_attr);
         bool parseNotEqualAttr(const json& op_info, RelationalOperationsOpAttr& op_attr);
         bool parseEqualAttr(const json& op_info, RelationalOperationsOpAttr& op_attr);
-        bool parseOpAttr(std::string relational_op_type, const json& op_info, RelationalOperationsOpAttr& op_attr);
+        bool parseOpAttr(std::string relational_type, const json& op_info, RelationalOperationsOpAttr& op_attr);
 
     };
 
