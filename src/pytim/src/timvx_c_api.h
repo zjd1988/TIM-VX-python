@@ -134,10 +134,48 @@ typedef struct TimvxOutput
                                                         if FALSE, the following variables do not need to be set. */
     uint32_t index;                                     /* the output index. */
     void* buf;                                          /* the output buf for index.
-                                                        when is_prealloc = FALSE and timvx_outputs_release called,
+                                                        when is_prealloc = FALSE and timvxOutputsRelease called,
                                                         this buf pointer will be free and don't use it anymore. */
     uint32_t size;                                      /* the size of output buf. */
 } TimvxOutput;
+
+
+inline static const char* getTypeString(TimvxTensorType type)
+{
+    switch(type)
+    {
+        case TIMVX_TENSOR_FLOAT32: return "FP32";
+        case TIMVX_TENSOR_FLOAT16: return "FP16";
+        case TIMVX_TENSOR_INT8: return "INT8";
+        case TIMVX_TENSOR_UINT8: return "UINT8";
+        case TIMVX_TENSOR_INT16: return "INT16";
+        default: return "UNKNOW";
+    }
+}
+
+
+inline static const char* getQntTypeString(TimvxTensorQntType type)
+{
+    switch(type)
+    {
+        case TIMVX_TENSOR_QNT_NONE: return "NONE";
+        case TIMVX_TENSOR_QNT_DFP: return "DFP";
+        case TIMVX_TENSOR_QNT_AFFINE_ASYMMETRIC: return "AFFINE";
+        default: return "UNKNOW";
+    }
+}
+
+
+inline static const char* getFormatString(TimvxTensorFormat fmt)
+{
+    switch(fmt)
+    {
+        case TIMVX_TENSOR_NCHW: return "NCHW";
+        case TIMVX_TENSOR_NHWC: return "NHWC";
+        default: return "UNKNOW";
+    }
+}
+
 
 /*  timvx_init
 
@@ -147,11 +185,10 @@ typedef struct TimvxOutput
         TimvxContext* context           the pointer of context handle.
         const char* model_para_path     model para file path.
         const char* model_weight_path   model weight file path.
-        uint32_t flag                   extend flag, see the define of TIMVX_FLAG_XXX_XXX.
     return:
         int                             error code.
 */
-int timvxInit(TimvxContext* context, const char* model_para_path, const char* model_weight_path, uint32_t flag);
+int timvxInit(TimvxContext* context, const char* model_para_path, const char* model_weight_path);
 
 
 /*  timvxDestroy
@@ -166,22 +203,22 @@ int timvxInit(TimvxContext* context, const char* model_para_path, const char* mo
 int timvxDestroy(TimvxContext context);
 
 
-/*  timvx_query
+/*  timvxQuery
 
     query the information about model or others. see timvx_query_cmd.
 
     input:
         TimvxContext context        the handle of context.
-        timvx_query_cmd cmd          the command of query.
+        TimvxQueryCmd cmd           the command of query.
         void* info                  the buffer point of information.
         uint32_t size               the size of information.
     return:
-        int                         error code.
+        int                         success:0, fail:-1
 */
 int timvxQuery(TimvxContext context, TimvxQueryCmd cmd, void* info, uint32_t size);
 
 
-/*  timvx_inputs_set
+/*  timvxInputsSet
 
     set inputs information by input index of timvx model.
     inputs information see TimvxInput.
@@ -191,25 +228,24 @@ int timvxQuery(TimvxContext context, TimvxQueryCmd cmd, void* info, uint32_t siz
         uint32_t n_inputs           the number of inputs.
         TimvxInput inputs[]         the arrays of inputs information, see TimvxInput.
     return:
-        int                         error code
+        int                         success:0, fail:-1
 */
 int timvxInputsSet(TimvxContext context, uint32_t n_inputs, TimvxInput inputs[]);
 
 
-/*  timvx_run
+/*  timvxRun
 
     run the model to execute inference.
 
     input:
         TimvxContext context        the handle of context.
-        timvx_run_extend* extend     the extend information of run.
     return:
-        int                         error code.
+        int                         success:0, fail:-1
 */
 int timvxRun(TimvxContext context);
 
 
-/*  timvx_outputs_get
+/*  timvxOutputsGet
 
     wait the inference to finish and get the outputs.
     this function will block until inference finish.
@@ -220,12 +256,12 @@ int timvxRun(TimvxContext context);
         uint32_t n_outputs          the number of outputs.
         TimvxOutput outputs[]       the arrays of output, see TimvxOutput.
     return:
-        int                         error code.
+        int                         success:0, fail:-1
 */
 int timvxOutputsGet(TimvxContext context, uint32_t n_outputs, TimvxOutput outputs[]);
 
 
-/*  timvx_outputs_release
+/*  timvxOutputsRelease
 
     release the outputs that get by timvx_outputs_get.
     after called, the TimvxOutput[x].buf get from timvx_outputs_get will
@@ -236,9 +272,23 @@ int timvxOutputsGet(TimvxContext context, uint32_t n_outputs, TimvxOutput output
         uint32_t n_ouputs           the number of outputs.
         TimvxOutput outputs[]       the arrays of output.
     return:
-        int                         error code
+        int                         success:0, fail:-1
 */
 int timvxOutputsRelease(TimvxContext context, uint32_t n_ouputs, TimvxOutput outputs[]);
+
+
+/*  timvxModelCompileAndSave
+
+    compiled model to binary data and save to file.
+
+    input:
+        TimvxContext context        the handle of context.
+        const char* weight_file     dst compile weight file.
+        const char* para_file       dst compile para file.
+    return:
+        int                         success:0, fail:-1
+*/
+int timvxCompileModelAndSave(TimvxContext context, const char* weight_file, const char* para_file);
 
 
 #ifdef __cplusplus

@@ -612,6 +612,15 @@ namespace TimVX
         return true;
     }
 
+    bool TimVXEngine::compileToBinaryAndSave(const char* weight_file, const char* para_file)
+    {
+        std::vector<uint8_t> nbg_buf;
+        size_t bin_size;
+        if (false == compileToBinary(nbg_buf, bin_size))
+            return false;
+        return true;
+    }
+
     std::string TimVXEngine::getGraphName()
     {
         return m_graph_name;

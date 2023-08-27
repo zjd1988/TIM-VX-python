@@ -174,7 +174,7 @@ namespace TimVX
         return 0;
     }
 
-    int EngineInterface::loadModelFromFile(const std::string& para_file, const std::string& weight_file)
+    int EngineInterface::loadModelFromFile(const std::string para_file, const std::string weight_file)
     {
         std::shared_ptr<char> para_data;
         int para_len = 0;
@@ -244,6 +244,11 @@ namespace TimVX
             return -1;
         }
         return m_engine->runGraph();
+    }
+
+    bool EngineInterface::compileModelAndSave(const char* weight_file, const char* para_file)
+    {
+        return m_engine->compileToBinaryAndSave(weight_file, para_file);
     }
 
     EngineInterface::EngineInterface(const std::string para_file, const std::string weight_file)

@@ -34,9 +34,12 @@ namespace TimVX
         // get engine status
         bool getEngineStatus() { return m_status; }
 
+        // compile model
+        bool compileModelAndSave(const char* weight_file, const char* para_file);
+
     private:
         // load model
-        int loadModelFromFile(const std::string& para_file, const std::string& weight_file);
+        int loadModelFromFile(const std::string para_file, const std::string weight_file);
         int loadModelFromMemory(const char* para_data, const int para_len, 
             const char* weight_data, const int weight_len);
 

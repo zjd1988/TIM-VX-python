@@ -9,7 +9,13 @@
 #include "timvx_c_api.h"
 #include "timvx_cxx_api.h"
 
-int timvxInit(TimvxContext* context, const char* model_para_path, const char* model_weight_path, uint32_t flag)
+std::map<TimvxQueryCmd, std::string> gTimvxQueryCmd2Str = {
+    {TIMVX_QUERY_IN_OUT_NUM, "TIMVX_QUERY_IN_OUT_NUM"},
+    {TIMVX_QUERY_INPUT_ATTR, "TIMVX_QUERY_INPUT_ATTR"},
+    {TIMVX_QUERY_OUTPUT_ATTR, "TIMVX_QUERY_OUTPUT_ATTR"},
+};
+
+int timvxInit(TimvxContext* context, const char* model_para_path, const char* model_weight_path)
 {
     std::unique_ptr<TimVX::EngineInterface> engine_ins(new TimVX::EngineInterface(model_para_path, model_weight_path));
     if (nullptr == engine_ins.get() || false == engine_ins->getEngineStatus())
@@ -55,7 +61,7 @@ int timvxQuery(TimvxContext context, TimvxQueryCmd cmd, void* info, uint32_t siz
         if (size != sizeof(TimvxInputOutputNum))
         {
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor io_num need {} size bytes to store, but input size is {}", 
-                sizeof(TIMVX_QUERY_IN_OUT_NUM), size);
+                sizeof(TimvxInputOutputNum), size);
             return -1;
         }
         TimvxInputOutputNum* dst_io_num = (TimvxInputOutputNum*)info;
@@ -101,7 +107,7 @@ int timvxQuery(TimvxContext context, TimvxQueryCmd cmd, void* info, uint32_t siz
     }
     else
     {
-        TIMVX_LOG(TIMVX_LEVEL_ERROR, "input unsupported query cmd {} ", cmd);
+        TIMVX_LOG(TIMVX_LEVEL_ERROR, "unsupported query cmd: {} ", int(cmd));
         return -1;
     }
     return 0;
@@ -167,5 +173,18 @@ int timvxOutputsRelease(TimvxContext context, uint32_t n_ouputs, TimvxOutput out
         TIMVX_LOG(TIMVX_LEVEL_ERROR, "input context is nullptr");
         return -1;
     }
+    return 0;
+}
+
+int timvxCompileModelAndSave(TimvxContext context, const char* weight_file, const char* para_file)
+{
+    TimVX::EngineInterface* engine_ptr = (TimVX::EngineInterface*)context;
+    if (nullptr == engine_ptr)
+    {
+        TIMVX_LOG(TIMVX_LEVEL_ERROR, "input context is nullptr");
+        return -1;
+    }
+    if (false == engine_ptr->compileModelAndSave(weight_file, para_file))
+        return -1;
     return 0;
 }

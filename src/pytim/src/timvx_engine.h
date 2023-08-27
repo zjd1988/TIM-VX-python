@@ -53,6 +53,7 @@ namespace TimVX
         bool compileGraph();
         bool runGraph();
         bool compileToBinary(std::vector<uint8_t>& nbg_buf, size_t& bin_size);
+        bool compileToBinaryAndSave(const char* weight_file, const char* para_file);
         std::string getGraphName();
 
         // get input + output tensor num
