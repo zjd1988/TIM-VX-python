@@ -8,6 +8,86 @@
 
 using namespace TimVX;
 
+int parseModelInferOption(int argc, char* argv[], CmdLineArgOption& arg_opt)
+{
+    // 1 init arg options
+    cxxopts::Options arg_options("model_infer", "model inference test");
+    arg_options.add_options()
+        // model weight file path
+        ("weight", "Model weight file path", cxxopts::value<std::string>())
+        // model para file path
+        ("para", "Model para file path", cxxopts::value<std::string>())
+        // model input data file
+        ("input", "Input data file", cxxopts::value<std::string>()->default_value(""))
+        // model output data file
+        ("output", "Output tesnor data to file", cxxopts::value<bool>()->default_value("false"))
+        // log level, default is info level
+        ("log_level", "log level", cxxopts::value<int>()->default_value("2"))
+        // help
+        ("help", "Print usage");
+    arg_options.allow_unrecognised_options();
+
+    // 2 parse arg
+    auto parse_result = arg_options.parse(argc, argv);
+
+    // 3 check help arg
+    arg_opt.help_flag = false;
+    if (parse_result.count("help"))
+    {
+        arg_opt.help_flag = true;
+        std::cout << arg_options.help() << std::endl;
+        return -1;
+    }
+
+    // 4 check unmatch arg
+    const std::vector<std::string>& unmatch = parse_result.unmatched();
+    if (parse_result.unmatched().size() > 0)
+    {
+        std::cout << "contain unsupported options:" << std::endl;
+        for (int i = 0; i < unmatch.size(); i++)
+            std::cout << unmatch[i] << std::endl;
+        return -1;
+    }
+
+    // 5 chcek model/para file arg
+    arg_opt.weight_file = "";
+    if (0 == parse_result.count("weight"))
+    {
+        std::cout << "model weight file should be set" << std::endl;
+        std::cout << arg_options.help() << std::endl;
+        return -1;
+    }
+    arg_opt.weight_file = parse_result["weight"].as<std::string>();
+
+    arg_opt.para_file = "";
+    if (0 == parse_result.count("para"))
+    {
+        std::cout << "model para file should be set" << std::endl;
+        std::cout << arg_options.help() << std::endl;
+        return -1;
+    }
+    arg_opt.para_file = parse_result["para"].as<std::string>();
+
+    // 6 check input file and output flag arg
+    arg_opt.input_file = "";
+    arg_opt.output_flag = false;
+    if (0 != parse_result.count("input"))
+        arg_opt.input_file = parse_result["input"].as<std::string>();
+    
+    if (0 != parse_result.count("output"))
+        arg_opt.output_flag = parse_result["output"].as<bool>();
+
+    // 7 check log arg
+    // LOG_LEVEL_DEBUG = 1,
+    // LOG_LEVEL_INFO,
+    // LOG_LEVEL_WARN,
+    // LOG_LEVEL_ERROR
+    arg_opt.log_level = 1;
+    arg_opt.log_level = parse_result["log_level"].as<int>();
+
+    return 0;
+}
+
 int main(int argc, char* argv[])
 {
     CmdLineArgOption cmd_option;

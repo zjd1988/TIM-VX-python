@@ -67,7 +67,7 @@ namespace TimVX
             json tensor_json = para_json["inputs"][i];
             if (!tensor_json.contains("name") || !tensor_json["name"].is_string())
             {
-                TIMVX_LOG(TIMVX_LEVEL_ERROR, "para file's index:%d input tensor'name is invalid", i);
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "para file's index:%d input tensor name is invalid", i);
                 return -1;
             }
             std::string tensor_name = tensor_json.at("name");
@@ -99,7 +99,7 @@ namespace TimVX
             json tensor_json = para_json["outputs"][i];
             if (!tensor_json.contains("name") || !tensor_json["name"].is_string())
             {
-                TIMVX_LOG(TIMVX_LEVEL_ERROR, "para file's index:%d output tensor'name is invalid", i);
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "para file's index:%d output tensor name is invalid", i);
                 return -1;
             }
             std::string tensor_name = tensor_json.at("name");
@@ -144,31 +144,43 @@ namespace TimVX
         }
         if (!para_json.contains("norm"))
         {
-            TIMVX_LOG(TIMVX_LEVEL_INFO, "para file not contain norm info");
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "para file not contain norm info");
             return -1;
         }
         json norm_json = para_json["norm"];
-        return engine->createNormInfo(norm_json);
+        return engine->createNormInfo(norm_json) ? 0 : -1;
     }
 
     int EngineInterface::loadModelFromMemory(const char* para_data, const int para_len, 
         const char* weight_data, const int weight_len)
     {
-        m_engine.reset(new TimVXEngine("timvx_graph"));
-        if (nullptr == m_engine.get() || !m_engine->createGraph())
+        try
         {
-            m_engine.reset();
-            TIMVX_LOG(TIMVX_LEVEL_INFO, "create timvx graph fail");
-            return -1;
+            m_engine.reset(new TimVXEngine("timvx_graph"));
+            if (nullptr == m_engine.get() || !m_engine->createGraph())
+            {
+                m_engine.reset();
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "create timvx graph fail");
+                return -1;
+            }
+            TIMVX_LOG(TIMVX_LEVEL_DEBUG, "create timvx graph success");
+            json para_json = json::parse(para_data, para_data + para_len);
+            if ((0 != parseModelInputs(m_engine.get(), para_json)) || 
+                (0 != parseModelOutputs(m_engine.get(), para_json)) || 
+                (0 != parseModelTensors(m_engine.get(), para_json, weight_data, weight_len)) || 
+                (0 != parseModelNodes(m_engine.get(), para_json)) || 
+                (0 != parseModelNormInfo(m_engine.get(), para_json)))
+                return -1;
+            if (!m_engine->compileGraph())
+            {
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "compile timvx graph fail");
+                return -1;
+            }
+            TIMVX_LOG(TIMVX_LEVEL_DEBUG, "compile timvx graph success");
         }
-        json para_json = json::parse(para_data, para_data + para_len);
-        if (!parseModelInputs(m_engine.get(), para_json) || !parseModelOutputs(m_engine.get(), para_json) || 
-            !parseModelTensors(m_engine.get(), para_json, weight_data, weight_len) || 
-            !parseModelNodes(m_engine.get(), para_json) || !parseModelNormInfo(m_engine.get(), para_json))
-            return -1;
-        if (!m_engine->compileGraph())
+        catch(const std::exception& e)
         {
-            TIMVX_LOG(TIMVX_LEVEL_INFO, "compile timvx graph fail");
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "exception occur: {}", e.what());
             return -1;
         }
         return 0;

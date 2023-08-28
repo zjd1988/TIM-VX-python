@@ -104,7 +104,7 @@ namespace TimVX
             || !parseTensorAttr(tensor_info, tensor_name, "attribute", tensor_attr)
             || !parseTensorDataType(tensor_info, tensor_name, "data_type", data_type))
             return false;
-        if (tensor_info.contains("quant_info"))
+        if (tensor_info.contains("quant_info") && tensor_info["quant_info"].size())
         {
             if (!tensor_info["quant_info"].is_object())
             {

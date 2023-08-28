@@ -31,11 +31,6 @@ namespace TimVX
         bool                           help_flag;
     } CmdLineArgOption;
 
-    // command line arg option parse
-    int parseModelInferOption(int argc, char* argv[], CmdLineArgOption& arg_opt);
-    int parseModelBenchmarkOption(int argc, char* argv[], CmdLineArgOption& arg_opt);
-    int parseModelCompileOption(int argc, char* argv[], CmdLineArgOption& arg_opt);
-
     class ModelTensorData : public NonCopyable
     {
     public:

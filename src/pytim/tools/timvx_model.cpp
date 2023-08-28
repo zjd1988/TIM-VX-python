@@ -13,27 +13,35 @@ namespace TimVX
     TimVXModel::TimVXModel(CmdLineArgOption& opt)
     {
         m_cmd_opt = opt;
+        // init logger
+        TimVXLog::Instance().initTimVXLog("timvx_model", "", opt.log_level);
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "init logger success");
+
         // init model
         std::string weight_file = opt.weight_file;
         std::string para_file = opt.para_file;
-        if (0 != timvxInit(&m_model_context, weight_file.c_str(), para_file.c_str()))
+        if (0 != timvxInit(&m_model_context, para_file.c_str(), weight_file.c_str()))
             return;
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "init model success");
 
         // get model input output number
         if (0 != timvxQuery(m_model_context, TIMVX_QUERY_IN_OUT_NUM, (void*)&m_io_num, sizeof(TimvxInputOutputNum)))
             return;
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "get model input output number success");
 
-        // init input 
+        // get input tensor attr and init input tensor data
         m_input_attrs.resize(m_io_num.n_input);
         if (0 != timvxQuery(m_model_context, TIMVX_QUERY_INPUT_ATTR, (void*)&m_input_attrs[0], sizeof(TimvxTensorAttr)) || 
             0 != initModelInputTensors())
             return;
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "get input tensor attr and init input tensor data success");
 
-        // init output
+        // get output tensor attr and init output tensor data
         m_output_attrs.resize(m_io_num.n_output);
         if (0 != timvxQuery(m_model_context, TIMVX_QUERY_OUTPUT_ATTR, (void*)&m_output_attrs[0], sizeof(TimvxTensorAttr)) ||
             0 != initModelOutputTensors())
             return;
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "get output tensor attr and init output tensor data success");
 
         // print model info
         printModelInfo();

@@ -170,6 +170,8 @@ namespace TimVX
                 TIMVX_LOG(TIMVX_LEVEL_ERROR, "duplicate tensor name {} is provided, please check again!", tensor_name);
                 return false;
             }
+            std::string tensor_info_str = tensor_info.dump(4);
+            TIMVX_LOG(TIMVX_LEVEL_DEBUG, "try to create tensor:{} with config:\n{}", tensor_name, tensor_info_str);
             TensorSpec tensor_spec;
             if (!TensorSpecConstruct::constructTensorspec(tensor_info, tensor_name, tensor_spec))
             {
@@ -320,7 +322,7 @@ namespace TimVX
     bool TimVXEngine::createOperation(const json& op_info)
     {
         try
-        {        
+        {
             if (m_graph.get() == nullptr)
             {
                 TIMVX_LOG(TIMVX_LEVEL_ERROR, "graph is invalid, please create graph first!");
@@ -361,7 +363,7 @@ namespace TimVX
                 return false;
             }
             std::string op_info_str = op_info.dump(4);
-            TIMVX_LOG(TIMVX_LEVEL_DEBUG, "try to create op with config:\n{}", op_info_str);
+            TIMVX_LOG(TIMVX_LEVEL_DEBUG, "try to create op:{} with config:\n{}", op_name, op_info_str);
             auto op_node = op_creator->onCreate(m_graph, op_info["op_attr"]);
             if (nullptr != op_node && op_info.contains("rounding_policy"))
             {
