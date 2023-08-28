@@ -6,6 +6,8 @@ cwd_path = os.getcwd()
 sys.path.append(cwd_path)
 from pytim import *
 
+setLogLevel("DEBUG")
+
 def construct_tensors(engine):
     lenet_weight_data = np.load("./examples/api_test/lenet.npy")
     tensor_name = "input"
@@ -216,6 +218,11 @@ def construct_operations(engine):
 
 
 if __name__ == "__main__":
+    export_graph = False
+    if len(sys.argv) == 3:
+        export_graph = True
+        graph_json_file = sys.argv[1]
+        weight_bin_file = sys.argv[2]
     engine = Engine("lenet")
     assert engine.create_graph(), "engine create grah fail!"
     print("1 construct tensors begin....")
@@ -245,3 +252,6 @@ if __name__ == "__main__":
     for i in range(5):
         index = indices[i]
         print("{}: {:.6f}".format(index, out[index]))
+
+    if export_graph:
+        engine.export_graph(graph_json_file, weight_bin_file)
