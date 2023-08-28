@@ -7,6 +7,8 @@ cwd_path = os.getcwd()
 sys.path.append(cwd_path)
 from pytim import *
 
+# setLogLevel("DEBUG")
+
 def test_Conv1d_shape_3_6_1_float_ksize_1_stride_1_weights_3_no_bias_whcn():
     # create graph
     timvx_engine = Engine("test_Conv1d_shape_3_6_1_float_ksize_1_stride_1_weights_3_no_bias_whcn")

@@ -138,8 +138,8 @@ class Engine():
         # add engine tensor_info stat
         tensor_stat_info = {}
         tensor_stat_info["name"] = tensor_name
-        tensor_stat_info["dtype"] = self.convert_tim_dtype_to_np_dtype(tensor_dtype)
-        tensor_stat_info["attr"] = tensor_attr
+        tensor_stat_info["data_type"] = self.convert_tim_dtype_to_np_dtype(tensor_dtype)
+        tensor_stat_info["attribute"] = tensor_attr
         tensor_stat_info["shape"] = tensor_shape
         tensor_stat_info["quant_info"] = quant_info
         if np_data.size != 0:
@@ -233,7 +233,7 @@ class Engine():
             # check input data shape
             # timvx tensor dims is reverse order with np dims
             np_shape = input_data.shape
-            tensor_dtype = tensor_info["dtype"]
+            tensor_dtype = tensor_info["data_type"]
             tensor_shape = copy.deepcopy(tensor_info["shape"])
             tensor_shape.reverse()
 
@@ -289,7 +289,7 @@ class Engine():
             # timvx tensor dims is reverse order with np dims
             tensor_shape = copy.deepcopy(tensor_info["shape"])
             tensor_shape.reverse()
-            tensor_dtype = tensor_info["dtype"]
+            tensor_dtype = tensor_info["data_type"]
             output_data = np.zeros(tensor_shape).astype(tensor_dtype)
             assert self.copy_data_from_tensor(output_name, output_data), "get output tensor {} fail!".format(output_name)
 
@@ -326,7 +326,7 @@ class Engine():
             tensor_info = self.inputs_info[input_name]
             for item_key in tensor_info.keys():
                 item_value = tensor_info[item_key]
-                if item_key == "dtype":
+                if item_key == "data_type":
                     item_value = self.convert_np_dtype_to_tim_dtype(item_value)
                 input_tensor[item_key] = item_value
             if log_flag:
@@ -342,7 +342,7 @@ class Engine():
             tensor_info = self.outputs_info[output_name]
             for item_key in tensor_info.keys():
                 item_value = tensor_info[item_key]
-                if item_key == "dtype":
+                if item_key == "data_type":
                     item_value = self.convert_np_dtype_to_tim_dtype(item_value)
                 output_tensor[item_key] = item_value
             if log_flag:
@@ -360,7 +360,7 @@ class Engine():
             tensor_info = self.tensors_info[index]
             for item_key in tensor_info.keys():
                 item_value = tensor_info[item_key]
-                if item_key == "dtype":
+                if item_key == "data_type":
                     item_value = self.convert_np_dtype_to_tim_dtype(item_value)
                 if item_key == "data":
                     item_value = weight_offset

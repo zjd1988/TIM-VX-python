@@ -7,7 +7,7 @@ cwd_path = os.getcwd()
 sys.path.append(cwd_path)
 from pytim import *
 
-setLogLevel("DEBUG")
+# setLogLevel("DEBUG")
 
 def test_SpatialTransformer_shape_1_3_3_1_u8():
     # create graph

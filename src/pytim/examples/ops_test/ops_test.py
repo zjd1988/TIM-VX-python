@@ -16,6 +16,19 @@ from examples.ops_test.layernormalization_test import test_layernormalization_op
 from examples.ops_test.logsoftmax_test import test_logsoftmax_op
 from examples.ops_test.matmul_test import test_matmul_op
 from examples.ops_test.maxpoolwithargmax_test import test_maxpoolwithargmax_op
+from examples.ops_test.maxunpool2d_test import test_maxunpool2d_op
+from examples.ops_test.moments_test import test_moments_op
+from examples.ops_test.relational_operations_test import test_relational_operations_op
+from examples.ops_test.reorg_test import test_reorg_op
+from examples.ops_test.resize1d_test import test_resize1d_op
+from examples.ops_test.scatternd_test import test_scatternd_op
+from examples.ops_test.simple_operations_test import test_simple_operations_op
+from examples.ops_test.spatial_transformer_test import test_spatial_transformer_op
+from examples.ops_test.tile_test import test_tile_op
+from examples.ops_test.transpose_conv_test import test_transpose_conv_op
+from examples.ops_test.unstack_test import test_unstack_op
+
+# setLogLevel("DEBUG")
 
 if __name__ == "__main__":
     test_result = {}
@@ -31,6 +44,17 @@ if __name__ == "__main__":
     test_result.update(test_logsoftmax_op())
     test_result.update(test_matmul_op())
     test_result.update(test_maxpoolwithargmax_op())
+    test_result.update(test_maxunpool2d_op())
+    test_result.update(test_moments_op())
+    test_result.update(test_relational_operations_op())
+    test_result.update(test_reorg_op())
+    test_result.update(test_resize1d_op())
+    test_result.update(test_scatternd_op())
+    test_result.update(test_simple_operations_op())
+    test_result.update(test_spatial_transformer_op())
+    test_result.update(test_tile_op())
+    test_result.update(test_transpose_conv_op())
+    test_result.update(test_unstack_op())
 
     print("ops_test summary: ")
     for key, value in test_result.items():

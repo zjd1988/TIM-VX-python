@@ -65,8 +65,6 @@ def test_MaxpoolWithArgmax_shape_3_3_1_fp32_kernel_2_stride_2():
     assert np.allclose(golden_indices_data, output_data[1], atol=1.e-6), \
         "check gloden indices data with output data not equal!\n gloden:{}\n output:{}".format(golden_indices_data, output_data[1])
 
-
-
 def test_MaxpoolWithArgmax_shape_4_4_1_uint8_kernel_2_stride_2():
     # create graph
     timvx_engine = Engine("test_MaxpoolWithArgmax_shape_4_4_1_uint8_kernel_2_stride_2")

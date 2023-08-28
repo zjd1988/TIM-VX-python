@@ -6,6 +6,8 @@ cwd_path = os.getcwd()
 sys.path.append(cwd_path)
 from pytim import *
 
+# setLogLevel("DEBUG")
+
 def test_FloorDiv_shape_1_fp32():
     # create graph
     timvx_engine = Engine("test_FloorDiv_shape_1_fp32")
