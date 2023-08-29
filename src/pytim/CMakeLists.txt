@@ -31,6 +31,12 @@ set(PROJECT_INCLUDE_PATH ${TIM_VX_INCLUDE_PATH}
     ${STB_INCLUDE_PATH})
 file(GLOB_RECURSE PYTIMVX_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 
+# build timvx engine lib
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-stack-protector -std=gnu99 -O2 -flax-vector-conversions")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-stack-protector -std=c++11 -O2")
+
+
+link_directories(${TIM_VX_LIB_PATH})
 # build python lib
 if(BUILD_PYTHON_LIB)
     find_package(Python REQUIRED COMPONENTS Development)
@@ -40,31 +46,24 @@ if(BUILD_PYTHON_LIB)
     message("use system python include: ${CYTHON_INCLUDE_DIRS}")
     message("use system python libs: ${CYTHON_LIBS}")
 
-    link_directories(${TIM_VX_LIB_PATH})
     add_library(pytimvx SHARED ${PYTIMVX_SRC})
+
+    target_include_directories(pytimvx PRIVATE 
+        ${PROJECT_INCLUDE_PATH}
+        ${PYBIND11_INCLUDE_PATH}
+        ${CYTHON_INCLUDE_DIRS}
+        ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+    target_link_libraries(pytimvx PRIVATE 
+        tim-vx
+        ${CYTHON_LIBS})
 endif()
-
-# build timvx engine lib
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-stack-protector -std=gnu99 -O2 -flax-vector-conversions")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-stack-protector -std=c++11 -O2")
-
-target_include_directories(pytimvx PRIVATE 
-    ${PROJECT_INCLUDE_PATH}
-    ${PYBIND11_INCLUDE_PATH}
-    ${CYTHON_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-)
-target_link_libraries(pytimvx PRIVATE 
-    tim-vx
-    ${CYTHON_LIBS}
-)
 
 list(REMOVE_ITEM PYTIMVX_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/pytimvx.cpp)
 add_library(timvx_engine SHARED ${PYTIMVX_SRC})
 target_include_directories(timvx_engine PRIVATE 
     ${PROJECT_INCLUDE_PATH}
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(timvx_engine PRIVATE tim-vx)
 
 # build model tools
@@ -73,31 +72,40 @@ if(BUILD_MODEL_TOOLS)
     set(COMMON_TOOLS_SRC 
         ${CMAKE_CURRENT_SOURCE_DIR}/tools/timvx_model.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/tools/tool_utils.cpp)
+
+    # model verify tool
+    set(MODEL_VERIFY_TOOL_SRC ${CMAKE_CURRENT_SOURCE_DIR}/tools/model_verify.cpp)
+    add_executable(model_verify ${MODEL_VERIFY_TOOL_SRC} ${COMMON_TOOLS_SRC})
+    target_include_directories(model_verify PRIVATE 
+        ${PROJECT_INCLUDE_PATH}
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/tools)
+    target_link_libraries(model_verify PRIVATE timvx_engine)
+
     # model infer tool
     set(MODEL_INFER_TOOL_SRC ${CMAKE_CURRENT_SOURCE_DIR}/tools/model_infer.cpp)
     add_executable(model_infer ${MODEL_INFER_TOOL_SRC} ${COMMON_TOOLS_SRC})
     target_include_directories(model_infer PRIVATE 
         ${PROJECT_INCLUDE_PATH}
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/tools
-    )
+        ${CMAKE_CURRENT_SOURCE_DIR}/tools)
     target_link_libraries(model_infer PRIVATE timvx_engine)
+
     # model compile tool
     set(MODEL_COMPILE_TOOL_SRC ${CMAKE_CURRENT_SOURCE_DIR}/tools/model_compile.cpp)
     add_executable(model_compile ${MODEL_COMPILE_TOOL_SRC} ${COMMON_TOOLS_SRC})
     target_include_directories(model_compile PRIVATE 
         ${PROJECT_INCLUDE_PATH}
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/tools
-    )
+        ${CMAKE_CURRENT_SOURCE_DIR}/tools)
     target_link_libraries(model_compile PRIVATE timvx_engine)
+
     # model benchmark tool
     set(MODEL_BENCHMARK_TOOL_SRC ${CMAKE_CURRENT_SOURCE_DIR}/tools/model_benchmark.cpp)
     add_executable(model_benchmark ${MODEL_BENCHMARK_TOOL_SRC} ${COMMON_TOOLS_SRC})
     target_include_directories(model_benchmark PRIVATE 
         ${PROJECT_INCLUDE_PATH}
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/tools
-    )
+        ${CMAKE_CURRENT_SOURCE_DIR}/tools)
     target_link_libraries(model_benchmark PRIVATE timvx_engine)
 endif()

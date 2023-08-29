@@ -7,6 +7,7 @@
 #include <fstream>
 #include "common/timvx_log.h"
 #include "common/io_uitl.h"
+#include "common/json_parse.h"
 #include "timvx_cxx_api.h"
 #include "timvx_engine.h"
 
@@ -39,7 +40,7 @@ namespace TimVX
                 return -1;
             }
             std::string tensor_name = tensor_json.at("name");
-            if (!engine->createTensor(tensor_name, tensor_json))
+            if (!engine->createTensor(tensor_name, tensor_json, weight_data, weight_len))
                 return -1;
         }
         return 0;
@@ -131,6 +132,33 @@ namespace TimVX
             json node_json = para_json["nodes"][i];
             if (!engine->createOperation(node_json))
                 return -1;
+
+            // bind input/output tensors
+            std::string op_name = node_json.at("op_name");
+            if (!node_json.contains("op_inputs") || !node_json.contains("op_outputs"))
+            {
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "op_info have no op_inputs or op_outputs to bind");
+                return -1;
+            }
+
+            if (node_json.contains("op_inputs") && !node_json["op_inputs"].is_array())
+            {
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "{}'s op_inputs item contained, but op_inputs is not list", op_name);
+                return -1;
+            }
+            if (node_json.contains("op_outputs") && !node_json["op_outputs"].is_array())
+            {
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "{}'s op_outputs item contained, but op_outputs is not list", op_name);
+                return -1;
+            }
+
+            std::vector<std::string> op_inputs;
+            std::vector<std::string> op_outputs;
+            if (!parseDynamicList<std::string>(node_json, "op_info", "op_inputs", op_inputs) || 
+                !parseDynamicList<std::string>(node_json, "op_info", "op_outputs", op_outputs) ||
+                !engine->bindInputs(op_name, op_inputs) ||
+                !engine->bindOutputs(op_name, op_outputs))
+                return false;
         }
         return 0;
     }
@@ -166,8 +194,8 @@ namespace TimVX
             TIMVX_LOG(TIMVX_LEVEL_DEBUG, "create timvx graph success");
             json para_json = json::parse(para_data, para_data + para_len);
             if ((0 != parseModelInputs(m_engine.get(), para_json)) || 
-                (0 != parseModelOutputs(m_engine.get(), para_json)) || 
                 (0 != parseModelTensors(m_engine.get(), para_json, weight_data, weight_len)) || 
+                (0 != parseModelOutputs(m_engine.get(), para_json)) || 
                 (0 != parseModelNodes(m_engine.get(), para_json)) || 
                 (0 != parseModelNormInfo(m_engine.get(), para_json)))
                 return -1;
@@ -225,7 +253,7 @@ namespace TimVX
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "timvx infer engine is null, please init first");
             return -1;
         }
-        return m_engine->getInputTensorAttr(output_index, tensor_attr);
+        return m_engine->getOutputTensorAttr(output_index, tensor_attr);
     }
 
     int EngineInterface::setInputs(std::vector<TimvxInput>& input_datas)

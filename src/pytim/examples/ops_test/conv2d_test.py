@@ -7,7 +7,7 @@ cwd_path = os.getcwd()
 sys.path.append(cwd_path)
 from pytim import *
 
-# setLogLevel("DEBUG")
+setLogLevel("DEBUG")
 
 def test_Conv2d_shape_4_2_1_1_float32_PaddingTest():
     # create graph
@@ -50,6 +50,9 @@ def test_Conv2d_shape_4_2_1_1_float32_PaddingTest():
 
     # compile graph
     assert timvx_engine.compile_graph(), "compile graph fail...."
+
+    # export graph
+    timvx_engine.export_graph("./conv2d_graph.json", "./conv2d_weight.bin")
 
     # run graph with input data
     ###################################################################

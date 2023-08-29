@@ -25,9 +25,15 @@ namespace TimVX
         TIMVX_LOG(TIMVX_LEVEL_DEBUG, "init model success");
 
         // get model input output number
-        if (0 != timvxQuery(m_model_context, TIMVX_QUERY_IN_OUT_NUM, (void*)&m_io_num, sizeof(TimvxInputOutputNum)))
+        if (0 != timvxQuery(m_model_context, TIMVX_QUERY_IN_OUT_NUM, (void*)&m_io_num, sizeof(TimvxInputOutputNum)) ||
+            0 == m_io_num.n_input || 0 == m_io_num.n_output)
+        {
+            TIMVX_LOG(TIMVX_LEVEL_DEBUG, "get model input output number fail or input:{} output:{} invalid", 
+                m_io_num.n_input, m_io_num.n_output);
             return;
-        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "get model input output number success");
+        }
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "get model input output number success, input:{} output:{}", 
+            m_io_num.n_input, m_io_num.n_output);
 
         // get input tensor attr and init input tensor data
         m_input_attrs.resize(m_io_num.n_input);
@@ -121,7 +127,7 @@ namespace TimVX
         {
             std::shared_ptr<ModelTensorData> tensor_data;
             std::string tensor_name = m_input_attrs[i].name;
-            if (inputs_file_map.end() != inputs_file_map.find(tensor_name))
+            if (inputs_file_map.end() != inputs_file_map.find(tensor_name) && "" != inputs_file_map[tensor_name])
             {
                 std::string file_name = inputs_file_map[tensor_name];
                 tensor_data.reset(new ModelTensorData(file_name.c_str()));
@@ -138,6 +144,8 @@ namespace TimVX
                 TIMVX_LOG(TIMVX_LEVEL_ERROR, "prepare model input tensor {}'s data fail", tensor_name);
                 return -1;
             }
+            m_input_tensors[tensor_name] = tensor_data;
+            TIMVX_LOG(TIMVX_LEVEL_DEBUG, "prepare model input tensor {}'s data success", tensor_name);
         }
         return 0;
     }
@@ -158,6 +166,8 @@ namespace TimVX
                 TIMVX_LOG(TIMVX_LEVEL_ERROR, "prepare model output tensor {}'s data fail", tensor_name);
                 return -1;
             }
+            m_output_tensors[tensor_name] = tensor_data;
+            TIMVX_LOG(TIMVX_LEVEL_DEBUG, "prepare model output tensor {}'s data success", tensor_name);
         }
         return 0;
     }

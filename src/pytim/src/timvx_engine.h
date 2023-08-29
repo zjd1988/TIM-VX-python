@@ -32,7 +32,7 @@ namespace TimVX
         std::vector<uint32_t> getTensorDims(const std::string& tensor_name);
         Tensor* getTensor(const std::string& tensor_name);
         bool createTensor(const std::string& tensor_name, const json& tensor_info, 
-            const char *weight_data = nullptr, const int weight_len = 0);
+            const char* weight_data = nullptr, const int weight_len = 0);
         bool copyDataFromTensor(const std::string& tensor_name, char* buffer_data, const int buffer_len);
         bool copyDataToTensor(const std::string& tensor_name, const char* buffer_data, const int buffer_len);
 
@@ -63,8 +63,7 @@ namespace TimVX
         int setInputs(std::vector<TimvxInput>& input_data);
         int getOutputs(std::vector<TimvxOutput>& output_data);
 
-        // get input tensor attr
-        int getTensorInfo(const std::string& tensor_name, TimvxTensorAttr& tensor_info);
+        // get input/output tensor attr
         int getInputTensorAttr(int input_index, TimvxTensorAttr& tensor_attr);
         int getOutputTensorAttr(int output_index, TimvxTensorAttr& tensor_attr);
 
@@ -73,6 +72,7 @@ namespace TimVX
         int convertToTimVxDataType(DataType type, TimvxTensorType& tensor_type);
 
     private:
+        int getTensorAttr(const std::string& tensor_name, TimvxTensorAttr& tensor_info);
         // quant/dequant func
         int quantTensorData(std::string tensor_name, float* src_data, int src_len, uint8_t* quant_data);
         int dequantTensorData(std::string tensor_name, uint8_t* src_data, int src_len, float* dequant_data);

@@ -8,6 +8,7 @@
 #include "timvx_engine.h"
 #include "tensor_info.h"
 #include "timvx_ops/op_creator.h"
+#include "common/json_parse.h"
 
 namespace TimVX
 {
@@ -156,7 +157,7 @@ namespace TimVX
     }
 
     bool TimVXEngine::createTensor(const std::string& tensor_name, const json& tensor_info,
-        const char *weight_data, const int weight_len)
+        const char* weight_data, const int weight_len)
     {
         try 
         {
@@ -170,22 +171,55 @@ namespace TimVX
                 TIMVX_LOG(TIMVX_LEVEL_ERROR, "duplicate tensor name {} is provided, please check again!", tensor_name);
                 return false;
             }
+
             std::string tensor_info_str = tensor_info.dump(4);
             TIMVX_LOG(TIMVX_LEVEL_DEBUG, "try to create tensor:{} with config:\n{}", tensor_name, tensor_info_str);
+
+            // construct tensor spec
             TensorSpec tensor_spec;
             if (!TensorSpecConstruct::constructTensorspec(tensor_info, tensor_name, tensor_spec))
             {
                 TIMVX_LOG(TIMVX_LEVEL_ERROR, "construct tensor {} spec fail, please check again!", tensor_name);
                 return false;
             }
+            // if not contain 'offset' and 'length', weight_data is tensor data, weight_len is tensor data len
+            // else weight_data is model data , weight_len is model data len
+            // use offset and length update tensor_data and tensor_data_length
+            if ((tensor_info.contains("offset") && !tensor_info.contains("length")) ||
+                (!tensor_info.contains("offset") && tensor_info.contains("length")))
+            {
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} config should both contain offset and length or not, please check again!", 
+                    tensor_name);
+                return false;
+            }
+            const char* tensor_data = weight_data;
+            int tensor_data_length = weight_len;
+            int tensor_data_offset = 0;
+            if ((tensor_info.contains("offset") && 
+                !parseValue<int>(tensor_info, "tensor_info", "offset", tensor_data_offset)) ||
+                (tensor_info.contains("length") && 
+                !parseValue<int>(tensor_info, "tensor_info", "length", tensor_data_length)))
+                return false;
+            tensor_data += tensor_data_offset;
+            if (tensor_data && weight_data && 
+                (tensor_data + tensor_data_length) > (weight_data + weight_len))
+            {
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor data range exceed input weight data range, please check again!", tensor_name);
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "input weight data range:{}~{}, tensor data range:{}~{}", 
+                    spdlog::fmt_lib::ptr(weight_data), spdlog::fmt_lib::ptr(weight_data + weight_len), 
+                    spdlog::fmt_lib::ptr(tensor_data), spdlog::fmt_lib::ptr(tensor_data + tensor_data_length));
+                return false;
+            }
+
+            // init tensor with tensor data
             std::shared_ptr<Tensor> tensor;
-            if (!weight_data || 0 == weight_len)
+            if (tim::vx::CONSTANT != tensor_spec.attr_ || !tensor_data || 0 == tensor_data_length)
                 tensor = m_graph->CreateTensor(tensor_spec);
             else
             {
-                std::shared_ptr<char> data_array_ptr(new char[weight_len], [](char* data_array_ptr){delete [] data_array_ptr;});
+                std::shared_ptr<char> data_array_ptr(new char[tensor_data_length], [](char* data_array_ptr){delete [] data_array_ptr;});
                 m_tensors_data[tensor_name] = data_array_ptr;
-                memcpy((void*)data_array_ptr.get(), weight_data, weight_len);
+                memcpy((void*)data_array_ptr.get(), tensor_data, tensor_data_length);
                 tensor = m_graph->CreateTensor(tensor_spec, (void*)data_array_ptr.get());
             }
             if (nullptr == tensor.get())
@@ -193,7 +227,13 @@ namespace TimVX
                 TIMVX_LOG(TIMVX_LEVEL_ERROR, "create tensor {} fail!", tensor_name);
                 return false;
             }
+
+            // store tensor info
             m_tensors[tensor_name] = tensor;
+            if (TensorAttribute::INPUT == tensor_spec.attr_)
+                m_input_tensor_names.push_back(tensor_name);
+            if (TensorAttribute::OUTPUT == tensor_spec.attr_)
+                m_output_tensor_names.push_back(tensor_name);
         }
         catch(const std::exception& e)
         {
@@ -957,12 +997,19 @@ namespace TimVX
 
     int TimVXEngine::getInputOutputNum(TimvxInputOutputNum& io_num)
     {
-        io_num.n_input = m_input_tensor_names.size();
-        io_num.n_output = m_output_tensor_names.size();
+        if (m_graph.get() == nullptr)
+        {
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "timvx graph is invalid, please create graph first");
+            return -1;
+        }
+        auto input_tensors = m_graph->InputsTensor();
+        io_num.n_input = input_tensors.size();
+        auto output_tensors = m_graph->OutputsTensor();
+        io_num.n_output = output_tensors.size();
         return 0;
     }
 
-    int TimVXEngine::getTensorInfo(const std::string& tensor_name, TimvxTensorAttr& tensor_info)
+    int TimVXEngine::getTensorAttr(const std::string& tensor_name, TimvxTensorAttr& tensor_info)
     {
         memset(&tensor_info, 0, sizeof(TimvxTensorAttr));
         if (m_tensors.find(tensor_name) == m_tensors.end())
@@ -974,6 +1021,8 @@ namespace TimVX
         int name_len = 0;
         if (tensor_name.size() > TIMVX_MAX_NAME_LEN - 1)
             name_len = TIMVX_MAX_NAME_LEN - 1;
+        else
+            name_len = tensor_name.size();
         memset(tensor_info.name, 0, sizeof(tensor_info.name));
         memcpy(tensor_info.name, tensor_name.c_str(), name_len);
 
@@ -1018,14 +1067,26 @@ namespace TimVX
 
     int TimVXEngine::getInputTensorAttr(int input_index, TimvxTensorAttr& tensor_attr)
     {
-        if (input_index < 0 || input_index >= m_input_tensor_names.size())
+        if (m_graph.get() == nullptr)
         {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "want to get {}-th input tensor, only have {} input" , 
-                input_index, int(m_input_tensor_names.size()));
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "timvx graph is invalid, please create graph first");
+            return -1;
+        }
+        auto input_tensors = m_graph->InputsTensor();
+        if (input_index < 0 || input_index >= input_tensors.size())
+        {
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "want to get {}-th input tensor attr, only have {} input" , 
+                input_index, int(input_tensors.size()));
+            return -1;
+        }
+        if (m_input_tensor_names.size() != input_tensors.size())
+        {
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "input tensor names number:{} not equal to graph input number:{}" , 
+                m_input_tensor_names.size(), int(input_tensors.size()));
             return -1;
         }
         std::string tensor_name = m_input_tensor_names[input_index];
-        if (0 != getTensorInfo(tensor_name, tensor_attr))
+        if (0 != getTensorAttr(tensor_name, tensor_attr))
         {
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "get input:{} tesnor {} attr fail" , input_index, tensor_name.c_str());
             return -1;
@@ -1036,14 +1097,26 @@ namespace TimVX
 
     int TimVXEngine::getOutputTensorAttr(int output_index, TimvxTensorAttr& tensor_attr)
     {
-        if (output_index < 0 || output_index >= m_output_tensor_names.size())
+        if (m_graph.get() == nullptr)
         {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "output:{} is invalid, only have {} output" , output_index, 
-                int(m_output_tensor_names.size()));
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "timvx graph is invalid, please create graph first");
+            return -1;
+        }
+        auto output_tensors = m_graph->OutputsTensor();
+        if (output_index < 0 || output_index >= output_tensors.size())
+        {
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "want to get {}-th output tensor attr, only have {} output", 
+                output_index, int(output_tensors.size()));
+            return -1;
+        }
+        if (m_output_tensor_names.size() != output_tensors.size())
+        {
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "output tensor names number:{} not equal to graph output number:{}" , 
+                m_output_tensor_names.size(), int(output_tensors.size()));
             return -1;
         }
         std::string tensor_name = m_output_tensor_names[output_index];
-        if (0 != getTensorInfo(tensor_name, tensor_attr))
+        if (0 != getTensorAttr(tensor_name, tensor_attr))
         {
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "get output tesnor {} attr fail" , tensor_name.c_str());
             return -1;

@@ -103,7 +103,7 @@ namespace TimVX
 
     int ModelTensorData::tensorElementCount()
     {
-        if (m_shape.size())
+        if (0 == m_shape.size())
             return 0;
         else
             return std::accumulate(m_shape.begin(), m_shape.end(), 1, std::multiplies<int>());
