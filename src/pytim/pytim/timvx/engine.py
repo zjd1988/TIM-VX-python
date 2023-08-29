@@ -362,12 +362,18 @@ class Engine():
                 item_value = tensor_info[item_key]
                 if item_key == "data_type":
                     item_value = self.convert_np_dtype_to_tim_dtype(item_value)
-                if item_key == "data":
-                    item_value = weight_offset
+                    new_tensor_info[item_key] = item_value
+                elif item_key == "data":
+                    length_item_key = "length"
+                    length_item_value = len(tensor_info[item_key].tobytes())
+                    offset_item_key = "offset"
+                    offset_item_value = weight_offset
                     weight_offset += len(tensor_info[item_key].tobytes())
                     weight_bin_list.append(tensor_info[item_key].tobytes())
-                    item_key = "offset"
-                new_tensor_info[item_key] = item_value
+                    new_tensor_info[length_item_key] = length_item_value
+                    new_tensor_info[offset_item_key] = offset_item_value
+                else:
+                    new_tensor_info[item_key] = item_value
             if log_flag:
                 engine_logger.info(new_tensor_info)
             tensors_info.append(new_tensor_info)
