@@ -283,7 +283,7 @@ namespace TimVX
             TIMVX_LOG(TIMVX_LEVEL_ERROR, "timvx infer engine is null, please init first");
             return -1;
         }
-        return m_engine->runGraph();
+        return m_engine->runGraph() == true ? 0 : -1;
     }
 
     bool EngineInterface::compileModelAndSave(const char* weight_file, const char* para_file)

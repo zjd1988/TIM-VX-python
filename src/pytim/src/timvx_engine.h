@@ -27,7 +27,7 @@ namespace TimVX
         ~TimVXEngine();
 
         // tensor utils
-        size_t getTensorElemSize(const std::string& tensor_name);
+        size_t getTensorElemCount(const std::string& tensor_name);
         size_t getTensorByteSize(const std::string& tensor_name);
         std::vector<uint32_t> getTensorDims(const std::string& tensor_name);
         Tensor* getTensor(const std::string& tensor_name);
@@ -60,8 +60,8 @@ namespace TimVX
         int getInputOutputNum(TimvxInputOutputNum& io_num);
 
         // set inputs / get outputs
-        int setInputs(std::vector<TimvxInput>& input_data);
-        int getOutputs(std::vector<TimvxOutput>& output_data);
+        int setInputs(std::vector<TimvxInput>& input_datas);
+        int getOutputs(std::vector<TimvxOutput>& output_datas);
 
         // get input/output tensor attr
         int getInputTensorAttr(int input_index, TimvxTensorAttr& tensor_attr);
@@ -121,7 +121,7 @@ namespace TimVX
         }
 
         // output data convert func
-        int outputDataConvert(TimvxOutput out_data, std::string output_name, 
+        int outputDataConvert(TimvxOutput& out_data, std::string output_name, 
             std::shared_ptr<char>& convert_data, int& convert_len);
 
     private:
@@ -149,7 +149,7 @@ namespace TimVX
         std::map<std::string, std::vector<int>>                             m_tensor_reorders;
 
         // output tensor data
-        std::map<std::string, std::shared_ptr<char>>                        m_output_tensor_datas;
+        std::map<std::string, std::shared_ptr<char>>                        m_output_datas;
     };
 
 } //namespace TimVX

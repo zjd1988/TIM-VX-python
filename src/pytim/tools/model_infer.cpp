@@ -20,9 +20,22 @@ int parseModelInferOption(int argc, char* argv[], CmdLineArgOption& arg_opt)
         // model input data file
         ("input", "Input data file", cxxopts::value<std::string>()->default_value(""))
         // model output data file
-        ("output", "Output tesnor data to file", cxxopts::value<bool>()->default_value("false"))
+        ("output", "Output tesnor data to file")
+        /* pass through mode.
+        if TRUE, the buf data is passed directly to the input node of the timvx model
+                    without any conversion. the following variables do not need to be set.
+        if FALSE, the buf data is converted into an input consistent with the model
+                    according to the following type and fmt. so the following variables
+                    need to be set.*/
+        ("pass_through", "Input tesnor set pass through mode")
+        /* whether buf is pre-allocated.
+        if TRUE, the following variables need to be set.
+        if FALSE, the following variables do not need to be set. */
+        ("is_prealloc", "Want output tesnor is prealloc by engine or not")
+        // want transfer output data to float
+        ("want_float", "Want output tesnor is float type or not")
         // log level, default is info level
-        ("log_level", "log level", cxxopts::value<int>()->default_value("2"))
+        ("log_level", "Log level", cxxopts::value<int>()->default_value("2"))
         // help
         ("help", "Print usage");
     arg_options.allow_unrecognised_options();
@@ -75,9 +88,18 @@ int parseModelInferOption(int argc, char* argv[], CmdLineArgOption& arg_opt)
         arg_opt.input_file = parse_result["input"].as<std::string>();
     
     if (0 != parse_result.count("output"))
-        arg_opt.output_flag = parse_result["output"].as<bool>();
+        arg_opt.output_flag = true;
 
-    // 7 check log arg
+
+    // 7 check model infer input/outpute tensor attr(pass_through/is_prealloc/want_float)
+    if (0 != parse_result.count("pass_through"))
+        arg_opt.pass_through = true;
+    if (0 != parse_result.count("is_prealloc"))
+        arg_opt.is_prealloc = true;
+    if (0 != parse_result.count("want_float"))
+        arg_opt.want_float = true;
+
+    // 8 check log arg
     // LOG_LEVEL_DEBUG = 1,
     // LOG_LEVEL_INFO,
     // LOG_LEVEL_WARN,

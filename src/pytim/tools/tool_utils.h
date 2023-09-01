@@ -18,8 +18,9 @@ namespace TimVX
         std::string                    weight_file;
         std::string                    input_file;
         bool                           output_flag;
-        bool                           pass_through;
-        bool                           want_float;
+        bool                           pass_through = false;
+        bool                           is_prealloc = false;
+        bool                           want_float = false;
         // model compile
         std::string                    compile_para_file;
         std::string                    compile_weight_file;
@@ -37,6 +38,8 @@ namespace TimVX
         ModelTensorData(const char* file_name);
         ModelTensorData(std::vector<int> shape, TimvxTensorType type, 
             TimvxTensorFormat format, bool random_init=true);
+        ModelTensorData(std::vector<int> shape, TimvxTensorType type, 
+            TimvxTensorFormat format, void* data=nullptr);
         ~ModelTensorData();
 
     int tensorLength() { return m_data_len; };
@@ -46,15 +49,15 @@ namespace TimVX
     TimvxTensorType tensorType() { return m_type; }
     TimvxTensorFormat tensorFormat() { return m_format; }
 
+    // save data to npy file
+    int saveDataToNpy(const char* file_name);
+
     private:
         // radom init data
         void randomInitData();
         // load data from image/npy
         int loadDataFromStb(const char* file_name);
         int loadDataFromNpy(const char* file_name);
-
-        // save data to npy file
-        int saveDataByNpy(const char* file_name);
     
     private:
         bool                           m_tensor_valid = false;

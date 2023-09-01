@@ -36,7 +36,7 @@ int parseModelBenchmarkOption(int argc, char* argv[], CmdLineArgOption& arg_opt)
     {
         arg_opt.help_flag = true;
         std::cout << arg_options.help() << std::endl;
-        return 0;
+        return -1;
     }
 
     // 4 check unmatch arg

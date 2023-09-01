@@ -137,8 +137,10 @@ namespace TimVX
         RoundType round_type                = op_attr.round_type;
         DataLayout layout                   = op_attr.layout;
         std::array<uint32_t, 4> pad         = op_attr.pad;
-        std::array<uint32_t, 2> input_size  = op_attr.input_size;
-        std::array<uint32_t, 2> output_size = op_attr.output_size;
+        // std::array<uint32_t, 2> input_size  = op_attr.input_size;
+        // std::array<uint32_t, 2> output_size = op_attr.output_size;
+        std::array<uint32_t, 2> input_size  = {0, 0};
+        std::array<uint32_t, 2> output_size = {0, 0};
 
         TIMVX_LOG_MAP_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, cfg_type, pool_cfg_type_map[cfg_type]);
         TIMVX_LOG_MAP_DATATYPE_ATTR(TIMVX_LEVEL_DEBUG, type, gPoolTypeToStrMap[type]);

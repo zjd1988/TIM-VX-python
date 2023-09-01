@@ -52,9 +52,30 @@ namespace TimVX
             randomInitData();
     }
 
+    ModelTensorData::ModelTensorData(std::vector<int> shape, TimvxTensorType type, 
+        TimvxTensorFormat format, void* data)
+    {
+        m_shape = shape;
+        m_type = type;
+        m_format = format;
+        m_shape = shape;
+        m_data_len = tensorElementCount() * tensorElementSize();
+        if (nullptr == data)
+        {
+            m_own_flag = true;
+            m_data = (uint8_t*)(new char[m_data_len]);
+        }
+        else
+        {
+            m_own_flag = false;
+            m_data = (uint8_t*)data;
+        }
+        m_tensor_valid = (nullptr != m_data) ? true : false;
+    }
+
     ModelTensorData::~ModelTensorData()
     {
-        if (nullptr != m_data)
+        if (true == m_own_flag && nullptr != m_data)
             delete[] m_data;
     }
 
@@ -240,6 +261,55 @@ namespace TimVX
         m_format = TIMVX_TENSOR_NCHW;
         m_data = (uint8_t*)tensor_data;
         m_data_len = tensor_len;
+        return 0;
+    }
+
+    int ModelTensorData::saveDataToNpy(const char* file_name)
+    {
+        std::ofstream stream(file_name, std::ofstream::binary);
+        if (!stream)
+        {
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "failed to open output file {}", file_name);
+            return -1;
+        }
+        std::type_index tensor_index = std::type_index(typeid(float));
+        if (TIMVX_TENSOR_FLOAT32 == m_type)
+            tensor_index = std::type_index(typeid(float));
+        else if (TIMVX_TENSOR_INT8 == m_type)
+            tensor_index = std::type_index(typeid(int8_t));
+        else if (TIMVX_TENSOR_UINT8 == m_type)
+            tensor_index = std::type_index(typeid(uint8_t));
+        else if (TIMVX_TENSOR_INT16 == m_type)
+            tensor_index = std::type_index(typeid(int16_t));
+        else
+        {
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "unsupported tensor data type: {}", getTypeString(m_type));
+            return -1;
+        }
+        std::vector<npy::ndarray_len_t> shape_v(m_shape.begin(), m_shape.end());
+        bool fortran_order = false;
+        npy::dtype_t dtype = npy::dtype_map.at(tensor_index);
+        npy::header_t header{ dtype, fortran_order, shape_v };
+        npy::write_header(stream, header);
+        size_t before = stream.tellp(); //current pos
+        stream.write((const char*)m_data, m_data_len);
+        if (!stream.bad())
+        {
+            size_t curr_pos = stream.tellp();
+            size_t write_len = curr_pos - before;
+            if (m_data_len != write_len)
+            {
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "expect write {} bytes, actually write {} bytes to file {}",
+                    m_data_len, write_len, file_name);
+                return -1;
+            }
+        }
+        else
+        {
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "write tensor data to file {} fail", file_name);
+            return -1;
+        }
+        TIMVX_LOG(TIMVX_LEVEL_DEBUG, "write tensor data to file {} success", file_name);
         return 0;
     }
 
