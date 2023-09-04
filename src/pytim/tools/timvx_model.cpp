@@ -214,7 +214,7 @@ namespace TimVX
             std::shared_ptr<ModelTensorData>& tensor = m_output_tensors[tensor_name];
             model_outputs[i].index = i;
             model_outputs[i].is_prealloc = (m_cmd_opt.is_prealloc == true ? 1 : 0);
-            if (m_cmd_opt.is_prealloc)
+            if (0 == m_cmd_opt.is_prealloc)
             {
                 model_outputs[i].size = tensor->tensorLength();
                 model_outputs[i].buf = tensor->tensorData();

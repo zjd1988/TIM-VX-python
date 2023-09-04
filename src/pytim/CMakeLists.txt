@@ -15,6 +15,15 @@ else()
     set(TIM_VX_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../host_build/install/include)
     set(TIM_VX_LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../host_build/install/lib)
 endif()
+
+if(EXTERNAL_VIV_SDK)
+    set(EXTERNAL_VIV_SDK_LIB_PATH ${EXTERNAL_VIV_SDK}/drivers)
+    set(EXTERNAL_VIV_SDK_LIBS CLC GAL OpenVX OpenVXU VSC ArchModelSw NNArchPerf)
+else()
+    set(EXTERNAL_VIV_SDK_LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../prebuilt-sdk/X86_64_linux/lib)
+    set(EXTERNAL_VIV_SDK_LIBS CLC GAL OpenVX OpenVXU VSC ArchModelSw NNArchPerf Emulator)
+endif()
+
 set(PYBIND11_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rd_party/pybind11-2.9.2/include)
 set(SPDLOG_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rd_party/spdlog-1.12.0/include)
 set(NLOHMANN_JSON_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rd_party/nlohmann-json-3.11.2/include)
@@ -37,6 +46,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-stack-protector -std=c++11 -O2")
 
 
 link_directories(${TIM_VX_LIB_PATH})
+link_directories(${EXTERNAL_VIV_SDK_LIB_PATH})
 # build python lib
 if(BUILD_PYTHON_LIB)
     find_package(Python REQUIRED COMPONENTS Development)
@@ -64,7 +74,7 @@ add_library(timvx_engine SHARED ${PYTIMVX_SRC})
 target_include_directories(timvx_engine PRIVATE 
     ${PROJECT_INCLUDE_PATH}
     ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(timvx_engine PRIVATE tim-vx)
+target_link_libraries(timvx_engine PRIVATE tim-vx ${EXTERNAL_VIV_SDK_LIBS})
 
 # build model tools
 if(BUILD_MODEL_TOOLS)
@@ -80,7 +90,7 @@ if(BUILD_MODEL_TOOLS)
         ${PROJECT_INCLUDE_PATH}
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/tools)
-    target_link_libraries(model_verify PRIVATE timvx_engine)
+    target_link_libraries(model_verify PRIVATE timvx_engine tim-vx ${EXTERNAL_VIV_SDK_LIBS})
 
     # model infer tool
     set(MODEL_INFER_TOOL_SRC ${CMAKE_CURRENT_SOURCE_DIR}/tools/model_infer.cpp)
@@ -89,7 +99,7 @@ if(BUILD_MODEL_TOOLS)
         ${PROJECT_INCLUDE_PATH}
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/tools)
-    target_link_libraries(model_infer PRIVATE timvx_engine)
+    target_link_libraries(model_infer PRIVATE timvx_engine tim-vx ${EXTERNAL_VIV_SDK_LIBS})
 
     # model compile tool
     set(MODEL_COMPILE_TOOL_SRC ${CMAKE_CURRENT_SOURCE_DIR}/tools/model_compile.cpp)
@@ -98,7 +108,7 @@ if(BUILD_MODEL_TOOLS)
         ${PROJECT_INCLUDE_PATH}
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/tools)
-    target_link_libraries(model_compile PRIVATE timvx_engine)
+    target_link_libraries(model_compile PRIVATE timvx_engine tim-vx ${EXTERNAL_VIV_SDK_LIBS})
 
     # model benchmark tool
     set(MODEL_BENCHMARK_TOOL_SRC ${CMAKE_CURRENT_SOURCE_DIR}/tools/model_benchmark.cpp)
@@ -107,5 +117,5 @@ if(BUILD_MODEL_TOOLS)
         ${PROJECT_INCLUDE_PATH}
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/tools)
-    target_link_libraries(model_benchmark PRIVATE timvx_engine)
+    target_link_libraries(model_benchmark PRIVATE timvx_engine tim-vx ${EXTERNAL_VIV_SDK_LIBS})
 endif()

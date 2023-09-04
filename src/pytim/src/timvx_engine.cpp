@@ -137,7 +137,7 @@ namespace TimVX
         size_t dim_num;
         if (m_tensors.find(tensor_name) == m_tensors.end())
         {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} not exists", tensor_name.c_str());
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "tensor {} not exists", tensor_name);
             return 0;
         }
         sz = 0;
@@ -253,9 +253,9 @@ namespace TimVX
             for (int i = 0; i < m_input_tensor_names.size(); i++)
             {
                 std::string tensor_name = m_input_tensor_names[i];
-                if (!norm_json.contains(tensor_name.c_str()))
+                if (!norm_json.contains(tensor_name))
                     continue;
-                json tensor_norm = norm_json[tensor_name.c_str()];
+                json tensor_norm = norm_json[tensor_name];
                 std::vector<float> mean_val;
                 std::vector<float> std_val;
                 std::vector<int> reorder_val;
@@ -712,7 +712,7 @@ namespace TimVX
         }
         if (quant_info.Scales().size() != quant_info.ZeroPoints().size())
         {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "invalid quant info for tensor {} , scales num not equal to zero_point", tensor_name.c_str());
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "invalid quant info for tensor:{} , scales num not equal to zero_point", tensor_name);
             return -1;
         }
 
@@ -744,7 +744,7 @@ namespace TimVX
         }
         if (quant_info.Scales().size() != quant_info.ZeroPoints().size())
         {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "invalid quant info for tensor {} , scales num not equal to zero_point", tensor_name.c_str());
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "invalid quant info for tensor:{} , scales num not equal to zero_point", tensor_name);
             return -1;
         }
 
@@ -770,7 +770,7 @@ namespace TimVX
     {
         if (input_data.pass_through)
         {
-            TIMVX_LOG(TIMVX_LEVEL_DEBUG, "input tensor:{} set pass_through true, no need normalization", input_name.c_str());
+            TIMVX_LOG(TIMVX_LEVEL_DEBUG, "input tensor:{} set pass_through true, no need normalization", input_name);
             return 0;
         }
 
@@ -783,7 +783,7 @@ namespace TimVX
             reorder_data = std::shared_ptr<char>(new char[src_len], std::default_delete<char []>());
             if (nullptr == reorder_data.get())
             {
-                TIMVX_LOG(TIMVX_LEVEL_ERROR, "malloc data for tensor {} reorder out fail", input_name.c_str());
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "malloc data for tensor:{} reorder out fail", input_name);
                 return -1;
             }
             std::vector<int> reorder = m_tensor_reorders[input_name];
@@ -808,17 +808,17 @@ namespace TimVX
             norm_data = std::shared_ptr<char>(new char[src_len * sizeof(float)], std::default_delete<char []>());
             if (nullptr == norm_data.get())
             {
-                TIMVX_LOG(TIMVX_LEVEL_ERROR, "malloc data for tensor {} norm out fail", input_name.c_str());
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "malloc data for tensor:{} norm out fail", input_name);
                 return -1;
             }
             if (0 != inputDataMeanStd(src_data, src_len, (float*)norm_data.get(), means, stds))
             {
-                TIMVX_LOG(TIMVX_LEVEL_ERROR, "input tensor ({} - mean) / std fail", input_name.c_str());
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "input tensor ({} - mean) / std fail", input_name);
                 return -1;
             }
             if (0 != inputDataTranspose<float>((float*)norm_data.get(), norm_len, ch_num, (float*)norm_data.get()))
             {
-                TIMVX_LOG(TIMVX_LEVEL_ERROR, "input tensor {} transpose fail", input_name.c_str());
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "input tensor:{} transpose fail", input_name);
                 return -1;
             }
         }
@@ -828,7 +828,7 @@ namespace TimVX
             norm_data = std::shared_ptr<char>(new char[src_len], std::default_delete<char []>());
             if (0 != inputDataTranspose<uint8_t>((uint8_t*)src_data, src_len, ch_num, (uint8_t*)norm_data.get()))
             {
-                TIMVX_LOG(TIMVX_LEVEL_ERROR, "input tensor {} transpose fail", input_name.c_str());
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "input tensor:{} transpose fail", input_name);
                 return -1;
             }
         }
@@ -855,52 +855,63 @@ namespace TimVX
             std::string tensor_name = m_input_tensor_names[i];
             const char* buffer_data = (const char*)input.buf;
             int buffer_len = input.size;
-            if (!input.pass_through && m_tensor_means[tensor_name].size() &&
-                buffer_len % m_tensor_means[tensor_name].size())
+            if (0 == input.pass_through)
             {
-                TIMVX_LOG(TIMVX_LEVEL_ERROR, "invalid input data size {}", buffer_len);
-                return -1;
-            }
-            // norm data
-            int norm_len = 0;
-            std::shared_ptr<char> norm_data;
-            if (0 != inputDataNorm(input, tensor_name, norm_data, norm_len))
-            {
-                TIMVX_LOG(TIMVX_LEVEL_ERROR, "input data normalization fail");
-                return -1;
-            }
-            if (nullptr != norm_data.get())
-            {
-                buffer_data = (const char*)norm_data.get();
-                buffer_len = norm_len;
-            }
+                if (m_tensor_means.end() != m_tensor_means.find(tensor_name) && 
+                    m_tensor_means[tensor_name].size() && buffer_len % m_tensor_means[tensor_name].size())
+                {
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "input:{} data size:{}, means size:{}", 
+                        tensor_name, buffer_len, int(m_tensor_means[tensor_name].size()));
+                    return -1;
+                }
+                if (m_tensor_stds.end() != m_tensor_stds.find(tensor_name) && 
+                    m_tensor_stds[tensor_name].size() && buffer_len % m_tensor_stds[tensor_name].size())
+                {
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "input:{} data size:{}, stds size:{}", 
+                        tensor_name, buffer_len, int(m_tensor_stds[tensor_name].size()));
+                    return -1;
+                }
+                // norm data
+                int norm_len = 0;
+                std::shared_ptr<char> norm_data;
+                if (0 != inputDataNorm(input, tensor_name, norm_data, norm_len))
+                {
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "input tensor:{} data normalization fail", tensor_name);
+                    return -1;
+                }
+                if (nullptr != norm_data.get())
+                {
+                    buffer_data = (const char*)norm_data.get();
+                    buffer_len = norm_len;
+                }
 
-            // quant data
-            int quant_len = norm_len / sizeof(float);
-            std::shared_ptr<char> quant_data;
-            if (quant_len)
-                quant_data.reset(new char[quant_len], std::default_delete<char []>());
-            if (quant_len && nullptr == quant_data.get())
-            {
-                TIMVX_LOG(TIMVX_LEVEL_ERROR, "malloc data for tensor {} quant out fail", tensor_name.c_str());
-                return -1;
-            }
-            if (quant_len && nullptr != quant_data.get() && 
-                0 != quantTensorData(tensor_name, (float*)norm_data.get(), quant_len, (uint8_t*)quant_data.get()))
-            {
-                TIMVX_LOG(TIMVX_LEVEL_ERROR, "input data quantization fail");
-                return -1;
-            }
-            if (nullptr != quant_data.get())
-            {
-                buffer_data = (const char*)quant_data.get();
-                buffer_len = quant_len;
+                // quant data
+                int quant_len = norm_len / sizeof(float);
+                std::shared_ptr<char> quant_data;
+                if (quant_len)
+                    quant_data.reset(new char[quant_len], std::default_delete<char []>());
+                if (quant_len && nullptr == quant_data.get())
+                {
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "malloc data for tensor:{} quant out fail", tensor_name);
+                    return -1;
+                }
+                if (quant_len && nullptr != quant_data.get() && 
+                    0 != quantTensorData(tensor_name, (float*)norm_data.get(), quant_len, (uint8_t*)quant_data.get()))
+                {
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "input tensor:{} data quantization fail", tensor_name);
+                    return -1;
+                }
+                if (nullptr != quant_data.get())
+                {
+                    buffer_data = (const char*)quant_data.get();
+                    buffer_len = quant_len;
+                }
             }
 
             // copy data to tensor
             if (!copyDataToTensor(tensor_name, buffer_data, buffer_len))
             {
-                TIMVX_LOG(TIMVX_LEVEL_ERROR, "copy data to tensor {} fail", tensor_name.c_str());
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "copy data to tensor:{} fail", tensor_name);
                 return -1;
             }
         }
@@ -943,7 +954,7 @@ namespace TimVX
                 output_data = std::shared_ptr<char>(new char[output_data_size], std::default_delete<char []>());
                 if (nullptr == output_data.get())
                 {
-                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "malloc memory for tensor output:{} fail", tensor_name.c_str());
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "malloc memory for tensor output:{} fail", tensor_name);
                     return -1;
                 }
                 output.buf = (void*)output_data.get();
@@ -958,7 +969,7 @@ namespace TimVX
                 output_tensor_data = std::shared_ptr<char>(new char[output_tensor_size], std::default_delete<char []>());
                 if (nullptr == output_tensor_data.get())
                 {
-                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "malloc memory for tensor output:{} fail", tensor_name.c_str());
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "malloc memory for tensor output:{} fail", tensor_name);
                     return -1;
                 }
                 tensor_buffer_data = output_tensor_data.get();
@@ -967,7 +978,7 @@ namespace TimVX
             // copy data from tensor
             if (!copyDataFromTensor(tensor_name, tensor_buffer_data, tensor_buffer_len))
             {
-                TIMVX_LOG(TIMVX_LEVEL_ERROR, "copy data from tensor {} fail", tensor_name.c_str());
+                TIMVX_LOG(TIMVX_LEVEL_ERROR, "copy data from tensor:{} fail", tensor_name);
                 return -1;
             }
 
@@ -977,7 +988,7 @@ namespace TimVX
                 if (0 != dequantTensorData(tensor_name, (uint8_t*)tensor_buffer_data, 
                     tensor_buffer_len, (float*)output_buffer_data))
                 {
-                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "dequant form tensor {} fail", tensor_name.c_str());
+                    TIMVX_LOG(TIMVX_LEVEL_ERROR, "dequant form tensor:{} fail", tensor_name);
                     return -1;
                 }
             }
@@ -1078,7 +1089,7 @@ namespace TimVX
         std::string tensor_name = m_input_tensor_names[input_index];
         if (0 != getTensorAttr(tensor_name, tensor_attr))
         {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "get input:{} tesnor {} attr fail" , input_index, tensor_name.c_str());
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "get input:{} tesnor {} attr fail" , input_index, tensor_name);
             return -1;
         }
         tensor_attr.index = input_index;
@@ -1108,7 +1119,7 @@ namespace TimVX
         std::string tensor_name = m_output_tensor_names[output_index];
         if (0 != getTensorAttr(tensor_name, tensor_attr))
         {
-            TIMVX_LOG(TIMVX_LEVEL_ERROR, "get output tesnor {} attr fail" , tensor_name.c_str());
+            TIMVX_LOG(TIMVX_LEVEL_ERROR, "get output tesnor {} attr fail" , tensor_name);
             return -1;
         }
         tensor_attr.index = output_index;

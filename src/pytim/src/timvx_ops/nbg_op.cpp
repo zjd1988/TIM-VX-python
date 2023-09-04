@@ -11,8 +11,8 @@ namespace TimVX
 
     bool NBGOpCreator::parseBinaryAttr(const json& op_info, NBGOpAttr& op_attr)
     {
-        // use uint64_t to store void* binary
-        uint64_t binary_ptr;
+        // use size_t to store void* binary
+        size_t binary_ptr;
         if (parseValue<size_t>(op_info, m_op_name, "binary", binary_ptr))
             op_attr.binary = (void*)binary_ptr;
         else
