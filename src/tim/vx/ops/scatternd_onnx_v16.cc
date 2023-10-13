@@ -21,41 +21,23 @@
 *    DEALINGS IN THE SOFTWARE.
 *
 *****************************************************************************/
-#ifndef TIM_VX_OPS_FULLYCONNECTED_H_
-#define TIM_VX_OPS_FULLYCONNECTED_H_
-#include "tim/vx/builtin_op.h"
+#include "tim/vx/ops/scatternd_onnx_v16.h"
+
+#include "builtin_op_impl.h"
+#include "vsi_nn_pub.h"
 
 namespace tim {
 namespace vx {
 namespace ops {
 
-/**
- * ## FullyConnected
- *
- * Denotes a fully (densely) connected layer, which connects all elements in the
- * input tensor with each element in the output tensor.
- *
- * - axis: Describes the axis of the inputs when coerced to 2D.
- * - weights: the output channel number for weight tensor.
- */
+ScatterND_ONNX_V16::ScatterND_ONNX_V16(Graph* graph)
+    : BuiltinOp(graph, VSI_NN_OP_SCATTER_ND_UPDATE) {
+}
 
-class FullyConnected : public BuiltinOp {
- public:
-  FullyConnected(Graph* graph, uint32_t axis);
-  FullyConnected(Graph* graph, uint32_t axis, uint32_t weights);
-
-  std::shared_ptr<Operation> Clone(std::shared_ptr<Graph>& graph) const override;
-
- protected:
-  uint32_t axis_;
-  uint32_t weights_;
- private:
-  void OnBindInputPostProc(const std::shared_ptr<Tensor>& tensor,
-                           int32_t input_idx) override;
-};
+std::shared_ptr<Operation> ScatterND_ONNX_V16::Clone(std::shared_ptr<Graph>& graph) const {
+  return graph->CreateOperation<ScatterND_ONNX_V16>();
+}
 
 }  // namespace ops
 }  // namespace vx
 }  // namespace tim
-
-#endif /* TIM_VX_OPS_FULLYCONNECTED_H_ */

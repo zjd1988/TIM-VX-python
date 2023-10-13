@@ -48,9 +48,7 @@ class Quantization {
         channel_dim_(channel_dim),
         scales_(std::move(scales)),
         zero_points_(std::move(zero_points)) {}
-  Quantization(QuantType type, int8_t fl)
-      : type_(type),
-        fl_(fl){}
+  Quantization(QuantType type, int8_t fl) : type_(type), fl_(fl) {}
   QuantType& Type() { return type_; }
   const QuantType& Type() const { return type_; }
   Quantization& SetType(QuantType type) {
@@ -79,9 +77,9 @@ class Quantization {
     return *this;
   }
 
-  const std::int8_t& Fl() const{ return this->fl_; }
+  const std::int8_t& Fl() const { return this->fl_; }
 
-  bool operator ==  (const Quantization& other_quant) const;
+  bool operator==(const Quantization& other_quant) const;
 
  protected:
   QuantType type_{QuantType::NONE};
@@ -104,11 +102,13 @@ struct TensorSpec {
 
   TensorSpec(const TensorSpec& other);
 
+  bool operator==(const TensorSpec& other_spec) const;
+
   TensorSpec& operator=(const TensorSpec& other);
 
   TensorSpec& SetDataType(DataType datatype);
 
-  TensorSpec& SetShape(ShapeType& shape);
+  TensorSpec& SetShape(const ShapeType& shape);
 
   TensorSpec& SetAttribute(TensorAttribute attr);
 
@@ -148,8 +148,13 @@ class Tensor {
   virtual const Quantization& GetQuantization() = 0;
   virtual TensorSpec& GetSpec() = 0;
   virtual uint32_t GetId() = 0;
-  virtual bool CopyDataToTensor(const void* data, uint32_t size_in_bytes = 0) = 0;
+  virtual bool CopyDataToTensor(const void* data,
+                                uint32_t size_in_bytes = 0) = 0;
   virtual bool CopyDataFromTensor(void* data) = 0;
+  virtual bool SwapHandle(void* new_ptr, bool is_new_ptr_malloc_by_ovxlib,
+                          void** old_ptr) = 0;
+  virtual bool SwapHandle(std::shared_ptr<tim::vx::Tensor> tensor) = 0;
+  virtual bool SwapHandleWithCache(std::shared_ptr<tim::vx::Tensor> tensor) = 0;
   virtual bool FlushCacheForHandle() = 0;
   virtual bool InvalidateCacheForHandle() = 0;
   virtual void* map(bool invalidate_cpu_cache = false) = 0;
@@ -158,10 +163,13 @@ class Tensor {
   virtual bool IsConstTensor() = 0;
   virtual bool SaveTensorToTextByFp32(std::string filename) = 0;
   virtual void* ConvertTensorToData(uint8_t* tensorData) = 0;
+  virtual float* ConvertTensorToFloat32Data() = 0;
 };
-namespace utils{
-  bool Float32ToDtype(std::shared_ptr<tim::vx::Tensor> tensor, std::vector<float> fval, uint8_t* tensorData);
-  bool DtypeToFloat32(std::shared_ptr<tim::vx::Tensor> tensor, uint8_t* tensorData, float* data);
+namespace utils {
+bool Float32ToDtype(std::shared_ptr<tim::vx::Tensor> tensor,
+                    std::vector<float> fval, uint8_t* tensorData);
+bool DtypeToFloat32(std::shared_ptr<tim::vx::Tensor> tensor,
+                    uint8_t* tensorData, float* data);
 }  //namespace utils
 }  // namespace vx
 }  // namespace tim

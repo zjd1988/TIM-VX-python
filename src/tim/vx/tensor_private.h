@@ -37,7 +37,7 @@ class TensorImpl : public Tensor {
   TensorImpl(Graph* graph, const TensorSpec& spec, void* data = nullptr);
   ~TensorImpl();
 
-  bool Init(void *external_cache = nullptr);
+  bool Init(void* external_cache = nullptr);
   bool IsWriteable();
   bool IsReadable();
 
@@ -48,6 +48,10 @@ class TensorImpl : public Tensor {
   uint32_t GetId() override;
   bool CopyDataToTensor(const void* data, uint32_t size = 0) override;
   bool CopyDataFromTensor(void* data) override;
+  bool SwapHandle(void* new_ptr, bool is_new_ptr_malloc_by_ovxlib,
+                  void** old_ptr) override;
+  bool SwapHandle(std::shared_ptr<tim::vx::Tensor> tensor) override;
+  bool SwapHandleWithCache(std::shared_ptr<tim::vx::Tensor> tensor) override;
   bool FlushCacheForHandle() override;
   bool InvalidateCacheForHandle() override;
   void* map(bool invalidate_cpu_cache = false) override;
@@ -58,7 +62,7 @@ class TensorImpl : public Tensor {
   }
   bool SaveTensorToTextByFp32(std::string filename) override;
   void* ConvertTensorToData(uint8_t* tensorData) override;
-
+  float* ConvertTensorToFloat32Data() override;
   GraphImpl* graph_;
   vsi_nn_tensor_id_t id_;
   TensorSpec spec_;
@@ -68,7 +72,7 @@ class TensorImpl : public Tensor {
 
 class TensorPlaceholder : public Tensor {
  public:
-  TensorPlaceholder(Graph* graph) : id_(VSI_NN_TENSOR_ID_NA) {(void)(graph);}
+  TensorPlaceholder(Graph* graph) : id_(VSI_NN_TENSOR_ID_NA) { (void)(graph); }
   ~TensorPlaceholder(){};
 
   const ShapeType& GetShape() override { return spec_.shape_; }
@@ -84,6 +88,21 @@ class TensorPlaceholder : public Tensor {
     (void)data;
     return false;
   }
+  bool SwapHandle(void* new_ptr, bool is_new_ptr_malloc_by_ovxlib,
+                  void** old_ptr) override {
+    (void)new_ptr;
+    (void)old_ptr;
+    (void)is_new_ptr_malloc_by_ovxlib;
+    return false;
+  }
+  bool SwapHandle(std::shared_ptr<tim::vx::Tensor> tensor) override {
+    (void)tensor;
+    return false;
+  }
+  bool SwapHandleWithCache(std::shared_ptr<tim::vx::Tensor> tensor) override {
+    (void)tensor;
+    return false;
+  }
   bool InvalidateCacheForHandle() override { return false; }
   bool FlushCacheForHandle() override { return false; }
   void* map(bool invalidate_cpu_cache = false) override {
@@ -95,14 +114,15 @@ class TensorPlaceholder : public Tensor {
   bool IsConstTensor() override {
     return spec_.attr_ == tim::vx::TensorAttribute::CONSTANT;
   }
- bool SaveTensorToTextByFp32(std::string filename) override {
-   (void)filename;
-   return false;
- }
- void* ConvertTensorToData(uint8_t* tensorData) override {
-   (void)tensorData;
-   return nullptr;
- }
+  bool SaveTensorToTextByFp32(std::string filename) override {
+    (void)filename;
+    return false;
+  }
+  void* ConvertTensorToData(uint8_t* tensorData) override {
+    (void)tensorData;
+    return nullptr;
+  }
+  float* ConvertTensorToFloat32Data() override { return nullptr; }
 
   vsi_nn_tensor_id_t id_;
   TensorSpec spec_;
